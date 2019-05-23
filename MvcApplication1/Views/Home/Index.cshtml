@@ -1,0 +1,301 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+ <!-- criteria -->
+  <div class="row top_tiles">
+              <div class="animated flipInY col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+
+                
+
+                <div class="tile-stats" style="height:125px;background:#EDEDED">
+
+                     
+
+                   <div class="animated flipInY col-lg-3 col-md-3 col-sm-12 col-xs-12">
+               
+                      <div style="padding: 10px">
+                           <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Date : 
+                         </span>
+                               </div>
+                              <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                   @(Html.Kendo().DatePicker()
+                                .Name("dt_startdate")
+                                .Start(CalendarView.Year)
+                                .Depth(CalendarView.Year)
+                                .Format("MMMM yyyy")
+                                .Value(DateTime.Now)
+                                    )
+                               </div>
+                         
+                      </div>
+
+                       <div style="padding: 10px;margin-top: 30px">
+
+                            <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Country : 
+                         </span>
+                               </div>
+
+                          <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                           @(Html.Kendo().ComboBox()
+                                .Name("cbx_country")
+                                .Placeholder("Select a country...")
+                                .DataTextField("Xvalue")
+                                .DataValueField("Xvalue")
+                                .Suggest(true)
+                                .DataSource(source =>
+                                 {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("Country_Read", "Home");
+                                      });
+                                 })   
+                               )
+                              </div>
+                      </div>
+                     
+                
+                  </div>
+
+                    <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+               
+                      <div style="padding: 10px">
+                           <div class="animated flipInY col-lg-2 col-md-2 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Network : 
+                         </span>
+                               </div>
+                              <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                   @(Html.Kendo().ComboBox()
+                                .Name("cbx_network")
+                                .Placeholder("Select a network...")
+                                .DataSource(source =>
+                                 {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("Network_Read", "Home");
+                                      });
+                                 }) 
+                                .Suggest(true)
+                                .HtmlAttributes(new {style="width: 60%"})
+                                    )
+                               </div>
+                         
+                      </div>
+
+                       <div style="padding: 10px;margin-top: 30px">
+
+                            <div class="animated flipInY col-lg-2 col-md-2 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Call Type : 
+                         </span>
+                               </div>
+
+                          <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                          @(Html.Kendo().ComboBox()
+                                .Name("cbx_calltype")
+                                .Placeholder("Select a type...")
+                                .DataSource(source =>
+                                 {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("CallType_Read", "Home");
+                                      });
+                                 }) 
+                                .Suggest(true)
+                                .HtmlAttributes(new {style="width: 60%"})
+                                    )
+                              </div>
+                      </div>
+                     
+                
+                  </div>
+
+                </div>
+              </div>
+             </div>
+            
+ <!-- / criteria -->
+
+ 
+
+        <!-- sms delivery failure, gauge, kb up , kp down-->
+          <div class="row">
+               <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="dashboard_graph x_panel">
+                <div class="x_title">
+                  <h2>Tableau des détails</h2>
+                  <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-file-image-o"></i> Export GIF</a>
+                            <li><a href="#"><i class="fa fa-file-excel-o"></i> Export CSV</a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                 <div class="x_content">
+                   
+                    <div id="linechart1" style="width:100%; ">
+
+                        @(Html.Kendo().Grid<MvcApplication1.Models.TestModel.GridDetails>()
+                            .Name("grid_detail")
+                            .Columns(columns=>
+                                {
+                                    columns.Bound(c => c.CallCategory);
+                                    columns.Bound(c => c.BSC_LN);
+                                    columns.Bound(c => c.StartTime).Format("{0:d}");
+                                    columns.Bound(c => c.PhoneNumber);
+                                    columns.Bound(c => c.Country);
+                                    columns.Bound(c => c.Origin);
+                                    columns.Bound(c => c.Duration);
+                                })
+                                .HtmlAttributes(new {style="height: 550px;" })
+                                .Scrollable()
+                                .Sortable()
+                                .Groupable()
+                                .Pageable(pageable=>pageable
+                                    .Refresh(true)
+                                    .PageSizes(true)
+                                    .ButtonCount(5))
+                                .DataSource(datasource=>datasource
+                                    .Ajax()
+                                    .Read(read=>read.Action("TableDetails_Read","Home"))
+                                    .PageSize(20))    
+                                )
+                        
+                        
+                    </div>
+                  </div>
+              </div>
+            </div>
+            </div>
+ <!-- /sms delivery failure, gauge, kb up , kp down-->
+
+
+ <!-- line and bar charts -->
+         <div class="row">
+
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="dashboard_graph x_panel">
+                <div class="x_title">
+                  <h2>Tableau des totaux</h2>
+                  <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-file-image-o"></i> Export GIF</a>
+                            <li><a href="#"><i class="fa fa-file-excel-o"></i> Export CSV</a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                 <div class="x_content">
+                   
+                    <div id="linechart" style="width:100%; ">
+
+                         @(Html.Kendo().Grid<MvcApplication1.Models.TestModel.GridTotal>()
+                            .Name("grid_total")
+                            .Columns(columns=>
+                                {
+                                    columns.Bound(c => c.CallCategory);
+                                    columns.Bound(c => c.Site);
+                                    columns.Bound(c => c.MonthlyTotal);
+                                    columns.Bound(c => c.AvgCallDurationIn);
+                                    columns.Bound(c => c.AvgCallDurationOut);
+                                    columns.Bound(c => c.AvgNumberCallIn);
+                                    columns.Bound(c => c.AvgNumberCallOut);
+                                })
+                                .HtmlAttributes(new {style="height: 550px;" })
+                                .Scrollable()
+                                .Sortable()
+                                .Groupable()
+                                .Pageable(pageable=>pageable
+                                    .Refresh(true)
+                                    .PageSizes(true)
+                                    .ButtonCount(5))
+                                .DataSource(datasource=>datasource
+                                    .Ajax()
+                                    .Read(read=>read.Action("TableTotal_Read","Home"))
+                                    .PageSize(20))    
+                                )
+
+                    </div>
+
+                    <div id="slider" style="margin-top: 20px">
+                        @(Html.Kendo().Slider()
+                            .Name("Slider")
+                            .IncreaseButtonTitle("Right")
+                            .DecreaseButtonTitle("Left")
+                            .Min(-10)
+                            .Max(10)
+                            .SmallStep(2)
+                            .LargeStep(1)
+                            .Value(0)
+                            .HtmlAttributes(new {@class="balSlider",style="width:100%"})
+                            )
+                    </div>
+
+
+                     <div id="buttongroup-home">
+    <div class="head">&nbsp;</div>
+   
+                         <div>
+                              @(Html.RadioButton("GESvoiceminute", "Avg Call duration In", new  {@GroupName = "tab2",id="1" }))
+                         <span>Avg Call duration In</span>
+                         </div>
+
+                         <div>
+                              @(Html.RadioButton("GESvoiceminute","Avg Call duration Out", new  {@GroupName = "tab2" ,id="2"}))
+                         <span>Avg Call Duration Out</span>
+                         </div>
+
+                         <div>
+                              @(Html.RadioButton("GESvoiceminute","Avg Call Number In"))
+                         <span>Avg Call Number In</span>
+                         </div>
+
+                         <div>
+                              @(Html.RadioButton("GESvoiceminute","Avg Call Number Out"))
+                         <span>Avg Call Number Out</span>
+                         </div>
+            
+        </div>
+
+                  </div>
+              </div>
+            </div>
+
+         
+ 
+          
+
+          </div>         
+        <!-- /line and bar charts -->
+
+
+
+
+          

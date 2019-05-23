@@ -1,0 +1,55 @@
+﻿<div class="dashboard_graph x_panel">
+                <div class="x_title">
+                  Nombre Employé par année
+                  <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-file-image-o"></i> Export GIF</a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                 <div class="x_content">
+                   
+                    <div id="employeebyyearChart" style="width:100%; ">
+
+                        @(Html.Kendo().Chart<MvcApplication1.Models.TestModel.Effectif>()
+                            .Name("employeebyyearChart")
+                            .Theme("Bootstrap")
+                            .Legend(legend => legend.Position(ChartLegendPosition.Bottom))
+                            .ChartArea(chartArea => chartArea.Background("transparent"))
+                            .SeriesDefaults(s=>s.Column().Stack(true))
+                            .Series(series =>
+                            {
+                                series.Column(m=>m.NbreEmployePermanent).Name("Permanents");
+                                series.Column(m => m.NbreEmployeTemporaire).Name("Temporaires");
+                               
+                            })
+                            .CategoryAxis(axis => axis.Categories(m=>m.MoisSubstring)
+                                                    .MajorGridLines(lines => lines.Visible(false))
+                                                    )
+                            .ValueAxis(axis => axis.Numeric()
+                                                 .Line(line => line.Visible(false))
+                                                 .MajorGridLines(lines => lines.Visible(true))
+                             )
+                             .DataSource(ds=>ds
+                                    .Read(read=>read.Action("GetEffectifanneeItems","Paie")
+                                    .Data("getFilterItems"))
+                             )
+                             .Tooltip(tooltip => tooltip.Visible(true)
+                                                      .Template("#= series.name #: #=value #")
+                                                      )
+                             .HtmlAttributes(new {style="height: 260px;width: 100%" })
+                             .AutoBind(false)
+                             )
+
+                    </div>
+                  </div>
+              </div>

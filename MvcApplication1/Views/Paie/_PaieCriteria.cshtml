@@ -1,0 +1,142 @@
+﻿  <div class="tile-stats" style="height:125px;background:#EDEDED">
+
+                     
+
+      <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+               
+                      <div style="padding:10px">
+                           <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Date : 
+                         </span>
+                               </div>
+                              <div class="animated flipInY col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                   @(Html.Kendo().DatePicker()
+                                .Name("dt_date")
+                                .Value(DateTime.Now.AddMonths(-1))
+                                .Start(CalendarView.Year)
+                                .Depth(CalendarView.Year)
+                                .Format("MMMM yyyy")
+                                .Events(e=>e.Change("onCriteriaChange")
+                                         )  
+                                    )
+                               </div>
+                         
+                      </div>
+
+                      
+                     
+                
+                  </div>
+
+      <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+               
+                      <div style="padding: 10px">
+
+                            <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Entite administrative : 
+                         </span>
+                               </div>
+
+                          <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                           @(Html.Kendo().ComboBox()
+                                .Name("cbx_entiteAdmin")
+                                .Placeholder("Select entite admin...")
+                                .DataTextField("Xvalue")
+                                .DataValueField("Xvalue")
+                                .Suggest(true)
+                                .DataSource(source =>
+                                 {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("EntiteAdmin_Read", "Paie");
+                                      });
+                                 })
+                                 .Events(e=>e.Change("onCriteriaChange"))   
+                               )
+                              </div>
+                      </div>
+
+                       <div style="padding: 10px;margin-top: 25px">
+
+                            <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Tranche âge : 
+                         </span>
+                               </div>
+
+                          <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                          @(Html.Kendo().ComboBox()
+                                .Name("cbx_age")
+                                .Placeholder("Select age...")
+                                .DataTextField("Xvalue")
+                                .DataValueField("Xvalue")
+                                .DataSource(source =>
+                                 {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("TrancheAge_Read", "Paie");
+                                      });
+                                 }) 
+                                .Suggest(true)
+                                 .Events(e=>e.Change("onCriteriaChange"))  
+                                    )
+                              </div>
+                      </div>
+                     
+                
+                  </div>
+
+
+      <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
+               
+                       <div style="padding: 10px">
+
+                            <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+               
+                         <span>
+                             Tranche ancienneté : 
+                         </span>
+                               </div>
+
+                          <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                          @(Html.Kendo().ComboBox()
+                                .Name("cbx_trancheAnc")
+                                .Placeholder("Select anciennete...")
+                                .DataTextField("Xvalue")
+                                .DataValueField("Xvalue")
+                                .DataSource(source =>
+                                 {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("TrancheAnc_Read", "Paie");
+                                      });
+                                 }) 
+                                .Suggest(true)
+                                 .Events(e=>e.Change("onCriteriaChange"))  
+                                    )
+                              </div>
+                      </div>
+
+                         <div style="padding: 10px;margin-top: 25px">
+                           <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
+               
+                          @(Html.CheckBox("chkHomme", new { @onclick="onCriteriaChange()" }))
+                         <span style="margin-right: 20px">Homme</span>
+
+                                @(Html.CheckBox("chkFemme", new { @onclick="onCriteriaChange()" }))
+                         <span>Femme</span>
+                         
+                      </div>
+                     
+                
+                  </div>
+
+                </div>  
+
+
+  </div>
