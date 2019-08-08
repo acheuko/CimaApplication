@@ -1,0 +1,55 @@
+﻿ <div class="x_panel dashboard_graph">
+                <div class="x_title">
+                  Repartition des salaires par entité administrative
+                  <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                         <li><a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-file-image-o"></i> Export GIF</a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                    <div class="x_content" style="height:270px">
+
+                    <div id="SalentiteadminChart" style="width:100%; ">
+
+                        @(Html.Kendo().Chart<Cima.Models.TestModel.Montant>()
+                            .Name("SalentiteadminChart")
+                            .Theme("Flat")
+                            .Legend(legend => legend.Position(ChartLegendPosition.Bottom))
+                            .ChartArea(chartArea => chartArea.Background("transparent"))
+                            .SeriesDefaults(s=>s.Bar().Stack(true))
+                            .Series(series =>
+                            {
+                                series.Bar(m=>m.MontantSalaire).Name("Salaire");
+                                series.Bar(m=>m.Prime).Name("Prime");
+                            })
+                            .CategoryAxis(axis => axis.Categories(m=>m.EntiteAdmin)
+                                                    .MajorGridLines(lines => lines.Visible(false))
+                                                    )
+                            .ValueAxis(axis => axis.Numeric()
+                                                 .Line(line => line.Visible(false))
+                                                 .MajorGridLines(lines => lines.Visible(true))
+                             )
+                             .DataSource(ds=>ds
+                                    .Read(read=>read.Action("GetSalaireEntAdminItems","Paie")
+                                    .Data("getFilterItems"))
+                             )
+                             .Tooltip(tooltip => tooltip.Visible(true)
+                                                      .Template("#= series.name #: #=value #")
+                                                      )
+                             .HtmlAttributes(new {style="height: 260px;width: 100%" })
+                             )
+
+                    </div>
+
+                   
+                  </div>
+              </div>
