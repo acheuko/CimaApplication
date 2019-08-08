@@ -5,60 +5,43 @@
 <!-- upload files to landing -->
 <div class="row">
 
-    <div id="example" ng-app="KendoDemos" class="col-md-12 col-sm-12 col-xs-12">
+    <div id="example" ng-app="UploadFile" class="col-md-12 col-sm-12 col-xs-12">
 
-        @*<div ng-controller="MyCtrl" class="dashboard_graph x_panel">
-                <div class="demo-section">
-                    <div class="{{ draggableCLass }}" id="draggable" kendo-draggable k-hint="draggableHint" k-dragstart="onDragStart" k-dragend="onDragEnd"><i class="fa fa-home"></i></div>
-                    <div id="droptarget" kendo-droptarget k-dragenter="onDragEnter" k-dragleave="onDragLeave" k-drop="onDrop" class="k-header">{{ dropTargetText }}</div>
+          <div ng-controller="UploadFileController">
+            <div id="droptarget" kendo-droptarget  k-drop="onDrop" class="k-header dashboard_graph x_panel">
+                <div id="file-upload-outline" class="file-upload-outline">
+                    <img src="~/Images/uploadFile.jpg" />
+                    <h2 class="file-upload-text">Glissez-déposez vos fichiers ici pour les charger</h2>
+                    <h2 class="file-upload-drop-text"> Déposez vos fichiers ici </h2>
+                    <p class="file-upload-text">
+                        <input type="file" id="fileselect" name="files[]" multiple class="manual-file-chooser" onchange="selectFiles(this.files);" /> Ou <a href="#" class="manual-file-chooser-text" ng-click="chooseFile();"> Choisissez vos fichiers</a>
+                    </p>
                 </div>
-            </div>*@
-        <div ng-controller="MyCtrl">
-            <div id="droptarget" kendo-droptarget k-dragenter="onDragEnter" k-dragleave="onDragLeave" k-drop="onDrop" class="k-header dashboard_graph x_panel">
-                <img src="~/Images/uploadFile.jpg" />
-                <h2>Glissez-déposez vos fichiers ici pour les charger</h2>
-                <p>
-                    <input type="file" class="manual-file-chooser"> Ou <a href="#"> Choisissez vos fichiers</a>
-                </p>
             </div>
 
             <div class="file-wrap">
-                <table class="files">
-                    <tbody>
-                        <tr>
-                            <td class="icon"><i class="fa fa-file"></i></td>
-                            <td class="name">upload.jpg</td>
-                            <td class="actions"><i class="fa fa-times"></i></td>
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fa fa-file"></i></td>
-                            <td class="name">upload1.jpg</td>
-                            <td class="actions"><i class="fa fa-times"></i></td>
-                        </tr>
-                        <tr>
-                            <td class="icon"><i class="fa fa-file"></i></td>
-                            <td class="name">upload2.jpg</td>
-                            <td class="actions"><i class="fa fa-times"></i></td>
-                        </tr>
-                    </tbody>
+                <table id="filesList" class="files">
+                    
                 </table>
             </div>
 
+           
+
             <div id="bt-uploadfiles">
                 <p>
-                    <kendo-button class="btn-success" ng-click="onClick1()" style="color:white;font-weight:bold">Charger</kendo-button>
-                    <kendo-button on-click="onClick2()" style="color:red;font-weight:bold">Annuler</kendo-button>
+                    <kendo-button class="btn-success" ng-click="uploadFile()" style="color:white;font-weight:bold">Charger</kendo-button>
+                    <kendo-button on-click="cancelUpload()" style="color:red;font-weight:bold">Annuler</kendo-button>
                 </p>
             </div>
         </div>
+
 
         <style scoped>
             #droptarget {
                 font-size: 18px;
                 border-radius: 3px;
                 text-align: center;
-                padding: 80px 0px;
-                margin-bottom:0px;
+                margin-bottom: 0px;
                 cursor: default;
                 box-shadow: inset 0 0 10px rgba(27,31,35,.05);
             }
@@ -87,38 +70,67 @@
                 position: absolute;
             }
 
-            .file-wrap{
+            .file-wrap {
                 border: 1px solid #dfe2e5;
                 border-top: 0;
-                margin-bottom:10px;
-                border-bottom-left-radius:3px;
-                border-bottom-right-radius:3px;
+                margin-bottom: 10px;
+                border-bottom-left-radius: 3px;
+                border-bottom-right-radius: 3px;
             }
 
-            .files{
+            .files {
                 width: 100%;
-                border-radius:2px;
-                background-color:#fafbfc;
+                border-radius: 2px;
+                background-color: #fafbfc;
             }
 
-            table.files td{
-                border-top : 1px solid #eaecef;
+            table.files td {
+                border-top: 1px solid #eaecef;
                 padding: 6px 3px;
-                line-height:20px;
+                line-height: 20px;
             }
 
-            table.files td.icon{
-                color:rgba(3,47,98,.55);
-                width:17px;
-                padding: 0px 2px 0px 10px;
-            }
+                table.files td.icon {
+                    color: rgba(3,47,98,.55);
+                    width: 17px;
+                    padding: 0px 2px 0px 10px;
+                }
 
-            table.files td.actions{
-               padding-right: 10px;
-               text-align: right;
-               width: 50px;
-               cursor: pointer;
-            }
+                table.files td.actions {
+                    padding-right: 10px;
+                    text-align: right;
+                    width: 50px;
+                    cursor: pointer;
+                }
+
+                .file-upload-outline{
+                    height: 94%;
+                    left: 1%;
+                    padding: 80px 0px;
+                    top: 3%;
+                }
+
+                .file-upload-outline-dropover{
+                    border: 6px dashed #ddd;
+                    border-radius: 5px;
+                }
+
+                .file-upload-text{
+                    margin-bottom:5px;
+                }
+
+                .file-upload-drop-text{
+                    display:none;
+                    margin-bottom:5px;
+                }
+
+                h2{
+                    font-size:24px;
+                }
+
+                #manual-file-chooser-text{
+                    cursor: pointer;
+                }
         </style>
     </div>
 
