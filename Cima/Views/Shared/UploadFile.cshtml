@@ -16,6 +16,10 @@
                     <p class="file-upload-text">
                         <input type="file" id="fileselect" name="files[]" multiple class="manual-file-chooser" onchange="selectFiles(this.files);" /> Ou <a href="#" class="manual-file-chooser-text" ng-click="chooseFile();"> Choisissez vos fichiers</a>
                     </p>
+                    <div class="file-upload-errors">
+                        <p>  Erreur !!! </p> 
+                        <p> Veuillez charger un fichier avec extension ".PFN"  </p>
+                    </div>
                 </div>
             </div>
 
@@ -130,6 +134,11 @@
 
                 #manual-file-chooser-text{
                     cursor: pointer;
+                }
+
+                .file-upload-errors{
+                    display: none;
+                    color: red;
                 }
         </style>
     </div>

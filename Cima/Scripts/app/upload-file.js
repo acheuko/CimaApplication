@@ -18,7 +18,8 @@ function UploadFileController($scope) {
         $("#fileselect").click();
     }
 
-  
+
+    
 
 }
 
@@ -35,10 +36,10 @@ function handleFileSelect(evt) {
     // files is a FileList of File objects. List some properties.
     var output = [];
     for (var i = 0, f; f = files[i]; i++) {
-        parseFile(output, f);
+       uploadingFiles(f, output);
     }
     
-    $("#filesList").append('<tbody>' + output.join('') + '</tbody>');
+   
 }
 
 // selection des fichiers via le bouton parcourir
@@ -47,11 +48,11 @@ function selectFiles(files) {
     // files is a FileList of File objects. List some properties.
     var output = [];
     for (var i = 0, f; f = files[i]; i++) {
-        parseFile(output, f);
+        uploadingFiles(f, output);
     }
 
-    $("#filesList").append('<tbody>' + output.join('') + '</tbody>');
 }
+
 
 function handleDragOver(evt) {
     evt.stopPropagation();
@@ -60,13 +61,13 @@ function handleDragOver(evt) {
         $("#file-upload-outline").addClass('file-upload-outline-dropover');
         $(".file-upload-text").hide();
         $(".file-upload-drop-text").show();
-
+        $(".file-upload-errors").hide();
         evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
     } else {
         $("#file-upload-outline").removeClass('file-upload-outline-dropover');
         $(".file-upload-text").show();
         $(".file-upload-drop-text").hide();
-
+        $(".file-upload-errors").hide();
         evt.dataTransfer.dropEffect = 'move';
     }
 }
@@ -76,6 +77,72 @@ function parseFile(outputArray, f) {
      outputArray.push('<tr>',
         '<td class="icon"><i class="fa fa-file"></i></td>',
         '<td class="name">', escape(f.name), '</td>',
-        '<td class="actions"><i class="fa fa-times"></i></td>',
+         '<td class="actions"><i id="', escape(f.name),'" class="fa fa-times" onclick="deleteFiles(this);"></i></td>',
         '</tr> ');
 }
+
+
+
+
+function uploadingFiles(f, outputArray) {
+
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+        var RawData = event.target.result;
+        $.ajax({
+            type: 'POST',
+            url: '/UploadFile/UploadingFile',
+            data: JSON.stringify({ filename: f.name, filesize: f.size, file: RawData }),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+
+                if (response != "FAILURE") {
+                    parseFile(outputArray, f);
+
+                    $("#filesList").append('<tbody>' + outputArray.join('') + '</tbody>');
+
+                    $(".file-upload-errors").hide();
+                }
+                else {
+                    
+                    $(".file-upload-errors").show();
+                }
+
+            },
+            failure: function (response) {
+                alert("erreur uploading");
+            }
+        });
+
+
+    }
+
+    reader.readAsText(f);  
+}
+
+function  deleteFiles(el) {
+
+    var filename = el.id;
+
+    $.ajax({
+        type: 'POST',
+        url: '/UploadFile/DeleteUploadedFile',
+        data: JSON.stringify({ filename: filename }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (response) {
+            if (response != "FAILURE") {
+                el.closest('tr').remove();
+            }
+        },
+        failure: function (response) {
+            alert("erreur deleting row");
+        }
+    });
+}
+
+
+
+
