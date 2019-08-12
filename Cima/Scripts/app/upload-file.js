@@ -9,7 +9,22 @@ function UploadFileController($scope) {
 
     $scope.uploadFile = function () {
         alert("Upload files ... ");
+        $.ajax({
+            type: 'POST',
+            url: '/UploadFile/SaveFileToLanding',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response != "FAILURE") {
+                    alert("Success ... ");
+                }
+            },
+            failure: function (response) {
+                alert("erreur uploading files");
+            }
+        });
     };
+
     $scope.cancelUpload = function () {
         alert("Cancel upload ...");
     };
@@ -46,14 +61,14 @@ function handleFileSelect(evt) {
 function selectFiles(files) {
     
     // files is a FileList of File objects. List some properties.
-    var output = [];
     for (var i = 0, f; f = files[i]; i++) {
-        uploadingFiles(f, output);
+        uploadingFiles(f);
     }
 
 }
 
 
+// 
 function handleDragOver(evt) {
     evt.stopPropagation();
     evt.preventDefault();
@@ -72,7 +87,7 @@ function handleDragOver(evt) {
     }
 }
 
-
+// 
 function parseFile(outputArray, f) {
      outputArray.push('<tr>',
         '<td class="icon"><i class="fa fa-file"></i></td>',
@@ -83,8 +98,8 @@ function parseFile(outputArray, f) {
 
 
 
-
-function uploadingFiles(f, outputArray) {
+// chargement des fichiers dans la table temporaire
+function uploadingFiles(f) {
 
     var reader = new FileReader();
 
@@ -99,6 +114,7 @@ function uploadingFiles(f, outputArray) {
             success: function (response) {
 
                 if (response != "FAILURE") {
+                    var outputArray = [];
                     parseFile(outputArray, f);
 
                     $("#filesList").append('<tbody>' + outputArray.join('') + '</tbody>');
@@ -122,6 +138,7 @@ function uploadingFiles(f, outputArray) {
     reader.readAsText(f);  
 }
 
+// supprimer le fichier chargé
 function  deleteFiles(el) {
 
     var filename = el.id;

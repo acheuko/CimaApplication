@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<Cima.Models.UploadingFile>
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -7,8 +8,8 @@
 
     <div id="example" ng-app="UploadFile" class="col-md-12 col-sm-12 col-xs-12">
 
-          <div ng-controller="UploadFileController">
-            <div id="droptarget" kendo-droptarget  k-drop="onDrop" class="k-header dashboard_graph x_panel">
+        <div ng-controller="UploadFileController">
+            <div id="droptarget" kendo-droptarget k-drop="onDrop" class="k-header dashboard_graph x_panel">
                 <div id="file-upload-outline" class="file-upload-outline">
                     <img src="~/Images/uploadFile.jpg" />
                     <h2 class="file-upload-text">Glissez-déposez vos fichiers ici pour les charger</h2>
@@ -17,7 +18,7 @@
                         <input type="file" id="fileselect" name="files[]" multiple class="manual-file-chooser" onchange="selectFiles(this.files);" /> Ou <a href="#" class="manual-file-chooser-text" ng-click="chooseFile();"> Choisissez vos fichiers</a>
                     </p>
                     <div class="file-upload-errors">
-                        <p>  Erreur !!! </p> 
+                        <p>  Erreur !!! </p>
                         <p> Veuillez charger un fichier avec extension ".PFN"  </p>
                     </div>
                 </div>
@@ -25,11 +26,25 @@
 
             <div class="file-wrap">
                 <table id="filesList" class="files">
-                    
+                    @{ if (Model != null)
+                        {
+                            <tbody>
+                                @foreach (var file in Model)
+                                {
+                                    <tr>
+                                        <td class="icon"><i class="fa fa-file"></i></td>
+                                        <td>@file.FileName</td>
+                                        <td class="actions"><i id="@file.FileName" class="fa fa-times" onclick="deleteFiles(this);"></i></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        }
+                        
+                    }                    
                 </table>
             </div>
 
-           
+
 
             <div id="bt-uploadfiles">
                 <p>
@@ -107,39 +122,39 @@
                     cursor: pointer;
                 }
 
-                .file-upload-outline{
-                    height: 94%;
-                    left: 1%;
-                    padding: 80px 0px;
-                    top: 3%;
-                }
+            .file-upload-outline {
+                height: 94%;
+                left: 1%;
+                padding: 80px 0px;
+                top: 3%;
+            }
 
-                .file-upload-outline-dropover{
-                    border: 6px dashed #ddd;
-                    border-radius: 5px;
-                }
+            .file-upload-outline-dropover {
+                border: 6px dashed #ddd;
+                border-radius: 5px;
+            }
 
-                .file-upload-text{
-                    margin-bottom:5px;
-                }
+            .file-upload-text {
+                margin-bottom: 5px;
+            }
 
-                .file-upload-drop-text{
-                    display:none;
-                    margin-bottom:5px;
-                }
+            .file-upload-drop-text {
+                display: none;
+                margin-bottom: 5px;
+            }
 
-                h2{
-                    font-size:24px;
-                }
+            h2 {
+                font-size: 24px;
+            }
 
-                #manual-file-chooser-text{
-                    cursor: pointer;
-                }
+            #manual-file-chooser-text {
+                cursor: pointer;
+            }
 
-                .file-upload-errors{
-                    display: none;
-                    color: red;
-                }
+            .file-upload-errors {
+                display: none;
+                color: red;
+            }
         </style>
     </div>
 

@@ -1,6 +1,7 @@
 ﻿using Cima.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web;
 
@@ -10,10 +11,12 @@ namespace Cima.Repository
     {
         int SaveTmpFile(UploadingFile uploadingFile);
 
-        void GetTmpFileByUserId(string UserId);
-
         int DeleteTmpFileByFileNameAndUserId(string FileName, string UserId);
 
-        
+        int DeleteTmpFileByUserId(string UserId);
+
+        ObservableCollection<UploadingFile> GetTmpFileNameByUserId(string UserId);
+
+        ObservableCollection<UploadingFile> GetTmpFileByUserId(string UserId);
     }
 }
