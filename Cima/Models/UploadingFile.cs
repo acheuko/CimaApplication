@@ -14,6 +14,13 @@ namespace Cima.Models
             set { fileName = value; }
         }
 
+        private string fileMask;
+        public string FileMask
+        {
+            get { return fileMask; }
+            set { fileMask = value; }
+        }
+
         private int fileSize;
         public int FileSize
         {

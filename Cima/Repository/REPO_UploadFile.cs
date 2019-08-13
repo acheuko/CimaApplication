@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Transactions;
 
 namespace Cima.Repository
 {
@@ -134,12 +135,13 @@ namespace Cima.Repository
             SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
             
             //Replaced Parameters with Value
-            string query = "INSERT INTO sysman.tmpUploadingFiles (FileName, FileSize, UploadDate, ID_Company, USERID, Contents) VALUES(@FileName,@FileSize, @UploadDate, @IDCompany,@UserID, @File)";
+            string query = "INSERT INTO sysman.tmpUploadingFiles (FileName, FileMask, FileSize, UploadDate, ID_Company, USERID, Contents) VALUES(@FileName,@FileMask,@FileSize, @UploadDate, @IDCompany,@UserID, @File)";
             
             SqlCommand cmd = (SqlCommand)this.GetCommand(query, con);
 
             //Pass values to Parameters
             cmd.Parameters.AddWithValue("@FileName", uploadingFile.FileName);
+            cmd.Parameters.AddWithValue("@FileMask", uploadingFile.FileMask);
             cmd.Parameters.AddWithValue("@FileSize", uploadingFile.FileSize);
             cmd.Parameters.AddWithValue("@UploadDate", DateTime.UtcNow);
             cmd.Parameters.AddWithValue("@IDCompany", uploadingFile.IdCompany);
@@ -209,5 +211,78 @@ namespace Cima.Repository
 
             return response;
         }
+
+        public void SaveBatchFiles(BatchModel batchModel)
+        {
+            using (var txscope = new TransactionScope(TransactionScopeOption.RequiresNew))
+            {
+                try
+                {
+                    using (SqlConnection objConn = this.connect(CONNECTION_STRING_SYSMAN))
+                    {
+                        // insertion du Batch
+                        string sqlQuery1 = @"INSERT INTO sysman.tblBatch(BatchNumber,ID_Company,NbFiles,BatchClosed,DateBatch) VALUES(@BatchNumber, @IdCompany,@NbFiles,'N', GETDATE())";
+                        SqlCommand objCmd1 = (SqlCommand)this.GetCommand(sqlQuery1, objConn);
+                        //Pass values to Parameters
+                        objCmd1.Parameters.AddWithValue("@BatchNumber", batchModel.BatchNumber);
+                        objCmd1.Parameters.AddWithValue("@IdCompany", batchModel.IdCompany);
+                        objCmd1.Parameters.AddWithValue("@NbFiles", batchModel.NbFiles);
+
+                        // Insertion des fichiers du batch
+                        string sqlQuery2 = @"INSERT INTO sysman.tblBatchFiles "+
+                                           "SELECT @BatchNumber as [BatchNumber]"+
+                                            ",@BatchNumber+'_'+[FileName] as [FileName]" +
+                                            ",[FileMask]"+
+                                            ",'N' as [FileIntegrated]"+
+                                            ",GETDATE()"+
+                                            ",ID_Company"+
+                                            ",USERID "+
+                                            "FROM sysman.tmpUploadingFiles "+
+                                            "WHERE ID_Company = @IdCompany";
+
+                        SqlCommand objCmd2 = (SqlCommand)this.GetCommand(sqlQuery2, objConn);
+                        objCmd2.Parameters.AddWithValue("@BatchNumber", batchModel.BatchNumber);
+                        objCmd2.Parameters.AddWithValue("@IdCompany", batchModel.IdCompany);
+
+                        // Suppression des fichiers corespondant à une company dans la table temporaire
+                        string sqlQuery3 = @"DELETE FROM sysman.tmpUploadingFiles WHERE ID_Company = @IdCompany";
+                        SqlCommand objCmd3 = (SqlCommand)this.GetCommand(sqlQuery3, objConn);
+                        //Pass values to Parameters
+                        objCmd3.Parameters.AddWithValue("@IdCompany", batchModel.IdCompany);
+
+
+                        try
+                        {
+                            objCmd1.ExecuteNonQuery();
+                            objCmd2.ExecuteNonQuery();
+                            objCmd3.ExecuteNonQuery();
+
+                            //The Transaction will be completed    
+                            txscope.Complete();
+                        }
+                        catch (SqlException e)
+                        {
+                           Console.WriteLine("Error SqlException Generated. Details: " + e.ToString());
+                           txscope.Dispose();
+                            throw e;
+                        }
+                        finally
+                        {
+                            objCmd1.Dispose();
+                            objCmd2.Dispose();
+                        }
+                        
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log error 
+                    txscope.Dispose();
+                    throw ex;
+                }
+            }
+        }
+
+        
     }
 }

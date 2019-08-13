@@ -203,6 +203,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\BatchModel.cs" />
     <Compile Include="Models\Shared\FiltreDashboard.cs" />
     <Compile Include="Models\Shared\FiltreElement.cs" />
     <Compile Include="Models\TestModel\BusinessModel.cs" />

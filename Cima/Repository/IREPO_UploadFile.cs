@@ -15,6 +15,8 @@ namespace Cima.Repository
 
         int DeleteTmpFileByUserId(string UserId);
 
+        void SaveBatchFiles(BatchModel batchModel);
+
         ObservableCollection<UploadingFile> GetTmpFileNameByUserId(string UserId);
 
         ObservableCollection<UploadingFile> GetTmpFileByUserId(string UserId);
