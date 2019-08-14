@@ -11,14 +11,14 @@ namespace Cima.Repository
     {
         int SaveTmpFile(UploadingFile uploadingFile);
 
-        int DeleteTmpFileByFileNameAndUserId(string FileName, string UserId);
+        int DeleteTmpFileByFileNameAndIdCompany(string FileName, string IdCompany);
 
-        int DeleteTmpFileByUserId(string UserId);
+        int DeleteTmpFileByIdCompany(string IdCompany);
 
         void SaveBatchFiles(BatchModel batchModel);
 
-        ObservableCollection<UploadingFile> GetTmpFileNameByUserId(string UserId);
+        ObservableCollection<UploadingFile> GetTmpFileNameByIdCompany(string IdCompany);
 
-        ObservableCollection<UploadingFile> GetTmpFileByUserId(string UserId);
+        ObservableCollection<UploadingFile> GetTmpFileByIdCompany(string IdCopmpany);
     }
 }

@@ -17,6 +17,7 @@ function UploadFileController($scope) {
             success: function (response) {
                 if (response != "FAILURE") {
                     alert("Success ... ");
+                    $("#filesList").html('');
                 }
             },
             failure: function (response) {

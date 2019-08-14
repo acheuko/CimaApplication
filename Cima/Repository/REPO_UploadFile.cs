@@ -14,18 +14,21 @@ namespace Cima.Repository
 {
     public class REPO_UploadFile : AbstractRepository, IREPO_UploadFile
     {
-        public int DeleteTmpFileByFileNameAndUserId(string FileName, string UserId)
+        /**
+         * Supprimer les fichiers temporaires pour un nom et une company donnée
+         **/
+        public int DeleteTmpFileByFileNameAndIdCompany(string FileName, string IdCompany)
         {
             SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
 
             //Replaced Parameters with Value
-            string query = @"DELETE FROM sysman.tmpUploadingFiles WHERE FileName = @FileName AND USERID = @UserID";
+            string query = @"DELETE FROM sysman.tmpUploadingFiles WHERE FileName = @FileName AND ID_COMPANY = @IdCompany";
 
             SqlCommand cmd = (SqlCommand)this.GetCommand(query, con);
 
             //Pass values to Parameters
             cmd.Parameters.AddWithValue("@FileName", FileName);
-            cmd.Parameters.AddWithValue("@UserID", UserId);
+            cmd.Parameters.AddWithValue("@IdCompany", IdCompany);
 
             int response = 0;
 
@@ -47,13 +50,16 @@ namespace Cima.Repository
             return response;
         }
 
-        public ObservableCollection<UploadingFile> GetTmpFileNameByUserId(string UserId)
+        /**
+         * récupérer le nom des fichiers temporaires pour une company donnée
+         **/ 
+        public ObservableCollection<UploadingFile> GetTmpFileNameByIdCompany(string IdCompany)
         {
             SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
             ObservableCollection<UploadingFile> items = new ObservableCollection<UploadingFile>();
-            using (var sqlQuery = new SqlCommand(@"SELECT FileName FROM sysman.tmpUploadingFiles WHERE USERID = @UserId", con))
+            using (var sqlQuery = new SqlCommand(@"SELECT FileName FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @UserId", con))
             {
-                sqlQuery.Parameters.AddWithValue("@UserID", UserId);
+                sqlQuery.Parameters.AddWithValue("@UserID", IdCompany);
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
                     if (sqlQueryResult != null)
                     {
@@ -91,15 +97,15 @@ namespace Cima.Repository
         }
 
         /**
-        * 
+        * Récupérer les fichiers temporaires pour une company donnée
         */
-        public ObservableCollection<UploadingFile> GetTmpFileByUserId(string UserId)
+        public ObservableCollection<UploadingFile> GetTmpFileByIdCompany(string IdCompany)
         {
             ObservableCollection<UploadingFile> Files = new ObservableCollection<UploadingFile>();
             using (var sqlConnection = this.connect(CONNECTION_STRING_SYSMAN))
-            using (var sqlQuery = new SqlCommand(@"SELECT FileName, FileSize,Contents FROM sysman.tmpUploadingFiles WHERE USERID = @UserId", sqlConnection))
+            using (var sqlQuery = new SqlCommand(@"SELECT FileName, FileSize,Contents FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @IdCompany", sqlConnection))
             {
-                sqlQuery.Parameters.AddWithValue("@UserID", UserId);
+                sqlQuery.Parameters.AddWithValue("@IdCompany", IdCompany);
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
                     if (sqlQueryResult != null)
                     {
@@ -128,7 +134,7 @@ namespace Cima.Repository
 
 
         /*
-         * 
+         * Sauvegarder les fichiers temporaires
          */
         public int SaveTmpFile(UploadingFile uploadingFile)
         {
@@ -180,17 +186,20 @@ namespace Cima.Repository
             return sqlcommand;
         }
 
-        public int DeleteTmpFileByUserId(string UserId)
+        /**
+         * Supprimer les fichiers temporaires pour une company donnée
+         **/ 
+        public int DeleteTmpFileByIdCompany(string IdCompany)
         {
             SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
 
             //Replaced Parameters with Value
-            string query = @"DELETE FROM sysman.tmpUploadingFiles WHERE USERID = @UserID";
+            string query = @"DELETE FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @IdCompany";
 
             SqlCommand cmd = (SqlCommand)this.GetCommand(query, con);
 
             //Pass values to Parameters
-            cmd.Parameters.AddWithValue("@UserID", UserId);
+            cmd.Parameters.AddWithValue("@IdCompany", IdCompany);
 
             int response = 0;
 
@@ -212,6 +221,9 @@ namespace Cima.Repository
             return response;
         }
 
+        /**
+         * Sauvegarder le Batch de chargement des fichiers 
+         **/ 
         public void SaveBatchFiles(BatchModel batchModel)
         {
             using (var txscope = new TransactionScope(TransactionScopeOption.RequiresNew))

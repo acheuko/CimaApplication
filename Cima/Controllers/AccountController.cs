@@ -10,6 +10,8 @@ using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using Cima.Filters;
 using Cima.Models;
+using Cima.Repository;
+using System.Collections.ObjectModel;
 
 namespace Cima.Controllers
 {
@@ -17,6 +19,9 @@ namespace Cima.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+
+        REPO_Login repo_login = new REPO_Login();
+
         //
         // GET: /Account/Login
 
@@ -33,29 +38,58 @@ namespace Cima.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginModel model, string returnUrl)
+        public ActionResult Login(LoginModel model)
         {
-            
-            //model.UserName, model.Password
-            if (ModelState.IsValid && WebSecurity.Login("admin", "0ejH6cH8nMdyKXM2fYBJLGV5EjU=", persistCookie: model.RememberMe))
+
+            if (!ModelState.IsValid)
             {
-                return RedirectToLocal(returnUrl);
+                return View(model);
             }
 
-            // If we got this far, something failed, redisplay form
-            ModelState.AddModelError("", "The user name or password provided is incorrect.");
-            return View(model);
+            ObservableCollection<User> users = repo_login.GetUserByLoginAndPassword(model);
+
+            if (users != null && users.Count == 1)
+            {
+                ActionResult actionResult;
+                User user = users[0];
+
+                FormsAuthentication.SetAuthCookie(model.UserName, false);
+
+                var authTicket = new FormsAuthenticationTicket(1, user.Login, DateTime.Now, DateTime.Now.AddMinutes(20), false, user.Profils);
+                string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                HttpContext.Response.Cookies.Add(authCookie);
+
+                Session["Username"] = user.Login;
+                Session["Profils"] = user.Profils;
+                Session["Company"] = user.Company;
+
+                if (user.Profils.Contains("Entreprise"))
+                    actionResult =  RedirectToAction("Index","UploadFile");
+                else
+                    actionResult = RedirectToAction("Index", "Home");
+
+                return actionResult;
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(model);
+            }
         }
 
         //
         // POST: /Account/LogOff
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public ActionResult LogOff()
         {
-            WebSecurity.Logout();
-
+            //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            FormsAuthentication.SignOut();
+            Session.Clear();
+            Session.Abandon();
+            Response.Cookies["ASP.NET_SessionId"].Value = string.Empty;
+            Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddMonths(-10);
             return RedirectToAction("Index", "Home");
         }
 

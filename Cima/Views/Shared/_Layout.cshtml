@@ -124,14 +124,14 @@
 
 
 
-                            <li><a href="~/Home/Login"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> Déconnexion</a></li>
+                            <li><a href="/Account/LogOff"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> Déconnexion</a></li>
 
 
                             <li class="">
                                 <a href="javascript:;" class="user-profile"  aria-expanded="false">
 
-                                    <img src="~/Images/user.png" alt="">
-                                    Profil Entrepise
+                                    <img src="~/Images/user.png" alt=""> Profil
+                                        @Session["Profils"]
                                                          </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li><a href="javascript:;"> Profile</a></li>

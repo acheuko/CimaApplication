@@ -12,6 +12,7 @@ using System.Collections.Generic;
 
 namespace Cima.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
 
@@ -23,7 +24,8 @@ namespace Cima.Controllers
             return View("~/Views/Account/Login.cshtml");
         }
 
-        public ActionResult Index([DataSourceRequest]DataSourceRequest request)
+        [Authorize(Roles = "entreprise")]
+        public ActionResult Index()
         {
             return View();
         }
@@ -41,6 +43,7 @@ namespace Cima.Controllers
             return Json(tauxResult, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Dashboard2()
         {
             ViewBag.Message = "Your app description page.";
@@ -49,6 +52,7 @@ namespace Cima.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Dashboard3()
         {
             ViewBag.Message = "Your contact page.";

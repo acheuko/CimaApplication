@@ -10,36 +10,55 @@ using Kendo.Mvc.Extensions;
 using Cima.Models;
 using Cima.Repository;
 using System.Text;
+using System.Configuration;
 
 namespace Cima.Controllers
 {
+    [Authorize]
     public class UploadFileController : Controller
     {
         protected const string JSON_RESULT_FAILURE = "FAILURE";
         protected const string JSON_RESULT_SUCCESS = "SUCCESS";
+        protected const string PFN = "PFN";
+        protected const string VER = "VER";
 
         private static readonly IREPO_UploadFile repoUploadFile = new REPO_UploadFile();
 
-        //
+        private string SessionCompanyId()
+        {
+            string IdCompany;
+            if (Session["Company"] != null)
+                IdCompany = Session["Company"].ToString();
+            else
+                IdCompany = "";
+
+            return IdCompany; 
+        }
+
         // GET: /UploadedFile/
+        [Authorize(Roles = "Entreprise")]
         public ActionResult Index()
         {
-            ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByUserId("idusers");
+            
+            ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(SessionCompanyId());
 
             return View("UploadFile", uploadingFiles);
         }
 
-
+        /**
+         *  Copie des fichiers d'états dans le repertoire de chargement
+         **/
+        [Authorize(Roles = "Entreprise")]
         public JsonResult SaveFileToLanding()
         {
             String Status;
 
-            // Get les fichiers dans le temporaire pour un userId
-            ObservableCollection<UploadingFile> Files = repoUploadFile.GetTmpFileByUserId("iduser");
+            // Get les fichiers dans le temporaire pour un IdCompany
+            ObservableCollection<UploadingFile> Files = repoUploadFile.GetTmpFileByIdCompany(SessionCompanyId());
 
             if(Files != null)
             {
-                string path = @"C:\Files\Pfn\Landing";
+                string path = ConfigurationManager.AppSettings["LandingPath"];
 
                 // génération du numéro de batch
                 string batchNumber = RandomNumber(0,9999999);
@@ -54,7 +73,7 @@ namespace Cima.Controllers
                         using (var pfn = new FileStream(pfnFullPath, FileMode.Create, FileAccess.Write))
                         {
 
-                            string verFullPath = path + "\\" + filename.Replace("PFN", "VER");
+                            string verFullPath = path + "\\" + filename.Replace(PFN, VER);
 
                             FileStream ver = new FileStream(verFullPath, FileMode.Create, FileAccess.Write);
                             ver.Close();
@@ -79,7 +98,7 @@ namespace Cima.Controllers
                     BatchModel batchFiles = new BatchModel()
                     {
                         BatchNumber = batchNumber,
-                        IdCompany = "idcompany",
+                        IdCompany = SessionCompanyId(),
                         NbFiles = Files.Count
                     };
                     repoUploadFile.SaveBatchFiles(batchFiles);
@@ -87,7 +106,7 @@ namespace Cima.Controllers
                 }
                 catch (Exception e)
                 {
-                    string searchPattern = batchNumber + "*.PFN";
+                    string searchPattern = batchNumber + "*."+PFN;
                     DeleteFileInLanding(path, searchPattern);
                     Console.WriteLine("Error Copy files Generated. Details: " + e.ToString());
                     Status = JSON_RESULT_FAILURE;
@@ -100,6 +119,10 @@ namespace Cima.Controllers
             return Json(Status, JsonRequestBehavior.AllowGet);
         }
 
+        /**
+         * Sauvegarde des fichiers d'état dans la table temporaire
+         **/ 
+        [Authorize(Roles = "Entreprise")]
         public JsonResult UploadingFile(string fileName, int filesize, string file)
         {
 
@@ -107,7 +130,7 @@ namespace Cima.Controllers
 
             string FileExtension = fileName.Split('.')[1];
             // Vérifier l'extension du fichier chargé
-            if (FileExtension.Equals("PFN"))
+            if (PFN.Equals(FileExtension))
             {
                 string[] fArray = fileName.Split('_');
                 string fileMask = fArray.Length >= 2?fArray[2].Split('.')[0]:"";
@@ -116,8 +139,8 @@ namespace Cima.Controllers
                     FileName = fileName,
                     FileMask = fileMask,
                     FileSize = filesize,
-                    IdCompany = "idcompany",
-                    UserId = "iduser",
+                    IdCompany = SessionCompanyId(),
+                    UserId = Session["Username"].ToString(),
                     File = Encoding.ASCII.GetBytes(file)
                 };
 
@@ -134,11 +157,15 @@ namespace Cima.Controllers
             return Json(Status, JsonRequestBehavior.AllowGet); 
         }
 
+        /**
+         * Suppression des fichiers d'état de la table temporaire
+         **/ 
+        [Authorize(Roles = "Entreprise")]
         public JsonResult DeleteUploadedFile(string filename)
         {
             String StatusReponse;
 
-            int response = repoUploadFile.DeleteTmpFileByFileNameAndUserId(filename, "iduser");
+            int response = repoUploadFile.DeleteTmpFileByFileNameAndIdCompany(filename, SessionCompanyId());
 
             if (response == 0)
                 StatusReponse = JSON_RESULT_FAILURE;
@@ -158,13 +185,14 @@ namespace Cima.Controllers
             return randomNumber.Length<7? randomNumber.PadLeft(7,'0'):randomNumber;
         }
 
+        // Suppression des fichiers dans le répertoire de chargement
         private static void DeleteFileInLanding(string path, string searchPattern)
         {
             try
             {
                 string[] pfnList = Directory.GetFiles(path, searchPattern);
 
-                string[] verList = Directory.GetFiles(path, searchPattern.Replace("PFN","VER"));
+                string[] verList = Directory.GetFiles(path, searchPattern.Replace(PFN,VER));
 
                 // Delete pfn files that were copied.
                 foreach (string f in pfnList)

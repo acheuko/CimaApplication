@@ -38,7 +38,7 @@ namespace Cima.Filters
                         }
                     }
 
-                    WebSecurity.InitializeDatabaseConnection("Rascom_UserDB_Connection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+                  //  WebSecurity.InitializeDatabaseConnection("Rascom_UserDB_Connection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
                 }
                 catch (Exception ex)
                 {
