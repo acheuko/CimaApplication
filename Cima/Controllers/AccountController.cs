@@ -12,6 +12,8 @@ using Cima.Filters;
 using Cima.Models;
 using Cima.Repository;
 using System.Collections.ObjectModel;
+using Cima.Helpers;
+using Cima.ViewModel;
 
 namespace Cima.Controllers
 {
@@ -19,8 +21,11 @@ namespace Cima.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+        private readonly REPO_Login repoLogin = new REPO_Login();
 
-        REPO_Login repo_login = new REPO_Login();
+        private readonly REPO_Register repoRegister = new REPO_Register();
+
+        UserViewModel userViewModel;
 
         //
         // GET: /Account/Login
@@ -29,7 +34,13 @@ namespace Cima.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            userViewModel = new UserViewModel()
+            {
+                LoginModel = new LoginModel(),
+                RegisterModel = new RegisterModel()
+            };
+
+            return View(userViewModel);
         }
 
         //
@@ -38,7 +49,7 @@ namespace Cima.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginModel model)
+        public ActionResult Login(UserViewModel model)
         {
 
             if (!ModelState.IsValid)
@@ -46,34 +57,48 @@ namespace Cima.Controllers
                 return View(model);
             }
 
-            ObservableCollection<User> users = repo_login.GetUserByLoginAndPassword(model);
+            ObservableCollection<User> users = repoLogin.GetUserByLoginAndPassword(model.LoginModel, CriteriaHelper.LOGIN);
 
             if (users != null && users.Count == 1)
             {
                 ActionResult actionResult;
                 User user = users[0];
 
-                FormsAuthentication.SetAuthCookie(model.UserName, false);
+                string salt = user.Salt;
+                model.LoginModel.Password = PasswordHelper.EncodePassword(model.LoginModel.Password, salt);
 
-                var authTicket = new FormsAuthenticationTicket(1, user.Login, DateTime.Now, DateTime.Now.AddMinutes(20), false, user.Profils);
-                string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-                HttpContext.Response.Cookies.Add(authCookie);
+                ObservableCollection<User> userPwd = repoLogin.GetUserByLoginAndPassword(model.LoginModel, CriteriaHelper.PASSWORD);
 
-                Session["Username"] = user.Login;
-                Session["Profils"] = user.Profils;
-                Session["Company"] = user.Company;
+                if(userPwd != null && userPwd.Count == 1)
+                {
+                    FormsAuthentication.SetAuthCookie(model.LoginModel.UserName, false);
 
-                if (user.Profils.Contains("Entreprise"))
-                    actionResult =  RedirectToAction("Index","UploadFile");
+                    var authTicket = new FormsAuthenticationTicket(1, user.Login, DateTime.Now, DateTime.Now.AddMinutes(20), false, user.Profils);
+                    string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                    var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                    HttpContext.Response.Cookies.Add(authCookie);
+
+                    Session["Username"] = user.Login;
+                    Session["Profils"] = user.Profils;
+                    Session["Company"] = user.Company;
+
+                    if (user.Profils.Contains(Profil.ENTREPRISE))
+                        actionResult = RedirectToAction("Index", "UploadFile");
+                    else
+                        actionResult = RedirectToAction("Index", "Home");
+
+                    return actionResult;
+                }
                 else
-                    actionResult = RedirectToAction("Index", "Home");
+                {
+                    ModelState.AddModelError("", "Mot de passe incorrect.");
+                    return View(model);
+                }
 
-                return actionResult;
             }
             else
             {
-                ModelState.AddModelError("", "Invalid login attempt.");
+                ModelState.AddModelError("", "Nom d'utilisateur incorrect.");
                 return View(model);
             }
         }
@@ -99,7 +124,12 @@ namespace Cima.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            userViewModel = new UserViewModel()
+            {
+                LoginModel = new LoginModel(),
+                RegisterModel = new RegisterModel()
+            };
+            return View(userViewModel);
         }
 
         //
@@ -108,20 +138,41 @@ namespace Cima.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterModel model)
+        public ActionResult Register(UserViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 // Attempt to register the user
                 try
                 {
-                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
-                    WebSecurity.Login(model.UserName, model.Password);
-                    return RedirectToAction("Index", "Home");
+                   
+                    ObservableCollection<User> users = repoRegister.GetUserByUsername(model.RegisterModel.UserName);
+                    
+                    if (users.Count == 0)
+                    {
+                        User user = new User();
+                        var salt = PasswordHelper.GeneratePassword(10);
+                        var password = PasswordHelper.EncodePassword(model.RegisterModel.Password, salt);
+                        user.Password = password;
+                        user.Salt = salt;
+                        user.Login = model.RegisterModel.UserName;
+                        user.FirstName = model.RegisterModel.FirstName;
+                        user.LastName = model.RegisterModel.LastName;
+                        user.Company = model.RegisterModel.Company;
+                        user.Profils = model.RegisterModel.Profil;
+
+                        int response = repoRegister.RegisterUser(user);
+
+                        ModelState.Clear();
+                        return RedirectToAction("Index", "Home");
+                    }
+                    ViewBag.ErrorMessage = "User Allredy Exixts!!!!!!!!!!";
+                    return View();
+                    
                 }
-                catch (MembershipCreateUserException e)
+                catch (Exception e)
                 {
-                    ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
+                    ModelState.AddModelError("", "Some Exception occured with message: " + (e.Message));
                 }
             }
 

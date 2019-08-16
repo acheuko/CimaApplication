@@ -1,4 +1,4 @@
-﻿@model Cima.Models.LoginModel
+﻿@model Cima.ViewModel.UserViewModel
 
 @{
     ViewBag.Title = "Log in";
@@ -7,7 +7,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
@@ -27,94 +27,156 @@
 
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
-  </head>
 
-  <body class="login">
+    <script src="~/Scripts/jquery.min.js"></script>
+
+    <style>
+        #validation-errors{
+            color: #da230eb5;
+            position: absolute;
+            top: -60px;
+            width: 100%;
+            font-size:22px;
+            font-weight: 600;
+        }
+        ul{
+                list-style-type: none;
+        }
+        .input-container{
+            margin-bottom:20px;
+            text-align:left;
+        }
+    </style>
+
+</head>
+
+<body class="login">
     <div>
-      <a class="hiddenanchor" id="signup"></a>
-      <a class="hiddenanchor" id="signin"></a>
+        <a class="hiddenanchor" id="signup"></a>
+        <a class="hiddenanchor" id="signin"></a>
 
-      <div class="login_wrapper">
-        <div class="animate form login_form">
-          <section class="login_content">
-          @*  <form>*@
-              @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+        <div class="login_wrapper">
+            
+            <div class="animate form login_form">
+                <section class="login_content">
+                    @*  <form>*@
+                    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true,"",new { @id="validation-errors"})
 
-              <h1>Connexion</h1>
-              <div>
-                @*<input type="text" class="form-control" placeholder="Username" required="" />*@
-                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @placeholder="Username"})
-                @Html.ValidationMessageFor(m => m.UserName)
-              </div>
-              <div>
-                @*<input type="password" class="form-control" placeholder="Password" required="" />*@
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder="Password"})
-                @Html.ValidationMessageFor(m => m.Password)
-              </div>
-              <div>
-               @* <a class="btn btn-default submit">Log in</a>*@
-                <input class="btn btn-primary btn-lg submit" type="submit" value="Log in" style="width:100%;margin-left:0px"/>
-                @*<a class="reset_pass" href="#">Mot de passe oublié?</a>*@
-              </div>
+                        <h1>Connexion</h1>
+                        <div class="input-container">
+                            @*<input type="text" class="form-control" placeholder="Username" required="" />*@
+                            @Html.TextBoxFor(m => m.LoginModel.UserName, new { @class = "form-control", @placeholder = "Nom d'utilisateur", @style = "margin-bottom:5px" })
+                            @Html.ValidationMessageFor(m => m.LoginModel.UserName, String.Empty, new { @class = "text-danger" })
+                        </div>
+                        <div class="input-container">
+                            @*<input type="password" class="form-control" placeholder="Password" required="" />*@
+                            @Html.PasswordFor(m => m.LoginModel.Password, new { @class = "form-control", @placeholder = "Mot de passe", @style = "margin-bottom:5px" })
+                            @Html.ValidationMessageFor(m => m.LoginModel.Password, String.Empty, new { @class = "text-danger" })
+                        </div>
+                        <div>
+                            <button class="btn btn-success btn-lg submit" style="width:100%;font-size:18px"><span>Log in </span> <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="float:right;font-size:1em;display:none"></i></button>
+                            @*<input class="btn btn-success btn-lg submit" type="submit" value="Log in"  style="width:100%;margin-left:0px"/>*@
+                            @*<a class="reset_pass" href="#">Mot de passe oublié?</a>*@
+                        </div>
 
-              <div class="clearfix"></div>
+                        <div class="clearfix"></div>
 
-              <div class="separator">
-                @*<p class="change_link">Nouveau?
-                  <a href="#signup" class="to_register"> Créer un compte </a>
-                </p>*@
+                        <div class="separator">
+                            <p class="change_link">
+                                Nouveau?
+                                <a href="#signup" class="to_register"> Créer un compte </a>
+                            </p>
 
-                <div class="clearfix"></div>
-                <br />
+                            <div class="clearfix"></div>
+                            <br />
 
-                <div>
-                  <h1><i class="fa fa-signal"></i> Cima Apps!</h1>
-                  <p>©2019 All Rights Reserved. Designed by Interface SA</p>
-                </div>
-              </div>@*
-            </form>*@
- }
-          </section>
+                            <div>
+                                <h1><i class="fa fa-signal"></i> Cima Apps!</h1>
+                                <p>©2019 All Rights Reserved. Designed by Interface SA</p>
+                            </div>
+                        </div>@*
+                    </form>*@
+                    }
+                </section>
+            </div>
+
+            <div id="register" class="animate form registration_form">
+                <section class="login_content">
+
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+
+                        <h1>Nouveau compte</h1>
+                        <div>
+                            @*<input type="text" class="form-control" placeholder="Username" required="" />*@
+                            @Html.TextBoxFor(m => m.RegisterModel.UserName, new { @class = "form-control", @placeholder = "Nom d'utilisateur" })
+                            @Html.ValidationMessageFor(m => m.RegisterModel.UserName)
+                        </div>
+                        <div>
+                            @*<input type="password" class="form-control" placeholder="Password" required="" />*@
+                            @Html.PasswordFor(m => m.RegisterModel.Password, new { @class = "form-control", @placeholder = "Mot de passe" })
+                            @Html.ValidationMessageFor(m => m.RegisterModel.Password)
+                        </div>
+                        <div>
+
+                            @Html.PasswordFor(m => m.RegisterModel.ConfirmPassword, new { @class = "form-control", @placeholder = "Confirmer mot de passe" })
+                            @Html.ValidationMessageFor(m => m.RegisterModel.ConfirmPassword)
+                        </div>
+                        <div>
+
+                            @Html.TextBoxFor(m => m.RegisterModel.FirstName, new { @class = "form-control", @placeholder = "Nom" })
+                            @Html.ValidationMessageFor(m => m.RegisterModel.FirstName)
+                        </div>
+                        <div>
+
+                            @Html.TextBoxFor(m => m.RegisterModel.LastName, new { @class = "form-control", @placeholder = "Prénom" })
+                            @Html.ValidationMessageFor(m => m.RegisterModel.LastName)
+                        </div>
+                        <div style="margin: 0 0 20px">
+
+                            @Html.DropDownListFor(m => m.RegisterModel.Company, new SelectList(new[] { "Choisir la company", "Ghana", "Benin", "Gabon" }), new { @class = "form-control", @placeholder = "Company" })
+                        </div>
+                        <div style="margin: 0 0 20px">
+                            @Html.DropDownListFor(m => m.RegisterModel.Profil, new SelectList(new[] { "Choisir le profil", "Admin", "Cima", "Entreprise", "Directions des assurances" }), new { @class = "form-control", @placeholder = "Profil" })
+
+                        </div>
+                        <div>
+                            <input class="btn btn-success btn-lg submit" type="submit" value="Enregitrer" style="width:100%;margin-left:0px" />
+                            <input class="btn btn-warning btn-lg submit" value="Annuler" style="width:100%;margin-left:0px" />
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="separator">
+                            <p class="change_link">
+                                Already a member ?
+                                <a href="#signin" class="to_register"> Log in </a>
+                            </p>
+
+                            <div class="clearfix"></div>
+                            <br />
+
+                            <div>
+                                <h1><i class="fa fa-signal"></i> Cima Apps!</h1>
+                                <p>©2019 All Rights Reserved. Designed by Interface SA</p>
+                            </div>
+                        </div>
+                    }
+                </section>
+            </div>
         </div>
-
-        <div id="register" class="animate form registration_form">
-          <section class="login_content">
-            <form>
-              <h1>Nouveau compte</h1>
-              <div>
-                <input type="text" class="form-control" placeholder="Username" required="" />
-              </div>
-              <div>
-                <input type="email" class="form-control" placeholder="Email" required="" />
-              </div>
-              <div>
-                <input type="password" class="form-control" placeholder="Password" required="" />
-              </div>
-              <div>
-                <a class="btn btn-default submit" href="index.html">Submit</a>
-              </div>
-
-              <div class="clearfix"></div>
-
-              <div class="separator">
-                <p class="change_link">Already a member ?
-                  <a href="#signin" class="to_register"> Log in </a>
-                </p>
-
-                <div class="clearfix"></div>
-                <br />
-
-                <div>
-                  <h1><i class="fa fa-signal"></i> Cima Apps!</h1>
-                  <p>©2019 All Rights Reserved. Designed by Interface SA</p>
-                </div>
-              </div>
-            </form>
-          </section>
-        </div>
-      </div>
     </div>
-  </body>
+    <script>
+        $(".submit").click(function(){
+            $(".fa-spinner").show();
+
+            return true;
+        });
+    </script>
+</body>
 </html>

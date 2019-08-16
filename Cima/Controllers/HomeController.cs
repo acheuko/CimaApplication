@@ -9,6 +9,7 @@ using Cima.Repository.TestData;
 using Cima.Models.TestModel;
 using Cima.Models.Shared;
 using System.Collections.Generic;
+using Cima.Helpers;
 
 namespace Cima.Controllers
 {
@@ -24,7 +25,7 @@ namespace Cima.Controllers
             return View("~/Views/Account/Login.cshtml");
         }
 
-        [Authorize(Roles = "entreprise")]
+        [Authorize(Roles = Profil.ADMIN)]
         public ActionResult Index()
         {
             return View();
@@ -43,7 +44,7 @@ namespace Cima.Controllers
             return Json(tauxResult, JsonRequestBehavior.AllowGet);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Profil.ADMIN)]
         public ActionResult Dashboard2()
         {
             ViewBag.Message = "Your app description page.";
@@ -52,7 +53,7 @@ namespace Cima.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Profil.ADMIN)]
         public ActionResult Dashboard3()
         {
             ViewBag.Message = "Your contact page.";

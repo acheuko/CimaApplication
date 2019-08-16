@@ -11,6 +11,7 @@ using Cima.Models;
 using Cima.Repository;
 using System.Text;
 using System.Configuration;
+using Cima.Helpers;
 
 namespace Cima.Controllers
 {
@@ -36,19 +37,24 @@ namespace Cima.Controllers
         }
 
         // GET: /UploadedFile/
-        [Authorize(Roles = "Entreprise")]
+        [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE)]
         public ActionResult Index()
         {
-            
-            ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(SessionCompanyId());
+            if (Session["Profils"] !=  null && Session["Profils"].ToString() != "")
+            {
+                ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(SessionCompanyId());
 
-            return View("UploadFile", uploadingFiles);
+                return View("UploadFile", uploadingFiles);
+            }
+
+            return RedirectToAction("Login", "Account");
+
         }
 
         /**
          *  Copie des fichiers d'états dans le repertoire de chargement
          **/
-        [Authorize(Roles = "Entreprise")]
+        [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE)]
         public JsonResult SaveFileToLanding()
         {
             String Status;
@@ -122,7 +128,7 @@ namespace Cima.Controllers
         /**
          * Sauvegarde des fichiers d'état dans la table temporaire
          **/ 
-        [Authorize(Roles = "Entreprise")]
+        [Authorize(Roles = Profil.ENTREPRISE)]
         public JsonResult UploadingFile(string fileName, int filesize, string file)
         {
 
@@ -160,7 +166,7 @@ namespace Cima.Controllers
         /**
          * Suppression des fichiers d'état de la table temporaire
          **/ 
-        [Authorize(Roles = "Entreprise")]
+        [Authorize(Roles = Profil.ENTREPRISE)]
         public JsonResult DeleteUploadedFile(string filename)
         {
             String StatusReponse;

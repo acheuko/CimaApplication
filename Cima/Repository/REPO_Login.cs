@@ -1,4 +1,5 @@
-﻿using Cima.Models;
+﻿using Cima.Helpers;
+using Cima.Models;
 using Cima.Repository.Shared;
 using System;
 using System.Collections.Generic;
@@ -12,14 +13,27 @@ namespace Cima.Repository
 {
     public class REPO_Login:AbstractRepository
     {
-        public ObservableCollection<User> GetUserByLoginAndPassword(LoginModel u)
+        public ObservableCollection<User> GetUserByLoginAndPassword(LoginModel u, string criteria)
         {
             SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
             ObservableCollection<User> items = new ObservableCollection<User>();
-            using (var sqlQuery = new SqlCommand(@"SELECT Login, Password, Profils, Company FROM sysman.tblUser WHERE Login = @Login And Password = @Password", con))
+
+            string query;
+            if (CriteriaHelper.LOGIN.Equals(criteria))
+                query = @"SELECT Login, Password, Profils, Company, Salt FROM sysman.tblUser WHERE Login = @Login";
+            else if (CriteriaHelper.PASSWORD.Equals(criteria))
+                query = @"SELECT Login, Password, Profils, Company, Salt FROM sysman.tblUser WHERE Password = @Password";
+            else
+                throw new Exception("The query string to execute is empty");
+
+            using (var sqlQuery = new SqlCommand(query, con))
             {
-                sqlQuery.Parameters.AddWithValue("@Login", u.UserName);
-                sqlQuery.Parameters.AddWithValue("@Password", u.Password);
+               
+                if (CriteriaHelper.LOGIN.Equals(criteria))
+                    sqlQuery.Parameters.AddWithValue("@Login", u.UserName);
+                else if (CriteriaHelper.PASSWORD.Equals(criteria))
+                    sqlQuery.Parameters.AddWithValue("@Password", u.Password);
+                
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
                     if (sqlQueryResult != null)
                     {
@@ -32,7 +46,8 @@ namespace Cima.Repository
                                                         Login = sqlQueryResult.GetString(0),
                                                         Password = sqlQueryResult.GetString(1),
                                                         Profils = sqlQueryResult.GetString(2),
-                                                        Company = sqlQueryResult.GetString(3)
+                                                        Company = sqlQueryResult.GetString(3),
+                                                        Salt = sqlQueryResult.GetString(4)
                                                     }
                                           );
                             }

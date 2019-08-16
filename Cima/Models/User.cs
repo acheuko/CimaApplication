@@ -7,6 +7,21 @@ namespace Cima.Models
 {
     public class User
     {
+
+        private string firstName;
+        public string FirstName
+        {
+            get { return firstName; }
+            set { firstName = value; }
+        }
+
+        private string lastName;
+        public string LastName
+        {
+            get { return lastName; }
+            set { lastName = value; }
+        }
+
         private string login;
         public string Login
         {
@@ -19,6 +34,13 @@ namespace Cima.Models
         {
             get { return password; }
             set { password = value; }
+        }
+
+        private string salt;
+        public string Salt
+        {
+            get { return salt; }
+            set { salt = value; }
         }
 
         private string profils;

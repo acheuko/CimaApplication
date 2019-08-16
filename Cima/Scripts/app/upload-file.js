@@ -8,7 +8,7 @@ function UploadFileController($scope) {
     dropZone.addEventListener('drop', handleFileSelect, false);
 
     $scope.uploadFile = function () {
-        alert("Upload files ... ");
+        $(".file-upload-progress").slideDown();
         $.ajax({
             type: 'POST',
             url: '/UploadFile/SaveFileToLanding',
@@ -16,7 +16,7 @@ function UploadFileController($scope) {
             dataType: 'json',
             success: function (response) {
                 if (response != "FAILURE") {
-                    alert("Success ... ");
+                    $(".file-upload-progress").slideUp();
                     $("#filesList").html('');
                 }
             },
@@ -105,6 +105,7 @@ function uploadingFiles(f) {
     var reader = new FileReader();
 
     reader.onload = function (event) {
+        $(".file-upload-progress").slideDown();
         var RawData = event.target.result;
         $.ajax({
             type: 'POST',
@@ -113,7 +114,7 @@ function uploadingFiles(f) {
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function (response) {
-
+                $(".file-upload-progress").slideUp();
                 if (response != "FAILURE") {
                     var outputArray = [];
                     parseFile(outputArray, f);

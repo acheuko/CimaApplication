@@ -202,6 +202,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CriteriaHelper.cs" />
+    <Compile Include="Helpers\PasswordHelper.cs" />
+    <Compile Include="Helpers\Profil.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BatchModel.cs" />
     <Compile Include="Models\Shared\FiltreDashboard.cs" />
@@ -223,6 +226,7 @@
     </Compile>
     <Compile Include="Repository\IREPO_UploadFile.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
+    <Compile Include="Repository\REPO_Register.cs" />
     <Compile Include="Repository\REPO_UploadFile.cs" />
     <Compile Include="Repository\Shared\AbstractRepository.cs" />
     <Compile Include="Repository\Shared\BaseRepository.cs" />
@@ -237,6 +241,7 @@
     <Compile Include="Repository\TestData\_REPO_SalaireEntiteAdmin.cs" />
     <Compile Include="Repository\TestData\_REPO_TaxDeductionGraph.cs" />
     <Compile Include="Repository\TestData\_REPO_TopFiveEntiteAdmin.cs" />
+    <Compile Include="ViewModel\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build\css\custom.css" />

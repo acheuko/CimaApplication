@@ -24,6 +24,10 @@
                 </div>
             </div>
 
+            <div class="file-upload-progress">
+                <i class="fa fa-spinner fa-spin" style="font-size:24px"></i> <span style="vertical-align:text-bottom"> Chargement du(des) fichier(s) en cours ...</span>
+            </div>
+
             <div class="file-wrap">
                 <table id="filesList" class="files">
                     @{ if (Model != null)
@@ -49,7 +53,7 @@
             <div id="bt-uploadfiles">
                 <p>
                     <kendo-button class="btn-success" ng-click="uploadFile()" style="color:white;font-weight:bold">Charger</kendo-button>
-                    <kendo-button on-click="cancelUpload()" style="color:red;font-weight:bold">Annuler</kendo-button>
+                    <kendo-button on-click="cancelUpload()" style="color:darkorange;font-weight:bold">Annuler</kendo-button>
                 </p>
             </div>
         </div>
@@ -154,6 +158,18 @@
             .file-upload-errors {
                 display: none;
                 color: red;
+            }
+
+            .file-upload-progress{
+                display:none;
+                background-color: #fafbfc;
+                border: 1px solid #dfe2e5;
+                border-top: 0;
+                border-bottom-left-radius: 3px;
+                border-bottom-right-radius: 3px;
+                height:40px;
+                padding-top: 7px;
+                padding-left: 7px;
             }
         </style>
     </div>

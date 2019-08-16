@@ -58,12 +58,12 @@ namespace Cima.Models
     public class LoginModel
     {
         [Required]
-        [Display(Name = "User name")]
+        [Display(Name = "Nom d'utilisateur")]
         public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Mot de Passe")]
         public string Password { get; set; }
 
         [Display(Name = "Remember me?")]
@@ -86,6 +86,23 @@ namespace Cima.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Firstname")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Lastname")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Company")]
+        public string Company { get; set; }
+
+        [Required]
+        [Display(Name = "Profil")]
+        public string Profil { get; set; }
+
     }
 
     public class ExternalLogin
