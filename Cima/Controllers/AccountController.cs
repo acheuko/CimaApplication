@@ -25,6 +25,8 @@ namespace Cima.Controllers
 
         private readonly REPO_Register repoRegister = new REPO_Register();
 
+        private readonly REPO_ProfilePrivilege repoProfilePrivilege = new REPO_ProfilePrivilege();
+
         UserViewModel userViewModel;
 
         //
@@ -81,6 +83,9 @@ namespace Cima.Controllers
                     Session["Username"] = user.Login;
                     Session["Profils"] = user.Profils;
                     Session["Company"] = user.Company;
+
+                    List<Menu> menuItems = repoProfilePrivilege.GetMenuItems(user.Profils);
+                    Session["MenuItems"] = menuItems.ToList();
 
                     if (user.Profils.Contains(Profil.ENTREPRISE))
                         actionResult = RedirectToAction("Index", "UploadFile");

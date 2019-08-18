@@ -8,6 +8,14 @@
 
     <div id="example" ng-app="UploadFile" class="col-md-12 col-sm-12 col-xs-12">
 
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="http://www.cima-afrique.org/pg.php?caller=cima" target="_blank">Cima</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Upload Files</li>
+            </ol>
+        </nav>
+        
         <div ng-controller="UploadFileController">
             <div id="droptarget" kendo-droptarget k-drop="onDrop" class="k-header dashboard_graph x_panel">
                 <div id="file-upload-outline" class="file-upload-outline">
@@ -43,8 +51,8 @@
                                 }
                             </tbody>
                         }
-                        
-                    }                    
+
+                    }
                 </table>
             </div>
 
@@ -52,8 +60,8 @@
 
             <div id="bt-uploadfiles">
                 <p>
-                    <kendo-button class="btn-success" ng-click="uploadFile()" style="color:white;font-weight:bold">Charger</kendo-button>
-                    <kendo-button on-click="cancelUpload()" style="color:darkorange;font-weight:bold">Annuler</kendo-button>
+                    <kendo-button class="btn-success" ng-click="uploadFile()" style="color:white;font-weight:bold"><span>Charger</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+                    <kendo-button id="bt-cancel" on-click="cancelUpload()" style="color:darkorange;font-weight:bold" >Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
                 </p>
             </div>
         </div>
@@ -160,14 +168,14 @@
                 color: red;
             }
 
-            .file-upload-progress{
-                display:none;
+            .file-upload-progress {
+                display: none;
                 background-color: #fafbfc;
                 border: 1px solid #dfe2e5;
                 border-top: 0;
                 border-bottom-left-radius: 3px;
                 border-bottom-right-radius: 3px;
-                height:40px;
+                height: 40px;
                 padding-top: 7px;
                 padding-left: 7px;
             }

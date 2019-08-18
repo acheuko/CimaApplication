@@ -8,7 +8,8 @@ function UploadFileController($scope) {
     dropZone.addEventListener('drop', handleFileSelect, false);
 
     $scope.uploadFile = function () {
-        $(".file-upload-progress").slideDown();
+        $(".upload-spinner").show();
+       
         $.ajax({
             type: 'POST',
             url: '/UploadFile/SaveFileToLanding',
@@ -16,8 +17,9 @@ function UploadFileController($scope) {
             dataType: 'json',
             success: function (response) {
                 if (response != "FAILURE") {
-                    $(".file-upload-progress").slideUp();
+                    $(".upload-spinner").hide();
                     $("#filesList").html('');
+                   
                 }
             },
             failure: function (response) {
@@ -27,7 +29,22 @@ function UploadFileController($scope) {
     };
 
     $scope.cancelUpload = function () {
-        alert("Cancel upload ...");
+        $(".cancel-spinner").show();
+        $.ajax({
+            type: 'POST',
+            url: '/UploadFile/CancelUploadingTmpFile',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {
+                if (response != "FAILURE") {
+                    $(".cancel-spinner").hide();
+                    $("#filesList tbody").remove();
+                }
+            },
+            failure: function (response) {
+                alert("erreur cancel operation");
+            }
+        });
     };
 
     $scope.chooseFile = function () {
@@ -79,7 +96,7 @@ function handleDragOver(evt) {
         $(".file-upload-drop-text").show();
         $(".file-upload-errors").hide();
         evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-    } else {
+    } else if (evt.type == "dragleave"){
         $("#file-upload-outline").removeClass('file-upload-outline-dropover');
         $(".file-upload-text").show();
         $(".file-upload-drop-text").hide();
@@ -122,6 +139,7 @@ function uploadingFiles(f) {
                     $("#filesList").append('<tbody>' + outputArray.join('') + '</tbody>');
 
                     $(".file-upload-errors").hide();
+
                 }
                 else {
                     

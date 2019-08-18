@@ -207,6 +207,7 @@
     <Compile Include="Helpers\Profil.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BatchModel.cs" />
+    <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\Shared\FiltreDashboard.cs" />
     <Compile Include="Models\Shared\FiltreElement.cs" />
     <Compile Include="Models\TestModel\BusinessModel.cs" />
@@ -226,6 +227,7 @@
     </Compile>
     <Compile Include="Repository\IREPO_UploadFile.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
+    <Compile Include="Repository\REPO_ProfilePrivilege.cs" />
     <Compile Include="Repository\REPO_Register.cs" />
     <Compile Include="Repository\REPO_UploadFile.cs" />
     <Compile Include="Repository\Shared\AbstractRepository.cs" />

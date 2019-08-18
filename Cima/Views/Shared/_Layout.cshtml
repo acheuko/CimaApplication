@@ -72,10 +72,41 @@
                             <h3></h3>
                             <ul class="nav side-menu">
 
-                                <li>
-                                    <a href="/UploadFile/Index"><i class="fa fa-folder-open-o"></i> Upload Files</a>
+                                @{
+                                    var menus = ((List<Cima.Models.Menu>)@Session["MenuItems"]);
+                                    if (menus != null)
+                                    {
+                                        foreach (var m in menus)
+                                        {
+
+                                            if (m.MenuItems == null ||  m.MenuItems.Count == 0)
+                                            {
+                                                <li><a href="@Url.Action(m.Action, m.Controller)"><i class="fa @m.Icon"></i> @m.Name</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li>
+                                                    <a><i class="fa @m.Icon"></i> @m.Name <span class="fa fa-chevron-down"></span></a>
+                                                    <ul class="nav child_menu">
+                                                        @foreach (var c in m.MenuItems)
+                                                        {
+                                                            <li>@Html.ActionLink(c.Name, c.Action, c.Controller)</li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        }
+                                    }
+
+                                }
+
+
+
+                                @*<li>
+                                    <a href="@Url.Action("Index", "UploadFile")"><i class="fa fa-folder-open-o"></i> Upload Files</a>
 
                                 </li>
+
 
                                 <li>
                                     <a><i class="fa fa-bar-chart"></i> Dashboards <span class="fa fa-chevron-down"></span></a>
@@ -85,7 +116,7 @@
                                         <li><a href="#"> SC1</a></li>
 
                                     </ul>
-                                </li>
+                                </li>*@
 
                             </ul>
                         </div>
@@ -107,7 +138,7 @@
                                             <a data-toggle="tooltip" data-placement="top" title="Vérouiller">
                                                 <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                                             </a>
-                                            <a data-toggle="tooltip" data-placement="top" title="Déconnexion" href="/Account/Login">
+                                            <a data-toggle="tooltip" data-placement="top" title="Déconnexion" href="/Account/LogOff">
                                                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                                             </a>
                                         </div>

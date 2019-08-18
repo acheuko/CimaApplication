@@ -25,7 +25,7 @@ namespace Cima.Controllers
 
         private static readonly IREPO_UploadFile repoUploadFile = new REPO_UploadFile();
 
-        private string SessionCompanyId()
+        private string GetSessionCompanyId()
         {
             string IdCompany;
             if (Session["Company"] != null)
@@ -42,7 +42,7 @@ namespace Cima.Controllers
         {
             if (Session["Profils"] !=  null && Session["Profils"].ToString() != "")
             {
-                ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(SessionCompanyId());
+                ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(GetSessionCompanyId());
 
                 return View("UploadFile", uploadingFiles);
             }
@@ -60,7 +60,7 @@ namespace Cima.Controllers
             String Status;
 
             // Get les fichiers dans le temporaire pour un IdCompany
-            ObservableCollection<UploadingFile> Files = repoUploadFile.GetTmpFileByIdCompany(SessionCompanyId());
+            ObservableCollection<UploadingFile> Files = repoUploadFile.GetTmpFileByIdCompany(GetSessionCompanyId());
 
             if(Files != null)
             {
@@ -104,7 +104,7 @@ namespace Cima.Controllers
                     BatchModel batchFiles = new BatchModel()
                     {
                         BatchNumber = batchNumber,
-                        IdCompany = SessionCompanyId(),
+                        IdCompany = GetSessionCompanyId(),
                         NbFiles = Files.Count
                     };
                     repoUploadFile.SaveBatchFiles(batchFiles);
@@ -145,7 +145,7 @@ namespace Cima.Controllers
                     FileName = fileName,
                     FileMask = fileMask,
                     FileSize = filesize,
-                    IdCompany = SessionCompanyId(),
+                    IdCompany = GetSessionCompanyId(),
                     UserId = Session["Username"].ToString(),
                     File = Encoding.ASCII.GetBytes(file)
                 };
@@ -171,7 +171,7 @@ namespace Cima.Controllers
         {
             String StatusReponse;
 
-            int response = repoUploadFile.DeleteTmpFileByFileNameAndIdCompany(filename, SessionCompanyId());
+            int response = repoUploadFile.DeleteTmpFileByFileNameAndIdCompany(filename, GetSessionCompanyId());
 
             if (response == 0)
                 StatusReponse = JSON_RESULT_FAILURE;
@@ -215,6 +215,20 @@ namespace Cima.Controllers
             {
                 Console.WriteLine(dirNotFound.Message);
             }
+        }
+
+        public JsonResult CancelUploadingTmpFile()
+        {
+            String StatusReponse;
+
+            int response = repoUploadFile.DeleteTmpFileByIdCompany(GetSessionCompanyId());
+
+            if (response == 0)
+                StatusReponse = JSON_RESULT_FAILURE;
+            else
+                StatusReponse = JSON_RESULT_SUCCESS;
+
+            return Json(StatusReponse, JsonRequestBehavior.AllowGet);
         }
 
     }
