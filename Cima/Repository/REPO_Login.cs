@@ -11,11 +11,11 @@ using System.Web;
 
 namespace Cima.Repository
 {
-    public class REPO_Login:AbstractRepository
+    public class REPO_Login:SqlRepository<LoginModel>
     {
         public ObservableCollection<User> GetUserByLoginAndPassword(LoginModel u, string criteria)
         {
-            SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
             ObservableCollection<User> items = new ObservableCollection<User>();
 
             string query;
@@ -26,7 +26,7 @@ namespace Cima.Repository
             else
                 throw new Exception("The query string to execute is empty");
 
-            using (var sqlQuery = new SqlCommand(query, con))
+            using (var sqlQuery = (SqlCommand) GetCommand(query, con))
             {
                
                 if (CriteriaHelper.LOGIN.Equals(criteria))
@@ -69,15 +69,9 @@ namespace Cima.Repository
             return items;
         }
 
-        protected override IDbCommand GetCommand(string query, IDbConnection sqlconnection)
+        protected override LoginModel MapItem(SqlDataReader reader)
         {
-            SqlCommand sqlcommand = new SqlCommand(query)
-            {
-                Connection = (SqlConnection)sqlconnection
-            };
-
-            return sqlcommand;
+            throw new NotImplementedException();
         }
-
     }
 }

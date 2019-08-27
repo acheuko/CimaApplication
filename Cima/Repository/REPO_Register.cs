@@ -10,11 +10,11 @@ using System.Web;
 
 namespace Cima.Repository
 {
-    public class REPO_Register : AbstractRepository 
+    public class REPO_Register : SqlRepository<string> 
     {
         public int RegisterUser(User user)
         {
-            SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
 
             //Replaced Parameters with Value
             string query = "INSERT INTO sysman.tblUser (Login, Password, Salt, FirstName, LastName,Company, Profils) VALUES (@Login,@Password,@Salt, @FirstName, @LastName,@Company, @Profil)";
@@ -52,11 +52,11 @@ namespace Cima.Repository
 
         public ObservableCollection<User> GetUserByUsername(string username)
         {
-            SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
             ObservableCollection<User> items = new ObservableCollection<User>();
 
 
-            using (var sqlQuery = new SqlCommand(@"SELECT Login, Password, Profils, Company, Salt FROM sysman.tblUser WHERE Login = @Username", con))
+            using (var sqlQuery = (SqlCommand) GetCommand(@"SELECT Login, Password, Profils, Company, Salt FROM sysman.tblUser WHERE Login = @Username", con))
             {
 
       
@@ -98,14 +98,9 @@ namespace Cima.Repository
             return items;
         }
 
-        protected override IDbCommand GetCommand(string query, IDbConnection sqlconnection)
+        protected override string MapItem(SqlDataReader reader)
         {
-            SqlCommand sqlcommand = new SqlCommand(query)
-            {
-                Connection = (SqlConnection)sqlconnection
-            };
-
-            return sqlcommand;
+            throw new NotImplementedException();
         }
     }
 }

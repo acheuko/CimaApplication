@@ -2,296 +2,571 @@
     ViewBag.Title = "Home Page";
 }
 
- <!-- criteria -->
-  <div class="row top_tiles">
-              <div class="animated flipInY col-lg-12 col-md-12 col-sm-12 col-xs-12" >
-                <div class="tile-stats" style="height:125px;background:#EDEDED">
-                   <div class="animated flipInY col-lg-3 col-md-3 col-sm-12 col-xs-12">
-               
-                      <div style="padding: 10px">
-                           <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
-               
-                         <span>
-                             Start date : 
-                         </span>
-                               </div>
-                              <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                   @(Html.Kendo().DatePicker()
-                                .Name("dt_startdate")
-                                .Start(CalendarView.Year)
-                                .Depth(CalendarView.Year)
-                                .Format("MMMM yyyy")
-                                .Value(DateTime.Now.AddMonths(-1))
-                                    )
-                               </div>
-                         
-                      </div>
+<!-- criteria -->
+@Html.Partial("_FiltreCriteria")
+<!-- / criteria -->
 
-                       <div style="padding: 10px;margin-top: 30px">
-
-                            <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
-               
-                         <span>
-                             End date : 
-                         </span>
-                               </div>
-
-                          <div class="animated flipInY col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                           @(Html.Kendo().DatePicker()
-                                .Name("dt_enddate")
-                                .Start(CalendarView.Year)
-                                .Depth(CalendarView.Year)
-                                .Format("MMMM yyyy")
-                                .Value(DateTime.Now)
-                                    )
-                              </div>
-                      </div>
-                     
-                
-                  </div>
-
-                    <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
-               
-                      <div style="padding: 10px">
-                           <div class="animated flipInY col-lg-2 col-md-2 col-sm-12 col-xs-12">
-               
-                         <span>
-                             Network : 
-                         </span>
-                               </div>
-                              <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                   @(Html.Kendo().ComboBox()
-                                .Name("cbx_network")
-                                .Placeholder("Select a network...")
-                                .BindTo(new List<string>(){
-                                    "OrangeGW"})
-                                .Suggest(true)
-                                .HtmlAttributes(new {style="width: 60%"})
-                                    )
-                               </div>
-                         
-                      </div>
-
-                       <div style="padding: 10px;margin-top: 30px">
-
-                            <div class="animated flipInY col-lg-2 col-md-2 col-sm-12 col-xs-12">
-               
-                         <span>
-                             Sites : 
-                         </span>
-                               </div>
-
-                          <div class="animated flipInY col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                          @(Html.Kendo().ComboBox()
-                                .Name("cbx_site")
-                                .Placeholder("Select a site...")
-                                .BindTo(new List<string>(){
-                                    "Maleya 1",
-                                    "Abaya",
-                                    "Udeni",
-                                    "ChaiChai",
-                                    "Bolobo",
-                                    "Gabenge",
-                                    "Kalo",
-                                    "Nkolo",
-                                    "Panu",
-                                    "Tshumbiri",
-                                    "Yumbi",
-                                    "Kinshasa 01",
-                                    "Kwamouth"})
-                                .Suggest(true)
-                                .HtmlAttributes(new {style="width: 60%"})
-                                    )
-                              </div>
-                      </div>
-                     
-                
-                  </div>
-
-                </div>
-              </div>
-             
-            </div>
- <!-- / criteria -->
-
- 
+    <div>
 
         <!-- sms delivery failure, gauge, kb up , kp down-->
-          <div class="row">
-              <div class="animated flipInY col-lg-4 col-md-4 col-sm-7 col-xs-12">
+        <div id="panel2" class="row">
+            <div class="animated flipInY col-lg-4 col-md-4 col-sm-7 col-xs-12">
                 <div class="tile-stats" style="height: 150px">
-                  <div class="tile_stats_count" style="padding: 5px;">
-              <h3 class="count_top"><i class="fa fa-envelope"></i> SMS Delivery failure</h3>
-              <div style="margin: 30px;">
-                             
-                           @(Html.Kendo().ProgressBar()
-                              .Name("pb_smsDeliveryfailure")
-                              .Value(60)
-                              .Min(0)
-                              .Max(100)
-                              .Type(ProgressBarType.Percent)
-                              )
+                    <div class="tile_stats_count" style="padding: 5px;">
+                        <h3 class="count_top"><i class="fa fa-signal"></i> Progress Bar</h3>
+                        <div style="margin: 30px;">
+
+                            @(Html.Kendo().ProgressBar()
+                               .Name("pb_smsDeliveryfailure")
+                               .Value(60)
+                               .Min(0)
+                               .Max(100)
+                               .Type(ProgressBarType.Percent)
+                            )
+
+
 
                         </div>
-              <span class="count_bottom pull-right"><i class="green"><i class="fa fa-sort-asc"></i> 10% </i></span>
-            </div>
-                </div>
-              </div>
-              <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                <div class="tile-stats" style="height: 150px">
-                   <div class="tile_stats_count" style="padding: 5px">
-                      <h3 class="count_top"><i class="fa fa-pie-chart"></i> Taux conso</h3>
-                   <div id="gauge-container" class="" style="text-align:center">
-                       @(Html.Kendo().RadialGauge()
-                             .Name("gauge")
-                             .Pointer(pointer => pointer.Value(65))
-                             .Scale(scale => scale
-                                  .MinorUnit(2)
-                                  .StartAngle(0)
-                                  .EndAngle(180)
-                                  .Max(100))
-                                  .HtmlAttributes(new { style="height: 100px" })
-                            )
-                   </div>
-                   <span class="count_bottom pull-right"><i class="green"><i class="fa fa-sort-asc"></i> 65% </i></span>
-                  </div>
-                </div>
-              </div>
-              <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
-               <div class="tile-stats" style="height: 150px">
-                  <div class="tile_stats_count" style="padding: 5px;height: 150px">
-                      <h3 class="count_top"><i class="fa fa-upload"></i> KB Up</h3>
-                      <div class="count" style="text-align:center;margin: 15px;">2 500</div>
-                       <span class="count_bottom pull-right"><i class="green"><i class="fa fa-sort-asc"></i> 34% </i></span>
-                  </div>
-                </div>
-              </div>
-              <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                <div class="tile-stats" style="height: 150px">
-                  <div class="tile_stats_count" style="padding: 5px">
-                      <h3 class="count_top"><i class="fa fa-download"></i> KB Down</h3>
-                      <div class="count" style="text-align:center;margin: 15px">7 500</div>
-                      <span class="count_bottom pull-right"><i class="red"><i class="fa fa-sort-desc"></i> 4% </i></span>
-                  </div>
-                </div>
-              </div>
-            </div>
- <!-- /sms delivery failure, gauge, kb up , kp down-->
-
-
- <!-- line and bar charts -->
-         <div class="row">
-
-
-            <div class="col-md-6 col-sm-6 col-xs-12">
-              <div class="dashboard_graph x_panel">
-                <div class="x_title">
-                  <h2>Evolution du traffic</h2>
-                  <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
-                        </li>
-                        <li><a href="#"><i class="fa fa-file-image-o"></i> Export GIF</a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
-                </div>
-                 <div class="x_content">
-                   
-                    <div id="linechart" style="width:100%; ">
-
-                        @(Html.Kendo().Chart()
-                            .Name("linechart")
-                            .Legend(legend => legend.Visible(true))
-                            .ChartArea(chartArea => chartArea.Background("transparent"))
-                            .Series(series =>
-                            {
-                                series.Line(new Double[] { 56000, 63000, 74000, 91000, 84000,96050 }).Name("Total trafic");
-                            })
-                            .CategoryAxis(axis => axis.Categories("jan 2017", "Fev 2017", "Mar 2017", "Avr 2017", "Mai 2017", "Jui 2017")
-                                                    .MajorGridLines(lines => lines.Visible(false))
-                                                    )
-                            .ValueAxis(axis => axis.Numeric()
-                                                 .Max(100000)
-                                                 .Line(line => line.Visible(false))
-                                                 .MajorGridLines(lines => lines.Visible(true))
-                             )
-                             .Tooltip(tooltip => tooltip.Visible(true)
-                                                      .Template("#= series.name #: #=value #")
-                                                      )
-                             .HtmlAttributes(new {style="height: 260px;width: 100%" })
-                             )
-
+                        <span class="count_bottom pull-right"><i class="green"><i class="fa fa-sort-asc"></i> 10% </i></span>
                     </div>
-                  </div>
-              </div>
+                </div>
+            </div>
+            <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="height: 150px">
+                    <div class="tile_stats_count" style="padding: 5px">
+                        <h3 class="count_top"><i class="fa fa-pie-chart"></i> Radial Gauge</h3>
+                        <div id="gauge-container" class="" style="text-align:center">
+                            @(Html.Kendo().RadialGauge()
+                                  .Name("gauge")
+                                  .Pointer(pointer => pointer.Value(65))
+                                  .Scale(scale => scale
+                                       .MinorUnit(2)
+                                       .StartAngle(0)
+                                       .EndAngle(180)
+                                       .Max(100))
+                                       .HtmlAttributes(new { style = "height: 100px" })
+                            )
+                        </div>
+                        <span class="count_bottom pull-right"><i class="green"><i class="fa fa-sort-asc"></i> 65% </i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="height: 150px">
+                    <div class="tile_stats_count" style="padding: 5px;height: 150px">
+                        <h3 class="count_top"><i class="fa fa-upload"></i> Montant</h3>
+                        <div class="count" style="text-align:center;margin: 15px;">2 500</div>
+                        <span class="count_bottom pull-right"><i class="green"><i class="fa fa-sort-asc"></i> 34% </i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                <div class="tile-stats" style="height: 150px">
+                    <div class="tile_stats_count" style="padding: 5px">
+                        <h3 class="count_top"><i class="fa fa-download"></i> Quantité</h3>
+                        <div class="count" style="text-align:center;margin: 15px"> 500</div>
+                        <span class="count_bottom pull-right"><i class="red"><i class="fa fa-sort-desc"></i> 4% </i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /sms delivery failure, gauge, kb up , kp down-->
+        <!-- line and bar charts -->
+        <div id="panel1" class="row">
+
+
+            <div id="sidebarss" class="col-md-6 col-sm-6 col-xs-12">
+                <div class="dashboard_graph x_panel">
+                    <div class="x_title">
+                        <h2>Evolution du montant</h2>
+                        <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-excel-o"></i> Export XLS</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-text-o"></i> Export XML</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                        <div id="linechart" style="width:100%; ">
+
+                            @(Html.Kendo().Chart()
+                                .Name("linechart")
+                                .Legend(legend => legend.Visible(true))
+                                .ChartArea(chartArea => chartArea.Background("transparent"))
+                                .Series(series =>
+                                {
+                                    series.Line(new Double[] { 56000, 63000, 74000, 91000, 84000, 96050 }).Name("Montant");
+                                })
+                                .CategoryAxis(axis => axis.Categories("jan 2017", "Fev 2017", "Mar 2017", "Avr 2017", "Mai 2017", "Jui 2017")
+                                                        .MajorGridLines(lines => lines.Visible(false))
+                                                        )
+                                .ValueAxis(axis => axis.Numeric()
+                                                     .Max(100000)
+                                                     .Line(line => line.Visible(false))
+                                                     .MajorGridLines(lines => lines.Visible(true))
+                                 )
+                                 .Tooltip(tooltip => tooltip.Visible(true)
+                                                          .Template("#= series.name #: #=value #")
+                                                          )
+                                 .HtmlAttributes(new { style = "height: 260px;width: 100%" })
+                            )
+
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-6 col-sm-6 col-xs-12 widget_tally_box">
-              <div class="x_panel dashboard_graph">
-                <div class="x_title">
-                  <h2>Repartition du trafic par opérateur</h2>
-                  <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <ul class="dropdown-menu" role="menu">
-                         <li><a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
-                        </li>
-                        <li><a href="#"><i class="fa fa-file-image-o"></i> Export GIF</a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
-                </div>
+            <div id="main-contentsss" class="col-md-6 col-sm-6 col-xs-12 widget_tally_box">
+                <div class="x_panel dashboard_graph">
+                    <div class="x_title">
+                        <h2>Repartition du montant par entreprise</h2>
+                        <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-excel-o"></i> Export XLS</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-text-o"></i> Export XML</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
                     <div class="x_content" style="height:270px">
 
-                    <div id="chart" style="width:100%; ">
+                        <div id="chart" style="width:100%; ">
 
-                        @(Html.Kendo().Chart()
-                            .Name("barchart")
-                            .Legend(legend => legend.Visible(true))
-                            .ChartArea(chartArea => chartArea.Background("transparent"))
-                            .Series(series =>
-                            {
-                                series.Bar(new Double[] { 56000, 63000, 74000, 91000 }).Name("Total trafic");
-                            })
-                            .CategoryAxis(axis => axis.Categories("ORDC", "Etisalat NIGERIA", "Camtel", "Unknown")
-                                                    .MajorGridLines(lines => lines.Visible(false))
-                                                    )
-                            .ValueAxis(axis => axis.Numeric()
-                                                 .Max(100000)
-                                                 .Line(line => line.Visible(false))
-                                                 .MajorGridLines(lines => lines.Visible(true))
-                             )
-                             .Tooltip(tooltip => tooltip.Visible(true)
-                                                      .Template("#= series.name #: #=value #")
-                                                      )
-                             .HtmlAttributes(new {style="height: 260px;width: 100%" })
-                             )
+                            @(Html.Kendo().Chart()
+                                .Name("barchart")
+                                .Legend(legend => legend.Visible(true))
+                                .ChartArea(chartArea => chartArea.Background("transparent"))
+                                .Series(series =>
+                                {
+                                    series.Bar(new Double[] { 56000, 63000, 74000, 91000 }).Name("Montant");
+                                })
+                                .CategoryAxis(axis => axis.Categories("ENTR1", "ENTR2", "ENTR3", "ENTR4")
+                                                        .MajorGridLines(lines => lines.Visible(false))
+                                                        )
+                                .ValueAxis(axis => axis.Numeric()
+                                                     .Max(100000)
+                                                     .Line(line => line.Visible(false))
+                                                     .MajorGridLines(lines => lines.Visible(true))
+                                 )
+                                 .Tooltip(tooltip => tooltip.Visible(true)
+                                                          .Template("#= series.name #: #=value #")
+                                                          )
+                                 .HtmlAttributes(new { style = "height: 260px;width: 100%" })
+                            )
+
+                        </div>
+
 
                     </div>
-
-                   
-                  </div>
-              </div>
+                </div>
             </div>
 
- 
-          
 
-          </div>         
+            <div id="sidebarss" class="col-md-6 col-sm-6 col-xs-12">
+                <div class="dashboard_graph x_panel">
+                    <div class="x_title">
+                        <h2>Evolution du traffic</h2>
+                        <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-excel-o"></i> Export XLS</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-text-o"></i> Export XML</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                        <div id="linechart1" style="width:100%; ">
+
+                            @(Html.Kendo().Chart()
+                                .Name("linechart1")
+                                .Legend(legend => legend.Visible(true))
+                                .ChartArea(chartArea => chartArea.Background("transparent"))
+                                .Series(series =>
+                                {
+                                    series.Line(new Double[] { 56000, 63000, 74000, 91000, 84000, 56050 }).Name("Volume");
+                                    series.Line(new Double[] { 46000, 73000, 54000, 21000, 94000, 66050 }).Name("Montant");
+                                })
+                                .CategoryAxis(axis => axis.Categories("jan 2017", "Fev 2017", "Mar 2017", "Avr 2017", "Mai 2017", "Jui 2017")
+                                                        .MajorGridLines(lines => lines.Visible(false))
+                                                        )
+                                .ValueAxis(axis => axis.Numeric()
+                                                     .Max(100000)
+                                                     .Line(line => line.Visible(false))
+                                                     .MajorGridLines(lines => lines.Visible(true))
+                                 )
+                                 .Tooltip(tooltip => tooltip.Visible(true)
+                                                          .Template("#= series.name #: #=value #")
+                                                          )
+                                 .HtmlAttributes(new { style = "height: 260px;width: 100%" })
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="main-contentsss" class="col-md-6 col-sm-6 col-xs-12 widget_tally_box">
+                <div class="x_panel dashboard_graph">
+                    <div class="x_title">
+                        <h2>Montant vs Volume par catégorie</h2>
+                        <ul class="nav navbar-right panel_toolbox" style="min-width:0px">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-excel-o"></i> Export XLS</a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="fa fa-file-text-o"></i> Export XML</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content" style="height:270px">
+
+                        <div id="chart1" style="width:100%; ">
+
+                            @(Html.Kendo().Chart()
+                                .Name("barchart1")
+                                .Legend(legend => legend.Visible(true))
+                                .ChartArea(chartArea => chartArea.Background("transparent"))
+                                .Series(series =>
+                                {
+                                    series.Column(new Double[] { 56000, 63000, 74000, 61000 }).Name("Montant");
+                                    series.Column(new Double[] { 36000, 93000, 54000, 41000 }).Name("Volume");
+                                })
+                                .CategoryAxis(axis => axis.Categories("CAT1", "CAT2", "CAT3", "CAT4")
+                                                        .MajorGridLines(lines => lines.Visible(false))
+                                                        )
+                                .ValueAxis(axis => axis.Numeric()
+                                                     .Max(100000)
+                                                     .Line(line => line.Visible(false))
+                                                     .MajorGridLines(lines => lines.Visible(true))
+                                 )
+                                 .Tooltip(tooltip => tooltip.Visible(true)
+                                                          .Template("#= series.name #: #=value #")
+                                                          )
+                                 .HtmlAttributes(new { style = "height: 260px;width: 100%" })
+                            )
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
         <!-- /line and bar charts -->
 
 
 
 
-          
+        <script>
+            $(document).ready(function () {
+
+                $("#sidebar").kendoSortable({
+                    filter: ">div",
+                    cursor: "move",
+                    connectWith: "#main-content",
+                    placeholder: placeholder,
+                    hint: hint
+                });
+
+                $("#main-content").kendoSortable({
+                    filter: ">div",
+                    cursor: "move",
+                    connectWith: "#sidebar",
+                    placeholder: placeholder,
+                    hint: hint
+                });
+
+                $("#panel1").kendoSortable({
+                    filter: ">div",
+                    cursor: "move",
+                    container: "#panel1",
+                    placeholder: placeholder,
+                    hint: hint
+                });
+
+                $("#panel2").kendoSortable({
+                    filter: ">div",
+                    axis: "x",
+                    cursor: "move",
+                    container: "#panel2",
+                    placeholder: placeholder,
+                    hint: hint
+                });
+
+                //exapand
+                $(".panel-wrap").on("click", "span.k-i-arrowhead-s", function (e) {
+                    var contentElement = $(e.target).closest(".widget").find(">div");
+                    $(e.target)
+                        .removeClass("k-i-arrowhead-s")
+                        .addClass("k-i-arrowhead-n");
+
+                    kendo.fx(contentElement).expand("vertical").stop().play();
+                });
+
+                //collapse
+                $(".panel-wrap").on("click", "span.k-i-arrowhead-n", function (e) {
+                    var contentElement = $(e.target).closest(".widget").find(">div");
+                    $(e.target)
+                        .removeClass("k-i-arrowhead-n")
+                        .addClass("k-i-arrowhead-s");
+
+                    kendo.fx(contentElement).expand("vertical").stop().reverse();
+                });
+            });
+
+            function placeholder(element) {
+                return element.clone().addClass("placeholder");
+            }
+
+            function hint(element) {
+                return element.clone().addClass("hint")
+                    .height(element.height())
+                    .width(element.width());
+            }
+        </script>
+
+        <style>
+            #example {
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+
+            .panel-wrap {
+                display: table;
+                margin: 0 0 20px;
+                width: 968px;
+                background-color: #f5f5f5;
+                border: 1px solid #e5e5e5;
+            }
+
+            #sidebar {
+                display: table-cell;
+                margin: 0;
+                padding: 20px 0 20px 20px;
+                vertical-align: top;
+            }
+
+            #main-content {
+                display: table-cell;
+                margin: 0;
+                padding: 20px;
+                vertical-align: top;
+            }
+
+            .widget.placeholder {
+                opacity: 0.4;
+                border: 1px dashed #a6a6a6;
+            }
+
+            /* WIDGETS */
+            .widget {
+                cursor: move;
+            }
+
+                .widget:hover {
+                    background-color: #fcfcfc;
+                    border-color: #cccccc;
+                }
+
+
+
+                .widget h3 span:hover {
+                    cursor: pointer;
+                    background-color: #e7e7e7;
+                    border-radius: 20px;
+                }
+
+            /* PROFILE */
+            .profile-photo {
+                width: 80px;
+                height: 80px;
+                margin: 10px auto;
+                border-radius: 100px;
+                border: 1px solid #e7e7e7;
+                background: url('../content/web/Customers/ISLAT.jpg') no-repeat 50% 50%;
+            }
+
+            #profile div {
+                text-align: center;
+            }
+
+            #profile h4 {
+                width: auto;
+                margin: 0 0 5px;
+                font-size: 1.2em;
+                color: #1f97f7;
+            }
+
+            #profile p {
+                margin: 0 0 10px;
+            }
+
+            /* BLOGS & NEWS */
+            #blogs div,
+            #news div {
+                padding: 0 20px 20px;
+            }
+
+            #teammates h4,
+            #blogs h4,
+            #news h4 {
+                width: auto;
+                margin: 20px 0 2px;
+                font-size: 1.4em;
+                color: #1f97f7;
+                font-weight: normal;
+            }
+
+            .blog-info {
+                margin: 0 0 10px;
+                font-size: .9em;
+                color: #787878;
+            }
+
+            #sidebar #blogs h4 {
+                font-size: 1em;
+            }
+
+            #sidebar #blogs p {
+                display: none;
+            }
+
+            #sidebar #blogs .blog-info {
+                display: block;
+            }
+
+            #main-content #news h4 {
+                font-size: 1.2em;
+                line-height: 1.4em;
+                height: 40px;
+            }
+
+                #main-content #news h4 span {
+                    display: block;
+                    float: left;
+                    width: 100px;
+                    height: 40px;
+                    color: #000;
+                }
+
+            #sidebar #news h4 {
+                font-size: 1em;
+            }
+
+                #sidebar #news h4 span {
+                    display: block;
+                    margin-bottom: 3px;
+                    color: #000;
+                }
+
+            /* TEAMMATES */
+            .team-mate:after {
+                content: ".";
+                display: block;
+                height: 0;
+                line-height: 0;
+                clear: both;
+                visibility: hidden;
+            }
+
+            #teammates .team-mate h4 {
+                font-size: 1.4em;
+                font-weight: normal;
+                margin-top: 12px;
+            }
+
+            .team-mate p {
+                margin: 0;
+            }
+
+            .team-mate img {
+                float: left;
+                margin: 0 15px 0 0;
+                border: 1px solid #e7e7e7;
+                border-radius: 60px;
+            }
+
+            .hint {
+                width: 250px;
+                height: 100px;
+                overflow: hidden;
+            }
+
+                .hint > h3 {
+                    padding-left: 20px;
+                }
+
+            .k-state-selected {
+                color: #fff;
+                background-color: #f35800;
+                border-color: #f35800;
+            }
+        </style>
+        
+        
+
+    </div>
+
+
+
+
+

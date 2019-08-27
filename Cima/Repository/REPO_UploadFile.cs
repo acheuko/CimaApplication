@@ -12,14 +12,14 @@ using System.Transactions;
 
 namespace Cima.Repository
 {
-    public class REPO_UploadFile : AbstractRepository, IREPO_UploadFile
+    public class REPO_UploadFile : SqlRepository<UploadingFile>, IREPO_UploadFile
     {
         /**
          * Supprimer les fichiers temporaires pour un nom et une company donnée
          **/
         public int DeleteTmpFileByFileNameAndIdCompany(string FileName, string IdCompany)
         {
-            SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
 
             //Replaced Parameters with Value
             string query = @"DELETE FROM sysman.tmpUploadingFiles WHERE FileName = @FileName AND ID_COMPANY = @IdCompany";
@@ -55,7 +55,7 @@ namespace Cima.Repository
          **/ 
         public ObservableCollection<UploadingFile> GetTmpFileNameByIdCompany(string IdCompany)
         {
-            SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
             ObservableCollection<UploadingFile> items = new ObservableCollection<UploadingFile>();
             using (var sqlQuery = new SqlCommand(@"SELECT FileName FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @UserId", con))
             {
@@ -88,7 +88,7 @@ namespace Cima.Repository
             return items;
         } 
 
-        private UploadingFile MapItem(SqlDataReader sqlDataReader)
+        protected override UploadingFile MapItem(SqlDataReader sqlDataReader)
         {
             return new UploadingFile()
             {
@@ -102,7 +102,7 @@ namespace Cima.Repository
         public ObservableCollection<UploadingFile> GetTmpFileByIdCompany(string IdCompany)
         {
             ObservableCollection<UploadingFile> Files = new ObservableCollection<UploadingFile>();
-            using (var sqlConnection = this.connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
             using (var sqlQuery = new SqlCommand(@"SELECT FileName, FileSize,Contents FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @IdCompany", sqlConnection))
             {
                 sqlQuery.Parameters.AddWithValue("@IdCompany", IdCompany);
@@ -138,7 +138,7 @@ namespace Cima.Repository
          */
         public int SaveTmpFile(UploadingFile uploadingFile)
         {
-            SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
             
             //Replaced Parameters with Value
             string query = "INSERT INTO sysman.tmpUploadingFiles (FileName, FileMask, FileSize, UploadDate, ID_Company, USERID, Contents) VALUES(@FileName,@FileMask,@FileSize, @UploadDate, @IDCompany,@UserID, @File)";
@@ -176,22 +176,13 @@ namespace Cima.Repository
             return response;
         }
 
-        protected override IDbCommand GetCommand(string query, IDbConnection sqlconnection)
-        {
-            SqlCommand sqlcommand = new SqlCommand(query)
-            {
-                Connection = (SqlConnection)sqlconnection
-            };
-
-            return sqlcommand;
-        }
 
         /**
          * Supprimer les fichiers temporaires pour une company donnée
          **/ 
         public int DeleteTmpFileByIdCompany(string IdCompany)
         {
-            SqlConnection con = this.connect(CONNECTION_STRING_SYSMAN);
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
 
             //Replaced Parameters with Value
             string query = @"DELETE FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @IdCompany";
@@ -230,7 +221,7 @@ namespace Cima.Repository
             {
                 try
                 {
-                    using (SqlConnection objConn = this.connect(CONNECTION_STRING_SYSMAN))
+                    using (SqlConnection objConn = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
                     {
                         // insertion du Batch
                         string sqlQuery1 = @"INSERT INTO sysman.tblBatch(BatchNumber,ID_Company,NbFiles,BatchClosed,DateBatch) VALUES(@BatchNumber, @IdCompany,@NbFiles,'N', GETDATE())";

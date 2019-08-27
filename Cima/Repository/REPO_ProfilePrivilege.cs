@@ -10,18 +10,9 @@ using System.Web;
 
 namespace Cima.Repository
 {
-    public class REPO_ProfilePrivilege : AbstractRepository
+    public class REPO_ProfilePrivilege : SqlRepository<string>
     {
-        protected override IDbCommand GetCommand(string query, IDbConnection sqlconnection)
-        {
-            SqlCommand sqlcommand = new SqlCommand(query)
-            {
-                Connection = (SqlConnection)sqlconnection
-            };
-
-            return sqlcommand;
-        }
-
+        
         public List<Menu> GetMenuItems(string ProfileName)
         {
             List<Menu> MenuItems = new List<Menu>();
@@ -32,8 +23,8 @@ namespace Cima.Repository
                             "JOIN sysman.tblMenuItems  on ID_MenuItems = ID_Auto " +
                             "WHERE ProfilName = @ProfilName";
 
-            using (var sqlConnection = this.connect(CONNECTION_STRING_SYSMAN))
-            using (var sqlQuery = new SqlCommand(query, sqlConnection))
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = (SqlCommand) GetCommand(query, sqlConnection))
             {
                 sqlQuery.Parameters.AddWithValue("@ProfilName", ProfileName);
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
@@ -85,8 +76,8 @@ namespace Cima.Repository
                             "WHERE ProfilName = @ProfilName AND ID_Parent = @IdParent";
 
 
-            using (var sqlConnection = this.connect(CONNECTION_STRING_SYSMAN))
-            using (var sqlQuery = new SqlCommand(childquery, sqlConnection))
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = (SqlCommand) GetCommand(childquery, sqlConnection))
             {
                 sqlQuery.Parameters.AddWithValue("@ProfilName", ProfileName);
                 sqlQuery.Parameters.AddWithValue("@IdParent", IdParent);
@@ -112,6 +103,11 @@ namespace Cima.Repository
             }
 
             return childMenu;
+        }
+
+        protected override string MapItem(SqlDataReader reader)
+        {
+            throw new NotImplementedException();
         }
     }
 }

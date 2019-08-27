@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Cima.Models.UploadingFile>
 @{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Upload Files";
 }
 
 <!-- upload files to landing -->
@@ -61,7 +61,7 @@
             <div id="bt-uploadfiles">
                 <p>
                     <kendo-button class="btn-success" ng-click="uploadFile()" style="color:white;font-weight:bold"><span>Charger</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
-                    <kendo-button id="bt-cancel" on-click="cancelUpload()" style="color:darkorange;font-weight:bold" >Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+                    <kendo-button id="bt-cancel" ng-click="cancelUpload()" style="color:darkorange;font-weight:bold" >Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
                 </p>
             </div>
         </div>

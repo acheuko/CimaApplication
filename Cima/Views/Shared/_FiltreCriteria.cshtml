@@ -1,0 +1,521 @@
+﻿<div class="row top_tiles">
+    <div class="panel-filter animated flipInY col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="tile-stats f-widget" style="background:#EDEDED">
+
+            <span class="collapse f-icon k-icon k-i-arrowhead-n"></span>
+
+            <div style="clear:both">
+
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+                    <div style="padding: 10px">
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Zone économique
+                            </span>
+                        </div>
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                            
+
+                            @(Html.Kendo().ComboBox()
+                                .Name("cbx_zoneconomique")
+                                .Placeholder("-- Select une zone --")
+                                .DataTextField("TextField")
+                                .DataValueField("ValueField")
+                                .Suggest(true)
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                        read.Action("FiltreCriteria_Read", "FiltreCriteria", new { criteriaName = "zoneEconomique"});
+                                    });
+                                })
+                                 .HtmlAttributes(new { style = "width: 100%" })
+                                 .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+
+
+                        </div>
+
+                    </div>
+
+                    <div style="padding: 10px;margin-top: 30px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Pays
+                            </span>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+
+
+                            @(Html.Kendo().ComboBox()
+                                .Name("cbx_pays")
+                                .AutoBind(false)
+                                .CascadeFrom("cbx_zoneconomique")
+                                .Placeholder("-- Select un pays --")
+                                .DataTextField("TextField")
+                                .DataValueField("ValueField")
+                                .Suggest(true)
+                                .Enable(false)
+                                .DataSource(source =>
+                                {
+                                    source.Read(read =>
+                                    {
+                                        read.Action("GetCriteriaByParent", "FiltreCriteria", new { criteriaName = "pays" })
+                                            .Data("filterPays");
+                                    }).ServerFiltering(true);
+                                })
+                                 .HtmlAttributes(new { style = "width: 100%" })
+                                 .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+                            
+
+                        </div>
+                    </div>
+
+
+                    <div style="padding: 10px;margin-top: 30px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Entreprise
+                            </span>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                            @(Html.Kendo().ComboBox()
+                        .Name("cbx_entreprise")
+                        .CascadeFrom("cbx_pays")
+                        .AutoBind(false)
+                        .Placeholder("Select une entreprise...")
+                        .BindTo(new List<string>(){
+                            "Cima","DNA","Company"})
+                        .Suggest(true)
+                        .Events(e=>e.Change("onCriteriaChange"))  
+                        .HtmlAttributes(new { style = "width: 100%", disabled="disabled"  })
+                            )
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+                    <div style="padding: 10px">
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Année
+                            </span>
+                        </div>
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                          
+
+                            @(Html.Kendo().ComboBox()
+                             .Name("cbx_annee")
+                             .Placeholder("-- Select une année --")
+                             .DataTextField("ValueField")
+                             .DataValueField("ValueField")
+                             .Suggest(true)
+                             .DataSource(source =>
+                             {
+                                 source.Read(read =>
+                                 {
+                                     read.Action("FiltreCriteria_Read", "FiltreCriteria", new { criteriaName = "annee" });
+                                 });
+                             })
+                              .HtmlAttributes(new { style = "width: 100%" })
+                              .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+
+                        </div>
+
+                    </div>
+
+                    <div   style="padding: 10px;margin-top: 30px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                           <a></a>
+                           <div id="buttongroup-home">
+                               <ul id="f-period" style="padding: 0px">
+                                   <li>
+                                       @(Html.Kendo().Button()
+                                        .Name("bt_semestre")
+                                        .Content("S")
+                                        .Events(e=>e.Click("getPeriod"))
+                                       )
+                                   </li>
+                                   <li>
+                                       @(Html.Kendo().Button()
+                                      .Name("bt_trimestre")
+                                      .Content("T")
+                                      .Events(e=>e.Click("getPeriod"))
+                                       )
+                                   </li>
+                               </ul>
+                           </div>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                            @(Html.Kendo().ComboBox()
+                             .Name("cbx_periode")
+                             .Placeholder("-- Select une période --")
+                             .DataTextField("TextField")
+                             .DataValueField("ValueField")
+                             .Suggest(true)
+                             .DataSource(source =>
+                             {
+                                 source.Read(read =>
+                                 {
+                                     read.Action("FiltreCriteriaPeriod_Read", "FiltreCriteria");
+                                 });
+                             })
+                              .HtmlAttributes(new { style = "width: 100%" })
+                              .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+                        </div>
+                    </div>
+
+
+                    <div style="padding: 10px;margin-top: 30px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Type Entreprise
+                            </span>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                          
+                            @(Html.Kendo().ComboBox()
+                               .Name("cbx_typentreprise")
+                               .Placeholder("-- Select un type entreprise --")
+                               .DataTextField("TextField")
+                               .DataValueField("ValueField")
+                               .Suggest(true)
+                               .DataSource(source =>
+                               {
+                                   source.Read(read =>
+                                   {
+                                       read.Action("FiltreCriteria_Read", "FiltreCriteria", new { criteriaName = "typeEntreprise" });
+                                   });
+                               })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                                .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+                    <div style="padding: 10px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Spécialisation
+                            </span>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                            
+                            @(Html.Kendo().ComboBox()
+                               .Name("cbx_specialisation")
+                               .Placeholder("-- Select une spécialisation --")
+                               .DataTextField("TextField")
+                               .DataValueField("ValueField")
+                               .Suggest(true)
+                               .DataSource(source =>
+                               {
+                                   source.Read(read =>
+                                   {
+                                       read.Action("FiltreCriteria_Read", "FiltreCriteria", new { criteriaName = "specialisation" });
+                                   });
+                               })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                                .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+                        </div>
+                    </div>
+
+                    <div style="padding: 10px;margin-top: 30px">
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Branche d'activité
+                            </span>
+                        </div>
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                           
+
+
+                            @(Html.Kendo().ComboBox()
+                               .Name("cbx_brancheactivite")
+                               .Placeholder("-- Select une categorie --")
+                               .DataTextField("TextField")
+                               .DataValueField("ValueField")
+                               .Suggest(true)
+                               .DataSource(source =>
+                               {
+                                   source.Read(read =>
+                                   {
+                                       read.Action("FiltreCriteria_Read", "FiltreCriteria", new { criteriaName = "categorie" });
+                                   });
+                               })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                                .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+                        </div>
+
+                    </div>
+
+                    <div style="padding: 10px;margin-top: 30px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Sous catégorie
+                            </span>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                           
+
+                            @(Html.Kendo().ComboBox()
+                               .Name("cbx_souscategorie")
+                               .CascadeFrom("cbx_brancheactivite")
+                               .AutoBind(false)
+                               .Placeholder("-- Select une sous categorie --")
+                               .DataTextField("TextField")
+                               .DataValueField("ValueField")
+                               .Suggest(true)
+                               .Enable(false)
+                               .DataSource(source =>
+                               {
+                                   source.Read(read =>
+                                   {
+                                       read.Action("GetCriteriaByParent", "FiltreCriteria", new { criteriaName = "sousCategorie" })
+                                       .Data("filterSousCategorie");
+                                   }).ServerFiltering(true);
+                               })
+                                .HtmlAttributes(new { style = "width: 100%" })
+                                .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+
+
+                <div class="animated flipInY col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+                    <div style="padding: 10px">
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Groupe consolidation
+                            </span>
+                        </div>
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                            @(Html.Kendo().ComboBox()
+                         .Name("cbx_groupeconsolidation")
+                         .Placeholder("Select un groupe...")
+                         .BindTo(new List<string>(){
+                             "CIMA","CEMAC"})
+                         .Suggest(true)
+                         .HtmlAttributes(new { style = "width: 100%" })
+                         .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+                        </div>
+
+                    </div>
+
+                    <div style="padding: 10px;margin-top: 30px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Type assurance vie
+                            </span>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                           
+                            @(Html.Kendo().ComboBox()
+                              .Name("cbx_typeassurancevie")
+                              .Placeholder("-- Select un type assurance --")
+                              .DataTextField("TextField")
+                              .DataValueField("ValueField")
+                              .Suggest(true)
+                              .DataSource(source =>
+                              {
+                                  source.Read(read =>
+                                  {
+                                      read.Action("FiltreCriteria_Read", "FiltreCriteria", new { criteriaName = "typeAssuranceVie" });
+                                  });
+                              })
+                               .HtmlAttributes(new { style = "width: 100%" })
+                               .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+                        </div>
+                    </div>
+
+
+                    <div style="padding: 10px;margin-top: 30px">
+
+                        <div class="animated flipInY col-lg-5 col-md-5 col-sm-12 col-xs-12">
+
+                            <span>
+                                Type réassurance
+                            </span>
+                        </div>
+
+                        <div class="animated flipInY col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                           
+                            @(Html.Kendo().ComboBox()
+                             .Name("cbx_typereassurance")
+                             .Placeholder("-- Select un type reassurance --")
+                             .DataTextField("TextField")
+                             .DataValueField("ValueField")
+                             .Suggest(true)
+                             .DataSource(source =>
+                             {
+                                 source.Read(read =>
+                                 {
+                                     read.Action("FiltreCriteria_Read", "FiltreCriteria", new { criteriaName = "typeReassurance" });
+                                 });
+                             })
+                              .HtmlAttributes(new { style = "width: 100%" })
+                              .Events(e=>e.Change("onCriteriaChange"))  
+                            )
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        //exapand bloc du filtre
+        $(".panel-filter").on("click", "span.k-i-arrowhead-s", function (e) {
+            var contentElement = $(e.target).closest(".f-widget").find(">div");
+            $(e.target)
+                .removeClass("k-i-arrowhead-s")
+                .addClass("k-i-arrowhead-n");
+
+            kendo.fx(contentElement).expand("vertical").stop().play();
+        });
+
+        //collapse bloc du filtre
+        $(".panel-filter").on("click", "span.k-i-arrowhead-n", function (e) {
+            var contentElement = $(e.target).closest(".f-widget").find(">div");
+            $(e.target)
+                .removeClass("k-i-arrowhead-n")
+                .addClass("k-i-arrowhead-s");
+
+            kendo.fx(contentElement).expand("vertical").stop().reverse();
+        });
+    });
+
+     // paramètres de filtres du pays
+     function filterPays() {
+        return {
+            idParent: $("#cbx_zoneconomique").val(),
+            childFilter: $("#cbx_pays").data("kendoComboBox").input.val()
+        };
+     }
+
+     // paramètres de filtre sous categorie 
+     function filterSousCategorie() {
+        return {
+            idParent: $("#cbx_brancheactivite").val(),
+            childFilter: $("#cbx_souscategorie").data("kendoComboBox").input.val()
+        };
+     }
+
+    // récupère la période sélectionné et alimente la combobox (semestre ou trimestre)
+    function getPeriod(e) {
+        var bt_period = $(e.event.target).closest(".k-button").attr("id");
+
+        var periode = $("#cbx_periode").data("kendoComboBox");
+        periode.dataSource.read({selectPeriod:bt_period});
+
+    }
+
+
+    //Custom Scripts
+        function onCriteriaChange() {
+           // displayDashboard();            
+        }
+
+</script>
+
+<style>
+
+    .f-widget .f-icon {
+        float: right;
+    }
+
+        .f-widget .f-icon:hover {
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 20px;
+        }
+
+        #select-period {
+    margin: 1em auto .4em auto;
+}
+
+        #buttongroup-home .km-list span {
+	float: right;
+}
+
+        .k-button{
+            font-size:10px;
+        }
+
+       
+
+        ul#f-period li{
+            display: inline;
+        }
+
+        .bt-active{
+            background-color:#ccc;
+        }
+
+</style>
+

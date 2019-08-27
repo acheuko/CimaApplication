@@ -19,6 +19,11 @@ namespace Cima.Controllers
         IREPO_Paie repo = REPO_Paie.getRepository();
         private FiltreDashboard filtre = new FiltreDashboard();
         
+        public PaieController()
+        {
+
+        }
+
         //
         // GET: /Paie/
 
