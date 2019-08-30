@@ -13,7 +13,7 @@
             <div class="animated flipInY col-lg-4 col-md-4 col-sm-7 col-xs-12">
                 <div class="tile-stats" style="height: 150px">
                     <div class="tile_stats_count" style="padding: 5px;">
-                        <h3 class="count_top"><i class="fa fa-signal"></i> Progress Bar</h3>
+                        <h4 class="count_top"><i class="fa fa-signal"></i> Progress Bar</h4>
                         <div style="margin: 30px;">
 
                             @(Html.Kendo().ProgressBar()
@@ -34,10 +34,11 @@
             <div class="animated flipInY col-lg-4 col-md-4 col-sm-6 col-xs-12">
                 <div class="tile-stats" style="height: 150px">
                     <div class="tile_stats_count" style="padding: 5px">
-                        <h3 class="count_top"><i class="fa fa-pie-chart"></i> Radial Gauge</h3>
+                        <h4 class="count_top"><i class="fa fa-pie-chart"></i> Radial Gauge</h4>
                         <div id="gauge-container" class="" style="text-align:center">
                             @(Html.Kendo().RadialGauge()
                                   .Name("gauge")
+                                   .Theme("Flat")
                                   .Pointer(pointer => pointer.Value(65))
                                   .Scale(scale => scale
                                        .MinorUnit(2)
@@ -54,7 +55,7 @@
             <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
                 <div class="tile-stats" style="height: 150px">
                     <div class="tile_stats_count" style="padding: 5px;height: 150px">
-                        <h3 class="count_top"><i class="fa fa-upload"></i> Montant</h3>
+                        <h4 class="count_top"><i class="fa fa-upload"></i> Montant</h4>
                         <div class="count" style="text-align:center;margin: 15px;">2 500</div>
                         <span class="count_bottom pull-right"><i class="green"><i class="fa fa-sort-asc"></i> 34% </i></span>
                     </div>
@@ -63,7 +64,7 @@
             <div class="animated flipInY col-lg-2 col-md-2 col-sm-6 col-xs-12">
                 <div class="tile-stats" style="height: 150px">
                     <div class="tile_stats_count" style="padding: 5px">
-                        <h3 class="count_top"><i class="fa fa-download"></i> Quantité</h3>
+                        <h4 class="count_top"><i class="fa fa-download"></i> Quantité</h4>
                         <div class="count" style="text-align:center;margin: 15px"> 500</div>
                         <span class="count_bottom pull-right"><i class="red"><i class="fa fa-sort-desc"></i> 4% </i></span>
                     </div>
@@ -75,7 +76,7 @@
         <div id="panel1" class="row">
 
 
-            <div id="sidebarss" class="col-md-6 col-sm-6 col-xs-12">
+            <div id="evolMontant" class="col-md-6 col-sm-6 col-xs-12">
                 <div class="dashboard_graph x_panel">
                     <div class="x_title">
                         <h2>Evolution du montant</h2>
@@ -87,21 +88,27 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li>
-                                        <a href="#"><i class="fa fa-file-pdf-o"></i> Export PDF</a>
+                                        @using (Html.BeginForm("ExportPDF", "Home", FormMethod.Post, new { id = "exportPDF" }))
+                                        {
+                                            <input type="hidden" name="fileContents" />
+                                            <a class="export-pdf"><i class="fa fa-file-pdf-o "></i> Export PDF</a>
+                                        }
                                     </li>
                                     <li>
-                                        <a href="#"><i class="fa fa-file-excel-o"></i> Export XLS</a>
+                                        <a href="@Url.Action("ExportToExcel","Home")"><i class="fa fa-file-excel-o"></i> Export XLS</a>
                                     </li>
                                     <li>
-                                        <a href="#"><i class="fa fa-file-text-o"></i> Export XML</a>
+                                        <a href="@Url.Action("ExportToCsv","Home")"><i class="fa fa-file-text-o"></i> Export CSV</a>
                                     </li>
+                                    
                                 </ul>
                             </li>
+                            
                         </ul>
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-
+                        
                         <div id="linechart" style="width:100%; ">
 
                             @(Html.Kendo().Chart()
@@ -124,6 +131,7 @@
                                                           .Template("#= series.name #: #=value #")
                                                           )
                                  .HtmlAttributes(new { style = "height: 260px;width: 100%" })
+                                 .Theme("Flat")
                             )
 
                         </div>
@@ -162,6 +170,7 @@
 
                             @(Html.Kendo().Chart()
                                 .Name("barchart")
+                                 .Theme("Flat")
                                 .Legend(legend => legend.Visible(true))
                                 .ChartArea(chartArea => chartArea.Background("transparent"))
                                 .Series(series =>
@@ -221,6 +230,7 @@
 
                             @(Html.Kendo().Chart()
                                 .Name("linechart1")
+                                 .Theme("Flat")
                                 .Legend(legend => legend.Visible(true))
                                 .ChartArea(chartArea => chartArea.Background("transparent"))
                                 .Series(series =>
@@ -278,6 +288,7 @@
 
                             @(Html.Kendo().Chart()
                                 .Name("barchart1")
+                                 .Theme("Flat")
                                 .Legend(legend => legend.Visible(true))
                                 .ChartArea(chartArea => chartArea.Background("transparent"))
                                 .Series(series =>
@@ -367,6 +378,7 @@
                         .addClass("k-i-arrowhead-s");
 
                     kendo.fx(contentElement).expand("vertical").stop().reverse();
+                   
                 });
             });
 
@@ -379,6 +391,21 @@
                     .height(element.height())
                     .width(element.width());
             }
+
+            $(".export-pdf").click(function () {
+                var HtmlContents = $("#evolMontant").html();
+                $("input[name='fileContents']").val(HtmlContents);
+                $("#exportPDF").submit();
+                }   
+            );
+
+         $(function () {
+            $("#btnExportPDF").click(function () {
+                $("input[name='fileContents']").val($("#evolMontant").html());
+            });
+         });       
+    
+
         </script>
 
         <style>
@@ -557,9 +584,21 @@
 
             .k-state-selected {
                 color: #fff;
-                background-color: #f35800;
-                border-color: #f35800;
+                background-color: #10c4b2;
+                border-color: #10c4b2;
             }
+
+            .dropdown-menu>li>form{
+                padding: 3px 20px;
+                color:#5A738E;
+            }
+
+             .dropdown-menu>li>form:hover{
+                color: #262626;
+                text-decoration: none;
+                background-color:#f5f5f5;
+            }
+
         </style>
         
         

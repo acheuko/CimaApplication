@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Kendo.Mvc.UI;
 using Kendo.Mvc.Extensions;
@@ -10,12 +8,21 @@ using Cima.Models.TestModel;
 using Cima.Models.Shared;
 using System.Collections.Generic;
 using Cima.Helpers;
+using iText.Html2pdf;
+using System.IO;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Kernel.Geom;
 
 namespace Cima.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
+
+        //public static final String TARGET = "target/results/ch01/";
+        //public static final String DEST = String.format("%stest-03.pdf", TARGET);
 
         private FiltreDashboard filtre;
 
@@ -61,6 +68,63 @@ namespace Cima.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult Pdf_Export_Save(string contentType, string base64, string fileName)
+        {
+            var fileContents = Convert.FromBase64String(base64);
+
+            return File(fileContents, contentType, fileName);
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult ExportPDF(string fileContents)
+        {
+            //new FileStream("C:\\Files\\test.pdf", FileMode.Create, FileAccess.Write)
+            using (var stream = new MemoryStream())
+            {
+
+                PdfWriter writer = new PdfWriter(stream);
+                PdfDocument pdf = new PdfDocument(writer);
+                Document document = new Document(pdf, PageSize.A4);
+                document.Add(new Paragraph("Goodbye!"));
+                document = HtmlConverter.ConvertToDocument(fileContents, writer);
+                
+                
+                document.Close();
+
+
+                return File(stream.ToArray(), "application/pdf", "evolMonant.pdf");
+
+            }
+
+        }
+
+        [HttpGet]
+        public FileContentResult ExportToExcel()
+        {
+            //List<Technology> technologies = StaticData.Technologies;
+
+            List<GridDetails> gridDetails = getGridDetails();
+
+            string[] columns = { "CallCategory", "BSC_LN", "StartTime", "PhoneNumber", "Country", "Origin", "Duration" };
+
+            byte[] filecontent = ExcelExportHelper.ExportExcel(gridDetails, "Grid Details", true, columns);
+
+            return File(filecontent, ExcelExportHelper.ExcelContentType, "TestData.xlsx");
+        }
+
+        [HttpGet]
+        public FileContentResult ExportToCsv()
+        {
+            //List<Technology> technologies = StaticData.Technologies;
+
+            List<GridDetails> gridDetails = getGridDetails();
+
+            string csv = CsvExportHelper.ListToCSV(gridDetails);
+
+            return File(new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "testData.csv");
+        }
 
         public JsonResult Country_Read()
         {
@@ -115,35 +179,7 @@ namespace Cima.Controllers
 
         public ActionResult TableDetails_Read([DataSourceRequest]DataSourceRequest request)
         {
-            List<GridDetails> gridDetails = new List<GridDetails>
-            {
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15, 00, 00, 32), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Abaya", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
-                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" }
-            };
+            List<GridDetails> gridDetails = getGridDetails();
             return Json(gridDetails.ToDataSourceResult(request,ModelState),JsonRequestBehavior.AllowGet);
         }
 
@@ -193,6 +229,39 @@ namespace Cima.Controllers
             gridTotals.Add(new GridTotal { CallCategory = "Outgoing", Site = "Chaichai", MonthlyTotal = 864.24, AvgCallDurationIn = 125.23, AvgCallDurationOut = 254.236, AvgNumberCallIn = 0214.32, AvgNumberCallOut = 45.236 });
             
             return Json(gridTotals.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
+        }
+
+        private List<GridDetails> getGridDetails()
+        {
+            return new List<GridDetails>
+            {
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15, 00, 00, 32), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Abaya", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" },
+                new GridDetails { CallCategory = "Outgoing", BSC_LN = "Udeni", StartTime = new DateTime(2006, 6, 15), PhoneNumber = " 234-80-91054665 ", Country = "Nigeria - Mobile - Other", Origin = "2348183833424", Duration = "00:10:14" }
+            };
         }
 
         private Dictionary<string, FiltreElement> buildFiltreDashboard()
