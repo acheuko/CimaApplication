@@ -1,0 +1,29 @@
+﻿@using ReportViewerForMvc;
+@using Microsoft.Reporting.WebForms;
+@using System.Web.UI.WebControls;
+
+@{
+    ViewBag.Title = "Report";
+}
+
+<h2>Report</h2>
+
+<div>
+    @if (ViewBag.ReportViewer != null)
+    {
+        @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer, new { ProcessingMode = ProcessingMode.Local, SizeToReportContent = true, ZoomMode = ZoomMode.FullPage, Width = Unit.Percentage(100), Height = Unit.Percentage(100) })
+    }
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("iframe[src*='Viewer']").width("95%");
+        $("iframe[src*='Viewer']").height("950px");
+    });
+</script>
+
+<style>
+    iframe{
+        border: none;
+    }
+</style>
