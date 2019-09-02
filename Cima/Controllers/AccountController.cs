@@ -87,7 +87,7 @@ namespace Cima.Controllers
                     List<Menu> menuItems = repoProfilePrivilege.GetMenuItems(user.Profils);
                     Session["MenuItems"] = menuItems.ToList();
 
-                    if (user.Profils.Contains(Profil.ENTREPRISE))
+                    if (user.Profils.Contains(Profil.ENTREPRISE) || user.Profils.Contains(Profil.ENTREPRISE_IARD) || user.Profils.Contains(Profil.ENTREPRISE_VIE))
                         actionResult = RedirectToAction("Index", "UploadFile");
                     else
                         actionResult = RedirectToAction("Index", "Home");

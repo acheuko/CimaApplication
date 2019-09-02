@@ -47,6 +47,16 @@ namespace Cima.Models
             }
         }
 
+        private string paramUrl;
+        public string ParamUrl
+        {
+            get { return paramUrl; }
+            set
+            {
+                paramUrl = value;
+            }
+        }
+
         private List<Menu> menuItems;
         public List<Menu> MenuItems
         {

@@ -37,7 +37,7 @@ namespace Cima.Controllers
         }
 
         // GET: /UploadedFile/
-        [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE)]
+        [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE + "," + Profil.ENTREPRISE_IARD + "," + Profil.ENTREPRISE_VIE)]
         public ActionResult Index()
         {
             if (Session["Profils"] !=  null && Session["Profils"].ToString() != "")
@@ -54,7 +54,7 @@ namespace Cima.Controllers
         /**
          *  Copie des fichiers d'états dans le repertoire de chargement
          **/
-        [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE)]
+        [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE + "," + Profil.ENTREPRISE_IARD + "," + Profil.ENTREPRISE_VIE)]
         public JsonResult SaveFileToLanding()
         {
             String Status;
@@ -128,7 +128,7 @@ namespace Cima.Controllers
         /**
          * Sauvegarde des fichiers d'état dans la table temporaire
          **/ 
-        [Authorize(Roles = Profil.ENTREPRISE)]
+        [Authorize(Roles = Profil.ENTREPRISE + "," + Profil.ENTREPRISE_IARD + "," + Profil.ENTREPRISE_VIE)]
         public JsonResult UploadingFile(string fileName, int filesize, string file)
         {
 
@@ -166,7 +166,7 @@ namespace Cima.Controllers
         /**
          * Suppression des fichiers d'état de la table temporaire
          **/ 
-        [Authorize(Roles = Profil.ENTREPRISE)]
+        [Authorize(Roles = Profil.ENTREPRISE + "," + Profil.ENTREPRISE_IARD + "," + Profil.ENTREPRISE_VIE)]
         public JsonResult DeleteUploadedFile(string filename)
         {
             String StatusReponse;
@@ -216,6 +216,7 @@ namespace Cima.Controllers
                 Console.WriteLine(dirNotFound.Message);
             }
         }
+
 
         public JsonResult CancelUploadingTmpFile()
         {

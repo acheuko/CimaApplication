@@ -9,6 +9,8 @@ namespace Cima.Helpers
     {
         public const string ADMIN = "Admin";
         public const string ENTREPRISE = "Entreprise";
+        public const string ENTREPRISE_IARD = "Entreprise IARD";
+        public const string ENTREPRISE_VIE = "Entreprise VIE";
         public const string DIR_ASSR = "Directions des assurances";
         public const string CIMA = "Cima";
     }

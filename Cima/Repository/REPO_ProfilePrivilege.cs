@@ -17,7 +17,7 @@ namespace Cima.Repository
         {
             List<Menu> MenuItems = new List<Menu>();
 
-            string query = @"SELECT ProfilName, Name, Controller, [Action], ID_MenuItems, ID_parent, Icon " +
+            string query = @"SELECT ProfilName, Name, Controller, [Action], ID_MenuItems, ID_parent, Icon, ParamUrl " +
                             "FROM sysman.tblProfilUser  " +
                             "JOIN sysman.tblProfilPrivilege on ID_UserProfil = ID_Profil " +
                             "JOIN sysman.tblMenuItems  on ID_MenuItems = ID_Auto " +
@@ -45,6 +45,7 @@ namespace Cima.Repository
                                     Controller = sqlQueryResult.GetString(2),
                                     Action = sqlQueryResult.GetString(3),
                                     Icon = sqlQueryResult.GetString(6),
+                                    ParamUrl = sqlQueryResult.IsDBNull(7)?"":sqlQueryResult.GetString(7),
                                     MenuItems = childMenu
                                 };
 
@@ -69,7 +70,7 @@ namespace Cima.Repository
             List<Menu> childMenu = new List<Menu>();
             
 
-            string childquery = @"SELECT ProfilName, Name, Controller, [Action], ID_MenuItems, ID_Parent " +
+            string childquery = @"SELECT ProfilName, Name, Controller, [Action], ParamUrl, ID_MenuItems, ID_Parent " +
                             "FROM sysman.tblProfilUser  " +
                             "JOIN [sysman].[tblProfilPrivilege]  on ID_UserProfil = ID_Profil " +
                             "JOIN sysman.tblMenuItems  on ID_MenuItems = [ID_Auto] " +
@@ -90,8 +91,8 @@ namespace Cima.Repository
                             {
                                 Name = sqlCommandResult.GetString(1),
                                 Controller = sqlCommandResult.GetString(2),
-                                Action = sqlCommandResult.GetString(3)
-                                
+                                Action = sqlCommandResult.GetString(3),
+                                ParamUrl = sqlCommandResult.IsDBNull(4)?"":sqlCommandResult.GetString(4)                                
                             };
 
                             childMenu.Add(childMenuItems);

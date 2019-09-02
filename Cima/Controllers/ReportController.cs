@@ -14,31 +14,56 @@ namespace Cima.Controllers
         //
         // GET: /Report/
 
-        public ActionResult Report()
+        private readonly string ReportServerUrl = ConfigurationManager.AppSettings["ReportServerUrl"].ToString();
+
+        public ActionResult Report(string paramUrl)
         {
-            string reportFolder = ConfigurationManager.AppSettings["ReportPath"].ToString();
+            string reportFolder = ConfigurationManager.AppSettings[paramUrl].ToString();
 
-            ReportViewer rptViewer = new ReportViewer
-            {
+            #pragma warning disable IDE0067 // Dispose objects before losing scope
+            ViewBag.ReportViewer = GetReportViewer(reportFolder);
+            #pragma warning restore IDE0067 // Dispose objects before losing scope
 
-                // ProcessingMode will be Either Remote or Local  
-                ProcessingMode = ProcessingMode.Remote,
-                SizeToReportContent = true,
-                ZoomMode = ZoomMode.PageWidth,
-                Width = Unit.Percentage(100),
-                Height = Unit.Percentage(100),
-                AsyncRendering = true
-            };
-            rptViewer.ServerReport.ReportServerUrl = new Uri("http://localhost/ReportServer/");
-
-            rptViewer.ServerReport.ReportPath = reportFolder;
-                //String.Format("{0}/{1}",reportFolder,"Report1.rdl");
-                //this.SetReportPath();
-
-            ViewBag.ReportViewer = rptViewer;
             return View();
         }
 
+
+        public ReportViewer GetReportViewer(string reportFolder)
+        {
+            try
+            {
+                ReportViewer rptViewer = new ReportViewer
+                {
+                    // ProcessingMode will be Either Remote or Local  
+                    ProcessingMode = ProcessingMode.Remote,
+                    SizeToReportContent = true,
+                    ZoomMode = ZoomMode.PageWidth,
+                    Width = Unit.Percentage(100),
+                    Height = Unit.Percentage(100),
+                    AsyncRendering = true
+                };
+                rptViewer.ServerReport.ReportServerUrl = new Uri(uriString: ReportServerUrl);
+
+                rptViewer.ServerReport.ReportPath = reportFolder;
+
+                List<ReportParameter> param = new List<ReportParameter>
+                {
+                    new ReportParameter("CodeEntreprise", Session["Company"].ToString())
+                };
+
+                rptViewer.ServerReport.SetParameters(param);
+
+                rptViewer.ServerReport.Refresh();
+
+                return rptViewer;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+           
+        }
 
     }
 }

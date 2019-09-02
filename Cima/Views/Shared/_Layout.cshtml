@@ -90,7 +90,15 @@
                                                     <ul class="nav child_menu">
                                                         @foreach (var c in m.MenuItems)
                                                         {
-                                                            <li>@Html.ActionLink(c.Name, c.Action, c.Controller)</li>
+                                                            if (c.ParamUrl != "")
+                                                            {
+                                                                <li>@Html.ActionLink(c.Name, c.Action, c.Controller, new { paramUrl = c.ParamUrl },null)</li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li>@Html.ActionLink(c.Name, c.Action, c.Controller)</li>
+                                                            }
+
                                                         }
                                                         <li>@Html.ActionLink("Report", "Report", "Report")</li>
                                                     </ul>
