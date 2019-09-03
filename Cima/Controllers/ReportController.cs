@@ -48,7 +48,7 @@ namespace Cima.Controllers
 
                 List<ReportParameter> param = new List<ReportParameter>
                 {
-                    new ReportParameter("CodeEntreprise", Session["Company"].ToString())
+                    new ReportParameter("strCompany", Session["Company"].ToString())
                 };
 
                 rptViewer.ServerReport.SetParameters(param);
