@@ -247,6 +247,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppContext\DwhDbContext.cs" />
+    <Compile Include="AppContext\SysmanDbContext.cs" />
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -256,7 +258,10 @@
     <Compile Include="Controllers\DemoController.cs" />
     <Compile Include="Controllers\FiltreCriteriaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MenuItemController.cs" />
     <Compile Include="Controllers\PaieController.cs" />
+    <Compile Include="Controllers\ProfilPrivilegeController.cs" />
+    <Compile Include="Controllers\ProfilUserController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UploadFileController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
@@ -271,6 +276,9 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BatchModel.cs" />
     <Compile Include="Models\Menu.cs" />
+    <Compile Include="Models\MenuItem.cs" />
+    <Compile Include="Models\ProfilPrivilege.cs" />
+    <Compile Include="Models\ProfilUser.cs" />
     <Compile Include="Models\Shared\FiltreCriteria.cs" />
     <Compile Include="Models\Shared\FiltreDashboard.cs" />
     <Compile Include="Models\Shared\FiltreElement.cs" />
@@ -292,12 +300,16 @@
     <Compile Include="Repository\IREPO_UploadFile.cs" />
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
+    <Compile Include="Repository\REPO_MenuItems.cs" />
+    <Compile Include="Repository\REPO_ProfilUser.cs" />
     <Compile Include="Repository\REPO_ProfilePrivilege.cs" />
     <Compile Include="Repository\REPO_Register.cs" />
     <Compile Include="Repository\REPO_UploadFile.cs" />
     <Compile Include="Repository\Shared\AbstractRepository.cs" />
     <Compile Include="Repository\Shared\BaseRepository.cs" />
+    <Compile Include="Repository\Shared\SqlBaseRepository.cs" />
     <Compile Include="Repository\Shared\SqlRepository.cs" />
+    <Compile Include="Repository\Shared\UnitOfWork.cs" />
     <Compile Include="Repository\TestData\IREPO_Paie.cs" />
     <Compile Include="Repository\TestData\REPO_CriteriaItems.cs" />
     <Compile Include="Repository\TestData\REPO_Paie.cs" />
@@ -589,6 +601,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\kendo\images\kendoui.ttf" />
     <Content Include="Content\kendo\images\kendoui.woff" />
+    <Content Include="Views\Shared\EditorTemplates\GridForeignKey.cshtml" />
     <None Include="Properties\PublishProfiles\rasom_dashboard.pubxml" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -5411,6 +5424,9 @@
     <Content Include="Views\Shared\UploadFile.cshtml" />
     <Content Include="Views\Shared\_FiltreCriteria.cshtml" />
     <Content Include="Views\Report\Report.cshtml" />
+    <Content Include="Views\MenuItem\MenuItem.cshtml" />
+    <Content Include="Views\MenuItem\MenuItemEditor.cshtml" />
+    <Content Include="Views\ProfilUser\ProfilUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

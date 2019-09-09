@@ -1,71 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cima.Models
 {
     public class Menu
     {
-        private string name;
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                name = value;
-            }
-        }
+        [Key]
+        public int ID_Auto { get; set; }
 
-        private string controller;
-        public string Controller
-        {
-            get { return controller; }
-            set
-            {
-                controller = value;
-            }
-        }
+        public string Name { get; set; }
 
-        private string action;
-        public string Action
-        {
-            get { return action; }
-            set
-            {
-                action = value;
-            }
-        }
+        public string Controller { get; set; }
 
-        private string icon;
-        public string Icon
-        {
-            get { return icon; }
-            set
-            {
-                icon = value;
-            }
-        }
+        public string Action { get; set; }
 
-        private string paramUrl;
-        public string ParamUrl
-        {
-            get { return paramUrl; }
-            set
-            {
-                paramUrl = value;
-            }
-        }
+        public string Icon { get; set; }
 
-        private List<Menu> menuItems;
-        public List<Menu> MenuItems
-        {
-            get { return menuItems; }
-            set
-            {
-                menuItems = value;
-            }
-        }
-        
+        public string ParamUrl { get; set; }
+
+        [ForeignKey("ID_Auto")]
+        public Menu ParentID { get; set; }
+
+        public List<Menu> MenuItems { get; set; }
+
     }
 }

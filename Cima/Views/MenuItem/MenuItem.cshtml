@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "MenuItem";
+}
+
+<h2>Liste des menus</h2>
+
+<div class="row">
+
+    <div id="menutable" style="width:100%; ">
+       
+        @(Html.Kendo().Grid<Cima.Models.MenuItem>()
+            .Name("menuItems")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.MenuId);
+                columns.Bound(c => c.Name).Title("LIbelle");
+                columns.Bound(c => c.Controller).Title("Controlleur");
+                columns.Bound(c => c.Action).Title("Action");
+                columns.Bound(c => c.Icon).Title("Icône");
+                columns.Bound(c => c.ParamUrl).Title("Url Paramètre");
+                columns.ForeignKey(c => c.MenuParentId, (System.Collections.IEnumerable)ViewBag.MenusParent, "MenuId", "Name").Title("Menu Parent");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250);
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                .ToolBar(toolbar => toolbar.Create().Text("Nouveau"))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.MenuId);
+                        model.Field(m => m.MenuId).Editable(false);
+                        model.Field(p => p.Controller).DefaultValue("");
+                        model.Field(p => p.Action).DefaultValue("");
+                        model.Field(p => p.MenuParentId).DefaultValue(null);
+                        })
+                    .Create(update => update.Action("MenuItem_Create", "MenuItem"))
+                    .Read(read => read.Action("MenuItem_Read", "MenuItem"))
+                    .Update(update => update.Action("MenuItem_Update", "MenuItem"))
+                    .Destroy(update => update.Action("MenuItem_Delete", "MenuItem"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
+
+    </div>
+
+</div>

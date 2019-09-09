@@ -1,4 +1,5 @@
-﻿using Cima.Models;
+﻿using Cima.AppContext;
+using Cima.Models;
 using Cima.Repository.Shared;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,20 @@ using System.Web;
 
 namespace Cima.Repository
 {
-    public class REPO_ProfilePrivilege : SqlRepository<string>
+    public class REPO_ProfilePrivilege : SqlBaseRepository<ProfilPrivilege>
     {
-        
+
+        // Constructeur par défaut
+        public REPO_ProfilePrivilege()
+        {
+
+        }
+
+        public REPO_ProfilePrivilege(SysmanDbContext context) : base(context)
+        {
+
+        }
+
         public List<Menu> GetMenuItems(string ProfileName)
         {
             List<Menu> MenuItems = new List<Menu>();
@@ -106,9 +118,75 @@ namespace Cima.Repository
             return childMenu;
         }
 
-        protected override string MapItem(SqlDataReader reader)
+        public List<MenuItem> GetMenuItemsByProfilId(int ProfilUserId)
         {
-            throw new NotImplementedException();
+            List<MenuItem> MenuItems = new List<MenuItem>();
+
+            string query = @"SELECT ProfilName, Name, ID_MenuItems, ID_Auto " +
+                            "FROM sysman.tblProfilUser  " +
+                            "JOIN sysman.tblProfilPrivilege on ID_UserProfil = ID_Profil " +
+                            "JOIN sysman.tblMenuItems  on ID_MenuItems = ID_Auto " +
+                            "WHERE ID_Profil = @ProfilId";
+
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = (SqlCommand)GetCommand(query, sqlConnection))
+            {
+                sqlQuery.Parameters.AddWithValue("@ProfilId", ProfilUserId);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                {
+                    if (sqlQueryResult.HasRows)
+                    {
+                        while (sqlQueryResult.Read())
+                        {                                     
+                                MenuItem menu = new MenuItem()
+                                {
+                                    Name = sqlQueryResult.GetString(1),
+                                    MenuId = sqlQueryResult.GetInt32(3)                                    
+                                };
+
+                                MenuItems.Add(menu);
+                        }
+
+                        sqlQueryResult.Close();
+
+                    }
+                }
+            }
+
+            return MenuItems;
         }
+
+        public int DeletePrivilegeByProfilId(int ProfilUserId)
+        {
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
+
+            //Replaced Parameters with Value
+            string query = @"DELETE FROM sysman.tblProfilPrivilege WHERE ID_Profil = @ProfilID";
+
+            SqlCommand cmd = (SqlCommand)this.GetCommand(query, con);
+
+            //Pass values to Parameters
+            cmd.Parameters.AddWithValue("@ProfilID", ProfilUserId);
+
+            int response = 0;
+
+            try
+            {
+                response = cmd.ExecuteNonQuery();
+                Console.WriteLine("Records deleted Successfully");
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine("Error Generated. Details: " + e.ToString());
+            }
+            finally
+            {
+                cmd.Dispose();
+                con.Close();
+            }
+
+            return response;
+        }
+
     }
 }

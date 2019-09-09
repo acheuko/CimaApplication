@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Cima.AppContext;
+using Cima.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -11,7 +14,7 @@ namespace Cima.Repository.Shared
 {
     public abstract class SqlRepository<T> : AbstractRepository
     {
-
+       
         protected abstract T MapItem(SqlDataReader reader);
 
         protected override IDbCommand GetCommand(string query, IDbConnection connection)
