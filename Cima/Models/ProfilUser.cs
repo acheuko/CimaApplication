@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
@@ -16,8 +17,10 @@ namespace Cima.Models
         [Column("ID_UserProfil")]
         public int ProfilUserId { get; set; }
 
+        [ScaffoldColumn(false)]
         public string WebFolder { get; set; }
 
+        [DisplayName("Libelle")]
         public string ProfilName { get; set; }
 
         [NotMapped]

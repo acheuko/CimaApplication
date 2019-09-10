@@ -7,17 +7,17 @@
 <div class="row">
 
     <div id="menutable" style="width:100%; ">
-       
+
         @(Html.Kendo().Grid<Cima.Models.MenuItem>()
             .Name("menuItems")
             .Columns(columns =>
             {
                 columns.Bound(c => c.MenuId);
-                columns.Bound(c => c.Name).Title("LIbelle");
+                columns.Bound(c => c.Name).Title("Libelle");
                 columns.Bound(c => c.Controller).Title("Controlleur");
-                columns.Bound(c => c.Action).Title("Action");
+                columns.Bound(c => c.Action).Title("Vue");
                 columns.Bound(c => c.Icon).Title("Icône");
-                columns.Bound(c => c.ParamUrl).Title("Url Paramètre");
+                columns.Bound(c => c.ParamUrl).Title("Paramètre");
                 columns.ForeignKey(c => c.MenuParentId, (System.Collections.IEnumerable)ViewBag.MenusParent, "MenuId", "Name").Title("Menu Parent");
                 columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250);
             })
@@ -30,6 +30,7 @@
                     .ButtonCount(5))
                 .ToolBar(toolbar => toolbar.Create().Text("Nouveau"))
                 .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .Events(e => e.Edit("onGridEdit"))
                 .DataSource(datasource => datasource
                     .Ajax()
                     .Model(model =>
@@ -51,4 +52,31 @@
 
     </div>
 
+    <script type="text/javascript">
+        function onGridEdit(e) {
+            if (e.model.isNew()) {
+                e.container.kendoWindow("title", "Créer un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Enregistrer";
+            } else {
+                e.container.kendoWindow("title", "Modifier un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Modifier";
+            }
+        }
+    </script>
+
 </div>
+
+<style>
+#menuItems .k-grid-header .k-header
+{
+       background-color: #428bca;
+       border-color: #169F85; 
+       
+}
+
+#menuItems .k-grid-header .k-header a
+{
+     
+       color: #fff;
+}
+</style>

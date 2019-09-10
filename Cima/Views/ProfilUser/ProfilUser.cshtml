@@ -25,6 +25,7 @@
                     .ButtonCount(5))
                 .ToolBar(toolbar => toolbar.Create().Text("Nouveau"))
                 .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .Events(e => e.Edit("onGridEdit"))
                 .DataSource(datasource => datasource
                     .Ajax()
                     .Model(model =>
@@ -202,6 +203,17 @@
                     margin-right: 10px;
                 }
 
+                #ProfilUsers .k-grid-header .k-header
+                {
+                       background-color: #428bca;
+                       border-color: #169F85;      
+                }
+
+                #ProfilUsers .k-grid-header .k-header a
+                {     
+                       color: #fff;
+                }
+
     </style>
 
     
@@ -212,6 +224,16 @@
             else if (a.value < b.value) return -1;
             else return 0;
         }
+
+         function onGridEdit(e) {
+            if (e.model.isNew()) {
+                e.container.kendoWindow("title", "Créer un profil");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Enregistrer";
+            } else {
+                e.container.kendoWindow("title", "Modifier un profil");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Modifier";
+            }
+         }
 
         function cancel() {
 
