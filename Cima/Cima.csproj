@@ -50,8 +50,16 @@
     <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Deedle, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Deedle.2.0.4\lib\net45\Deedle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EPPlus, Version=4.5.3.2, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.4.5.3.2\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\PFN-CIMA\PFN-CIMA_Final\bin\Debug\FSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="itext.barcodes, Version=7.1.7.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\itext7.7.1.7\lib\net40\itext.barcodes.dll</HintPath>
@@ -83,8 +91,9 @@
     <Reference Include="itext.svg, Version=7.1.7.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\itext7.7.1.7\lib\net40\itext.svg.dll</HintPath>
     </Reference>
-    <Reference Include="Kendo.Mvc">
-      <HintPath>..\..\..\..\Downloads\telerik\telerik.ui.for.aspnetmvc.2014.2.716.commercial\wrappers\aspnetmvc\Binaries\Mvc4\Kendo.Mvc.dll</HintPath>
+    <Reference Include="Kendo.Mvc, Version=2014.2.716.440, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\bin\bin\Kendo.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AnalysisServices.AdomdClient, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,16 +101,36 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportViewer.Common.10.0.40219.1\lib\Microsoft.ReportViewer.Common.dll</HintPath>
+      <HintPath>..\packages\Microsoft.ReportViewer.Common.VS2010.10.0.40219.1\lib\net40\Microsoft.ReportViewer.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportViewer.Common.10.0.40219.1\lib\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
+    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportViewer.Runtime.Common.12.0.2402.15\lib\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportViewer.Common.10.0.40219.1\lib\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
+    <Reference Include="Microsoft.ReportViewer.Design, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportViewer.11.0.3366.16\lib\Microsoft.ReportViewer.Design.DLL</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\MicosoftReportViewerWebForms_v11.1.0.1\lib\Microsoft.ReportViewer.WebForms.DLL</HintPath>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportViewer.2012.Runtime.11.0.3452.0\lib\Microsoft.ReportViewer.ProcessingObjectModel.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebDesign, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportViewer.11.0.3366.16\lib\Microsoft.ReportViewer.WebDesign.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportViewer.Runtime.WebForms.12.0.2402.15\lib\Microsoft.ReportViewer.WebForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportViewer.WinForms.VS2010.10.0.40219.1\lib\net40\Microsoft.ReportViewer.WinForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Types">
+      <HintPath>..\packages\Microsoft.SqlServer.Types.11.0.1\lib\net20\Microsoft.SqlServer.Types.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="ReportViewerForMvc, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -111,6 +140,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -119,8 +149,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Providers">
-      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 4\Packages\Microsoft.AspNet.Providers.Core.1.2\lib\net40\System.Web.Providers.dll</HintPath>
+      <HintPath>E:\bin\bin\System.Web.Providers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -263,8 +294,8 @@
     <Compile Include="Controllers\ProfilPrivilegeController.cs" />
     <Compile Include="Controllers\ProfilUserController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RuleBasedController.cs" />
     <Compile Include="Controllers\UploadFileController.cs" />
-    <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -273,6 +304,7 @@
     <Compile Include="Helpers\ExcelExportHelper.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Helpers\Profil.cs" />
+    <Compile Include="Helpers\ReportServerCredentials.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BatchModel.cs" />
     <Compile Include="Models\Menu.cs" />
@@ -282,6 +314,13 @@
     <Compile Include="Models\Shared\FiltreCriteria.cs" />
     <Compile Include="Models\Shared\FiltreDashboard.cs" />
     <Compile Include="Models\Shared\FiltreElement.cs" />
+    <Compile Include="Models\TblAction.cs" />
+    <Compile Include="Models\TblDataColumn.cs" />
+    <Compile Include="Models\TblReport.cs" />
+    <Compile Include="Models\TblRule.cs" />
+    <Compile Include="Models\TblRuleBasedDetail.cs" />
+    <Compile Include="Models\TblRuleBasedLog.cs" />
+    <Compile Include="Models\TblRuleReport.cs" />
     <Compile Include="Models\TestModel\BusinessModel.cs" />
     <Compile Include="Models\TestModel\Effectif.cs" />
     <Compile Include="Models\TestModel\GridDetails.cs" />
@@ -298,12 +337,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Repository\IREPO_UploadFile.cs" />
+    <Compile Include="Repository\REPO_Action.cs" />
+    <Compile Include="Repository\REPO_DataColumn.cs" />
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
     <Compile Include="Repository\REPO_MenuItems.cs" />
     <Compile Include="Repository\REPO_ProfilUser.cs" />
     <Compile Include="Repository\REPO_ProfilePrivilege.cs" />
     <Compile Include="Repository\REPO_Register.cs" />
+    <Compile Include="Repository\REPO_Report.cs" />
+    <Compile Include="Repository\REPO_Rule.cs" />
+    <Compile Include="Repository\REPO_RuleBasedDetail.cs" />
+    <Compile Include="Repository\REPO_RuleBasedLog.cs" />
+    <Compile Include="Repository\REPO_RuleReport.cs" />
     <Compile Include="Repository\REPO_UploadFile.cs" />
     <Compile Include="Repository\Shared\AbstractRepository.cs" />
     <Compile Include="Repository\Shared\BaseRepository.cs" />
@@ -321,9 +367,27 @@
     <Compile Include="Repository\TestData\_REPO_SalaireEntiteAdmin.cs" />
     <Compile Include="Repository\TestData\_REPO_TaxDeductionGraph.cs" />
     <Compile Include="Repository\TestData\_REPO_TopFiveEntiteAdmin.cs" />
+    <Compile Include="RulesBased\DataPreparation.cs" />
+    <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="ViewModel\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\packages\Microsoft.SqlServer.Types.11.0.1\nativeBinaries\x64\msvcr100.dll">
+      <Link>SqlServerTypes\x64\msvcr100.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\packages\Microsoft.SqlServer.Types.11.0.1\nativeBinaries\x64\SqlServerSpatial110.dll">
+      <Link>SqlServerTypes\x64\SqlServerSpatial110.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\packages\Microsoft.SqlServer.Types.11.0.1\nativeBinaries\x86\msvcr100.dll">
+      <Link>SqlServerTypes\x86\msvcr100.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\packages\Microsoft.SqlServer.Types.11.0.1\nativeBinaries\x86\SqlServerSpatial110.dll">
+      <Link>SqlServerTypes\x86\SqlServerSpatial110.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="build\css\custom.css" />
     <Content Include="build\css\custom.min.css" />
     <Content Include="build\js\custom.js" />
@@ -601,7 +665,9 @@
     <Content Include="Global.asax" />
     <Content Include="Content\kendo\images\kendoui.ttf" />
     <Content Include="Content\kendo\images\kendoui.woff" />
+    <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="Views\Shared\EditorTemplates\GridForeignKey.cshtml" />
+    <None Include="Properties\PublishProfiles\CIMA.pubxml" />
     <None Include="Properties\PublishProfiles\rasom_dashboard.pubxml" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -4487,7 +4553,9 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Shared\_oldLayout.cshtml" />
     <Content Include="Scripts\kendo\kendo.angular.min.js.map" />
     <Content Include="Scripts\kendo\kendo.autocomplete.min.js.map" />
@@ -5427,12 +5495,32 @@
     <Content Include="Views\MenuItem\MenuItem.cshtml" />
     <Content Include="Views\MenuItem\MenuItemEditor.cshtml" />
     <Content Include="Views\ProfilUser\ProfilUser.cshtml" />
+    <Content Include="Views\RuleBased\Index.cshtml" />
+    <Content Include="Views\RuleBased\Details.cshtml" />
+    <Content Include="Views\RuleBased\Create.cshtml" />
+    <Content Include="Views\RuleBased\Edit.cshtml" />
+    <Content Include="Views\RuleBased\Delete.cshtml" />
+    <Content Include="Views\RuleBased\Report.cshtml" />
+    <Content Include="Views\RuleBased\Action.cshtml" />
+    <Content Include="Views\RuleBased\DataColumn.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\RuleActionId.cshtml" />
+    <Content Include="Views\RuleBased\CreateActionView.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ReportColumnId.cshtml" />
+    <Content Include="Views\RuleBased\CreateRuleView.cshtml" />
+    <Content Include="Views\RuleBased\ReportEditorDateTimePicker.cshtml" />
+    <Content Include="Views\RuleBased\CreateReportView.cshtml" />
+    <Content Include="Views\RuleBased\CreateDataColumnView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -8,7 +8,6 @@ using System.Web.Security;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
-using Cima.Filters;
 using Cima.Models;
 using Cima.Repository;
 using System.Collections.ObjectModel;
@@ -18,7 +17,7 @@ using Cima.ViewModel;
 namespace Cima.Controllers
 {
     [Authorize]
-    [InitializeSimpleMembership]
+   // [InitializeSimpleMembership]
     public class AccountController : Controller
     {
         private readonly REPO_Login repoLogin = new REPO_Login();

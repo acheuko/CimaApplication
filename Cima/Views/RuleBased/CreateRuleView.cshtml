@@ -1,0 +1,232 @@
+﻿@{
+    ViewBag.Title = "CreateRuleView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Creation d'une Règle</h2>
+
+<form>
+<div class="row row-combo">    
+    <div class="col-md-6">
+      <input type="text" id="RuleId" class="form-control" placeholder="Code">
+    </div>
+    <div class="col-md-6">
+      <input type="text" id="LibRule" class="form-control" placeholder="Libellé">
+    </div>
+</div>
+<div class="row row-combo">
+    <div class="col-md-6">
+      @(Html.Kendo().ComboBox()
+        .Name("cbx_TypeRule")
+        .Placeholder("-- Choisir un type --")
+        .BindTo(new List<SelectListItem>() {
+              new SelectListItem() {
+                Text = "Cohérence", Value = "coherence"
+              },
+              new SelectListItem() {
+                Text = "Conformité", Value = "conformite"
+              }
+              })
+            .HtmlAttributes(new { style = "width: 100%" })
+        )
+    </div>
+    <div class="col-md-6">
+      <input type="text" id="RangeRule" class="form-control" placeholder="Portée">
+    </div>
+</div>
+<div class="row row-combo">
+    <div class="col-md-6">    
+    @(Html.Kendo().ComboBox()
+        .Name("cbx_Exercice")
+        .Placeholder("-- Choisir un Exercice --")
+        .BindTo(new List<SelectListItem>() {
+              new SelectListItem() {
+                Text = "2015", Value = "2015"
+              },
+              new SelectListItem() {
+                Text = "2016", Value = "2016"
+              },
+              new SelectListItem() {
+                Text = "2017", Value = "2017"
+              },
+              new SelectListItem() {
+                Text = "2018", Value = "2018"
+              },
+              new SelectListItem() {
+                Text = "2019", Value = "2019"
+              },
+              new SelectListItem() {
+                Text = "2020", Value = "2020"
+              },
+              new SelectListItem() {
+                Text = "2021", Value = "2021"
+              },
+              new SelectListItem() {
+                Text = "2022", Value = "2022"
+              },
+              new SelectListItem() {
+                Text = "2023", Value = "2023"
+              },
+              new SelectListItem() {
+                Text = "2024", Value = "2024"
+              },
+              new SelectListItem() {
+                Text = "2025", Value = "2025"
+              },
+              new SelectListItem() {
+                Text = "2026", Value = "2026"
+              }
+             })
+            .HtmlAttributes(new { style = "width: 100%" })
+        )
+    </div>
+    <div class="col-md-6">
+      @(Html.Kendo().MultiSelect()
+        .Name("cbx_report")
+        .Placeholder("-- Choisir un rapport --")
+        .DataTextField("LibReport")
+        .DataValueField("IdReport")
+        .Filter(FilterType.Contains)
+        .MaxSelectedItems(2)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                read.Action("Report_GetAll", "RuleBased");
+            }).ServerFiltering(true);
+        })
+            .HtmlAttributes(new { style = "width: 100%" })
+        )
+    </div>
+</div>
+
+
+<div class="row">
+    <kendo-button class="btn-success k-button submit-form" onclick="saveActionForm()" style="color:white;font-weight:bold"><span>Sauvegarder</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    <kendo-button id="bt-cancel" class="btn-warning k-button submit-form" onclick="cancel()" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+</div>
+</form>
+
+<span id="notification" style="display:none;"></span>
+
+<script id="successTemplate" type="text/x-kendo-template">
+    <div class="upload-success">
+        <img src="../../Images/success-icon.png" />
+        <h3>#= message #</h3>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var afterEditStatement = "";
+    var _oparator = ["diff", "equal", "issame", "checkType", "checkRangeData", "ncol", "regex", "ordercol"];
+    var cbx_report;
+    var cbx_TypeRule;
+    var cbx_Exercice;
+    var RuleId;
+    var LibRule;
+    var RangeRule;
+
+    function IsNullOrEmptyOrUdf(s) {
+        if ((s != "") && (s != " ") && (s != null) && (typeof s !== 'undefined')) return true;
+        else return false;
+    }
+    function IsValidForm() {
+        cbx_report = $("#cbx_report").val();
+        cbx_TypeRule = $("#cbx_TypeRule").val();
+        cbx_Exercice = $("#cbx_Exercice").val();
+        RuleId = $("#RuleId").val();
+        LibRule = $("#LibRule").val();
+        RangeRule = $("#RangeRule").val();
+        var boolValid = false;
+        if (IsNullOrEmptyOrUdf(cbx_report) && IsNullOrEmptyOrUdf(cbx_TypeRule) && IsNullOrEmptyOrUdf(cbx_Exercice) && IsNullOrEmptyOrUdf(RuleId) && IsNullOrEmptyOrUdf(LibRule)) boolValid = true;
+        return boolValid;
+    }
+    function saveActionForm() {
+        var notification = $("#notification").kendoNotification({
+            position: {
+                pinned: true,
+                top: 30,
+                right: 30
+            },
+            autoHideAfter: 3000,
+            stacking: "down",
+            templates: [{
+                type: "upload-success",
+                template: $("#successTemplate").html()
+            }]
+
+        }).data("kendoNotification");
+        if (IsValidForm()) {
+            $.ajax({
+                type: 'POST',
+                url: '/RuleBased/SaveRules',
+                data: JSON.stringify({ RuleId: RuleId, LibRule: LibRule, RangeRule: RangeRule, Idreport: cbx_report, typerule: cbx_TypeRule, execice: cbx_Exercice }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response != null) {
+                        var customMessage = 'La règle ' + response.data + ' a été enregistré avec succès';
+                        notification.show({
+                            message: customMessage
+                        }, "upload-success");
+
+                        cancel();
+                    }
+                    else {
+                        console.log("echec de l'enregistrement");
+                    }
+
+                },
+                failure: function (response) {
+                    alert("erreur opération d'enregistrement");
+                }
+            });
+        }
+        else alert("Remplir tous les champs");
+    }
+    function cancel() {
+        $("#cbx_report").data('kendoMultiSelect').value("");
+        $("#cbx_TypeRule").data('kendoComboBox').value("");
+        $("#cbx_Exercice").data('kendoComboBox').value("");
+        $("#RuleId").val("");
+        $("#LibRule").val("");
+        $("#RangeRule").val("");
+    } 
+</script>
+
+
+<style>
+    .row-combo {
+        margin-bottom: 10px;
+    }
+    .submit-form {
+        float: right;
+        margin-right: 10px;
+    }
+    .k-notification-upload-success.k-group {
+        background: rgba(0%,60%,0%,.7);
+        color: #fff;
+    }
+
+    .k-notification-upload-success.k-group {
+        background: rgba(0%,60%,0%,.7);
+        color: #fff;
+    }
+    .upload-success {
+        width: 240px;
+        height: 100px;
+        padding: 0 30px;
+        line-height: 100px;
+    }
+    .upload-success h3 {
+        font-size: 1.7em;
+        font-weight: normal;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .upload-success img {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+</style>

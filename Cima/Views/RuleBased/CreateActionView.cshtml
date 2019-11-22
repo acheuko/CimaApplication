@@ -1,0 +1,390 @@
+﻿@{
+    ViewBag.Title = "CreateActionView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Creation d'une action</h2>
+
+
+
+
+<form>
+<div class="row row-combo">    
+    <div class="col-md-6">
+      <input type="text" id="ActionId" class="form-control" placeholder="Code">
+    </div>
+    <div class="col-md-6">
+      <input type="text" id="LibAction" class="form-control" placeholder="Libellé">
+    </div>
+</div>
+  <div class="row row-combo">
+    <div class="col-md-6">
+      @(Html.Kendo().ComboBox()
+        .Name("cbx_rule")
+        .Placeholder("-- Choisir une règle --")
+        .DataTextField("LibRule")
+        .DataValueField("IdRule")
+        .Suggest(true)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                read.Action("Rule_GetAll", "RuleBased");
+            });
+        })
+            .HtmlAttributes(new { style = "width: 100%" })
+    )
+    </div>
+    <div class="col-md-6">
+      @(Html.Kendo().ComboBox()
+        .Name("cbx_report")
+        .Placeholder("-- Choisir un rapport --")
+        .DataTextField("ReportId")
+        .DataValueField("IdReport")
+        .Suggest(true)
+        .Filter(FilterType.Contains)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                read.Action("Report_GetAll", "RuleBased").Data("getReportsByRuleId");
+            }).ServerFiltering(true);
+        }).Enable(false)
+            .HtmlAttributes(new { style = "width: 100%" })
+            .AutoBind(false)
+            .CascadeFrom("cbx_rule")
+    )
+    </div>
+  </div>
+<div class="row row-combo">
+    <div class="col-md-6">
+      @(Html.Kendo().ComboBox()
+        .Name("cbx_operator")
+        .Placeholder("-- Choisir un opérateur --")
+        .BindTo(new List<SelectListItem>() {
+              new SelectListItem() {
+                Text = "Ecart", Value = "diff"
+              },
+              new SelectListItem() {
+                Text = "Egalité", Value = "equal"
+              },
+              new SelectListItem() {
+                Text = "Valeur identique", Value = "issame"
+              },
+              new SelectListItem() {
+                Text = "Type de données", Value = "checkType"
+              },
+              new SelectListItem() {
+                Text = "Intervalle de données", Value = "checkRangeData"
+              },
+              new SelectListItem() {
+                Text = "nombre de colonnes", Value = "ncol"
+              },
+              new SelectListItem() {
+                Text = "Format de données", Value = "regex"
+              },
+              new SelectListItem() {
+                Text = "Numéro de colonne", Value = "ordercol"
+              }
+                          })
+            .HtmlAttributes(new { style = "width: 100%" })
+            .Events(e => e.Change("processOperator"))
+            .Events(e => e.Open("stateAfterEditStatement"))
+    )
+    </div>
+    <div class="col-md-6">
+      @(Html.Kendo().ComboBox()
+        .Name("cbx_column")
+        .Placeholder("-- Choisir une colonne --")
+        .DataTextField("Name")
+        .DataValueField("IdDataColumn")
+        .Suggest(true)
+        .Filter(FilterType.Contains)
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                read.Action("DataColumn_GetAll", "RuleBased").Data("getColumnsByReport");
+            }).ServerFiltering(true);
+        }).Enable(false)
+            .HtmlAttributes(new { style = "width: 100%" })
+            .AutoBind(false)
+            .CascadeFrom("cbx_report")
+            .Events(e => e.Change("processColumn"))
+    )
+    </div>
+  </div>
+<div class="row row-combo">    
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="StatementTextarea">Opération</label>
+        <textarea class="form-control" id="Statement" rows="3" readonly></textarea>
+      </div>
+        
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="DetailActionTextarea">Détails</label>
+        <textarea class="form-control" id="DetailAction" rows="3"></textarea>
+      </div>
+        
+    </div>
+</div>
+<div class="row row-combo" id="hiddenRegex">    
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="StatementTextarea">Expression régulière</label>
+        <input class="form-control" type="text" id="regexdata">
+      </div>
+        
+    </div>
+    <div class="col-md-6">
+      
+    </div>
+</div>
+<div class="row row-combo">    
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="DetailActionTextarea">Précision</label>
+            <input type="number" id="Accurency" class="form-control" min="0" max="1000" value="0">
+        </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="DetailActionTextarea">Seuil</label>
+        <input type="number" id="Treshold" class="form-control" min="0" max="10" value="0">
+      </div>
+    </div>
+</div>
+<div class="row">
+    
+    
+    <kendo-button class="btn-success k-button submit-form" onclick="saveActionForm()" style="color:white;font-weight:bold"><span>Sauvegarder</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    <button class="btn btn-secondary submit-form" onclick="refresh()" type="button">Réinitialiser</button>
+    <kendo-button id="bt-cancel" class="btn-warning k-button submit-form" onclick="cancel()" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+</div>
+</form>
+
+<span id="notification" style="display:none;"></span>
+
+<script id="successTemplate" type="text/x-kendo-template">
+    <div class="upload-success">
+        <img src="../../Images/success-icon.png" />
+        <h3>#= message #</h3>
+    </div>
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#hiddenRegex").hide();
+    });
+    var afterEditStatement = "";
+    var _oparator = ["diff", "equal", "issame", "checkType", "checkRangeData", "ncol", "regex", "ordercol"];
+    var cbx_column;
+    var cbx_report;
+    var cbx_operator;
+    var cbx_rule;
+    var ActionId;
+    var LibAction;
+    var Statement;
+    var DetailAction;
+    var Accurency;
+    var Treshold,
+        regexdata = "";
+
+    function stateAfterEditStatement() {
+        afterEditStatement = $("#Statement").val();
+    }
+    function IsNullOrEmptyOrUdf(s) {
+        if ((s != "") && (s != " ") && (s != null) && (typeof s !== 'undefined')) return true;
+        else return false;
+    }
+    function checkifExist(tab, str) {
+        var bool = false;
+        tab.forEach(function (element) {
+            if (str.indexOf(element) !== -1) bool = true;
+        });
+        return bool;
+    }
+    function checkifRegexOpExist(str) {
+        var bool = false;
+        if (str.indexOf("regex") !== -1) bool = true;
+        return bool;
+    }
+    function extractOperator(tab, str) {
+        var op = "";
+        tab.forEach(function (element) {
+            if (str.indexOf(element) !== -1) op = element;
+        });
+        return op;
+    }
+    function getTemplateColumn(col) {
+        var reportObj = $("#cbx_report");
+        var report_text = reportObj.data('kendoComboBox').text();
+        var template = report_text + '(' + col + ')';
+        return template;
+    }
+    function getReportsByRuleId() {
+        return {
+            ruleid: $("#cbx_rule").val(),
+        };
+    } 
+    function getColumnsByReport() {
+        return {
+            reportid: $("#cbx_report").val(),
+        };
+    }
+    function IsValidForm() {
+        cbx_column = $("#cbx_column").val();
+        cbx_report = $("#cbx_report").val();
+        cbx_operator = $("#cbx_operator").val();
+        cbx_rule = $("#cbx_rule").val();
+        ActionId = $("#ActionId").val();
+        LibAction = $("#LibAction").val();
+        Statement = $("#Statement").val();
+        DetailAction = $("#DetailAction").val();
+        Accurency = $("#Accurency").val();
+        Treshold = $("#Treshold").val();
+        regexdata = $("#regexdata").val();
+        var boolValid = false;
+        if (IsNullOrEmptyOrUdf(ActionId) && IsNullOrEmptyOrUdf(LibAction) && IsNullOrEmptyOrUdf(Statement) && IsNullOrEmptyOrUdf(cbx_operator) && IsNullOrEmptyOrUdf(cbx_column)) boolValid = true;
+        return boolValid;
+    }
+    function processOperator() {
+        var operator = $("#cbx_operator").val();
+        var statement = $("#Statement").val();
+        if (IsNullOrEmptyOrUdf(statement)) {
+            //verifie s'il contient deja un opérateuravec indexof -> alert
+            if (checkifExist(_oparator, statement)) alert('Un opérateur existe deja veuillez réinitialiser');
+            else {
+                //verifie si la chaine contient un préfixe regex du préfixe
+                $("#Statement").val(statement + operator);
+                //$("#regexdata").val("");
+                //if regex active le champ de valeur
+                if (operator == "regex") $("#hiddenRegex").show();
+                else $("#hiddenRegex").hide();
+            }
+        }
+    }
+    function processColumn() {
+        var colonne = $("#cbx_column").val();
+        var colObj = $("#cbx_column");
+        var colonne_text = colObj.data('kendoComboBox').text();
+        var statement = $("#Statement").val();
+        var operateur = extractOperator(_oparator, statement)
+        if (IsNullOrEmptyOrUdf(statement)) {
+            if (IsNullOrEmptyOrUdf(operateur)) {
+                var postfixe = statement.split(operateur);
+                if (IsNullOrEmptyOrUdf(postfixe[1])) alert('La règle est déjà complète veuillez réinitialiser');
+                else $("#Statement").val(statement + getTemplateColumn(colonne_text));
+            }
+            else alert("Vous ne pouvez pas ajouter une colonne à la suite d'une autre");
+        }
+        else $("#Statement").val(getTemplateColumn(colonne_text));
+    }
+    function saveActionForm() {
+        var notification = $("#notification").kendoNotification({
+            position: {
+                pinned: true,
+                top: 30,
+                right: 30
+            },
+            autoHideAfter: 3000,
+            stacking: "down",
+            templates: [{
+                type: "upload-success",
+                template: $("#successTemplate").html()
+            }]
+        }).data("kendoNotification");
+
+        if (IsValidForm()) {
+            // On concatène l'action à l'expression 
+            if (checkifRegexOpExist(Statement)) Statement = Statement + regexdata;
+            $.ajax({
+                type: 'POST',
+                url: '/RuleBased/SaveAction',
+                data: JSON.stringify({ ActionId: ActionId, LibAction: LibAction, Statement: Statement, DetailAction: DetailAction, Accurency: Accurency, Treshold: Treshold, IdRule: cbx_rule, Operator: cbx_operator }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response != null) {
+                        var customMessage = "L action " + response.data + " a été enregistré avec succès";
+                        notification.show({
+                            message: customMessage
+                        }, "upload-success");
+
+                        cancel();
+                    }
+                    else {
+                        console.log("echec de l'enregistrement");
+                    }
+
+                },
+                failure: function (response) {
+                    alert("erreur opération d'enregistrement");
+                }
+            });
+        }
+        else alert("Remplir tous les champs");
+    }
+    function cancel() {
+        $("#cbx_column").data('kendoComboBox').value("");
+        $("#cbx_report").data('kendoComboBox').value("");
+        $("#cbx_operator").data('kendoComboBox').value("");
+        $("#cbx_rule").data('kendoComboBox').value("");
+        $("#ActionId").val("");
+        $("#LibAction").val("");
+        $("#Statement").val("");
+        $("#DetailAction").val("");
+        $("#Accurency").val(0);
+        $("#Treshold").val(0);
+        $("#hiddenRegex").val(0);
+        $("#hiddenRegex").hide();
+    } 
+    function refresh() {
+        $("#cbx_column").data('kendoComboBox').value("");
+        $("#cbx_report").data('kendoComboBox').value("");
+        $("#cbx_operator").data('kendoComboBox').value("");
+        $("#cbx_rule").data('kendoComboBox').value("");
+        $("#Statement").val("");
+        $("#hiddenRegex").val(0);
+        $("#hiddenRegex").hide();
+    }
+</script>
+
+
+<style>
+    .row-combo {
+        margin-bottom: 10px;
+    }
+    .submit-form {
+        float: right;
+        margin-right: 10px;
+    }
+    .k-notification-upload-success.k-group {
+        background: rgba(0%,60%,0%,.7);
+        color: #fff;
+    }
+
+    .k-notification-upload-success.k-group {
+        background: rgba(0%,60%,0%,.7);
+        color: #fff;
+    }
+    .upload-success {
+        width: 240px;
+        height: 100px;
+        padding: 0 30px;
+        line-height: 100px;
+    }
+    .upload-success h3 {
+        font-size: 1.7em;
+        font-weight: normal;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .upload-success img {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+</style>

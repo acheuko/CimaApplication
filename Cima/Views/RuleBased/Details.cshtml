@@ -1,0 +1,50 @@
+﻿@model Cima.Models.TblRule
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>TblRule</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.RuleId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.RuleId)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.LibRule)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.LibRule)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.TypeRule)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.TypeRule)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.RangeRule)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.RangeRule)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Exercice)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Exercice)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.IdRule }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

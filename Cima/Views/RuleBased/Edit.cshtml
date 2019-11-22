@@ -1,0 +1,69 @@
+﻿@model Cima.Models.TblRule
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>TblRule</legend>
+
+        @Html.HiddenFor(model => model.IdRule)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RuleId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RuleId)
+            @Html.ValidationMessageFor(model => model.RuleId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LibRule)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LibRule)
+            @Html.ValidationMessageFor(model => model.LibRule)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TypeRule)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TypeRule)
+            @Html.ValidationMessageFor(model => model.TypeRule)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RangeRule)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RangeRule)
+            @Html.ValidationMessageFor(model => model.RangeRule)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Exercice)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Exercice)
+            @Html.ValidationMessageFor(model => model.Exercice)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
