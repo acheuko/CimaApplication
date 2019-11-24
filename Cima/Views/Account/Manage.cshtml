@@ -1,32 +1,78 @@
-﻿@model Cima.Models.LocalPasswordModel
-@{
-    ViewBag.Title = "Manage Account";
+﻿@{
+    ViewBag.Title = "MenuItem";
 }
 
-<hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
-</hgroup>
+<h2>Liste des menus</h2>
 
-<p class="message-success">@ViewBag.StatusMessage</p>
+<div class="row">
 
-<p>You're logged in as <strong>@User.Identity.Name</strong>.</p>
+    <div id="menutable" style="width:100%; ">
 
-@if (ViewBag.HasLocalPassword)
-{
-    @Html.Partial("_ChangePasswordPartial")
-}
-else
-{ 
-    @Html.Partial("_SetPasswordPartial")
-}
+        @(Html.Kendo().Grid<Cima.Models.MenuItem>()
+            .Name("menuItems")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.MenuId);
+                columns.Bound(c => c.Name).Title("Libelle");
+                columns.Bound(c => c.Controller).Title("Controlleur");
+                columns.Bound(c => c.Action).Title("Vue");
+                columns.ForeignKey(c => c.Icon, (System.Collections.IEnumerable)ViewBag.Icons, "IconValue", "Libelle").Title("Icône");
+                columns.Bound(c => c.ParamUrl).Title("Paramètre");
+                columns.ForeignKey(c => c.MenuParentId, (System.Collections.IEnumerable)ViewBag.MenusParent, "MenuId", "Name").Title("Menu Parent");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250);
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                .ToolBar(toolbar => toolbar.Create().Text("Nouveau"))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .Events(e => e.Edit("onGridEdit"))
+                .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.MenuId);
+                        model.Field(m => m.MenuId).Editable(false);
+                        model.Field(p => p.Controller).DefaultValue("");
+                        model.Field(p => p.Action).DefaultValue("");
+                        model.Field(p => p.MenuParentId).DefaultValue(null);
+                        })
+                    .Create(update => update.Action("MenuItem_Create", "MenuItem"))
+                    .Read(read => read.Action("MenuItem_Read", "MenuItem"))
+                    .Update(update => update.Action("MenuItem_Update", "MenuItem"))
+                    .Destroy(update => update.Action("MenuItem_Delete", "MenuItem"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
 
-<section id="externalLogins">
-    @Html.Action("RemoveExternalLogins")
 
-    <h3>Add an external login</h3>
-    @Html.Action("ExternalLoginsList", new { ReturnUrl = ViewBag.ReturnUrl })
-</section>
+    </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    <script type="text/javascript">
+        function onGridEdit(e) {
+            if (e.model.isNew()) {
+                e.container.kendoWindow("title", "Créer un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Enregistrer";
+            } else {
+                e.container.kendoWindow("title", "Modifier un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Modifier";
+            }
+        }
+    </script>
+
+</div>
+
+<style>
+    #menuItems .k-grid-header .k-header {
+        background-color: #428bca;
+        border-color: #169F85;
+    }
+
+        #menuItems .k-grid-header .k-header a {
+            color: #fff;
+        }
+</style>

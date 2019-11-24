@@ -21,5 +21,19 @@ namespace Cima.AppContext
         public DbSet<ProfilUser> ProfilUsers { get; set; }
 
         public DbSet<ProfilPrivilege> ProfilPrivileges{ get; set; }
+
+        public DbSet<Icon> Icons { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Campaign> Campaigns { get; set; }
+
+        public DbSet<CampaignFile> CampaignFiles { get; set; }
+
+        public DbSet<CampaignControl> CampaignControls { get; set; }
+
+        public DbSet<CampaignCampaignControl> CampaignCampaignControl { get; set; }
+
+        public DbSet<CampaignCampaignFile> CampaignCampaignFile { get; set; }
     }
 }

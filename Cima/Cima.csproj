@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -22,6 +23,10 @@
     <IISExpressUseClassicPipelineMode />
     <Use64BitIISExpress />
     <UseGlobalApplicationHostFile />
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerLaunchUrl>http://{ServiceIPAddress}</DockerLaunchUrl>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -255,6 +260,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
     <Compile Include="Controllers\FiltreCriteriaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -264,7 +270,6 @@
     <Compile Include="Controllers\ProfilUserController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UploadFileController.cs" />
-    <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -273,8 +278,19 @@
     <Compile Include="Helpers\ExcelExportHelper.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Helpers\Profil.cs" />
+    <Compile Include="Migrations\201909071716456_InitialCreate.cs" />
+    <Compile Include="Migrations\201909071716456_InitialCreate.Designer.cs">
+      <DependentUpon>201909071716456_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BatchModel.cs" />
+    <Compile Include="Models\Campaign.cs" />
+    <Compile Include="Models\CampaignCampaignControl.cs" />
+    <Compile Include="Models\CampaignCampaignFile.cs" />
+    <Compile Include="Models\CampaignControl.cs" />
+    <Compile Include="Models\CampaignFile.cs" />
+    <Compile Include="Models\Icon.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\MenuItem.cs" />
     <Compile Include="Models\ProfilPrivilege.cs" />
@@ -298,13 +314,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Repository\IREPO_UploadFile.cs" />
+    <Compile Include="Repository\REPO_Campaign.cs" />
+    <Compile Include="Repository\REPO_CampaignCampaignControl.cs" />
+    <Compile Include="Repository\REPO_CampaignCampaignFile.cs" />
+    <Compile Include="Repository\REPO_CampaignFile.cs" />
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
+    <Compile Include="Repository\REPO_Icon.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
     <Compile Include="Repository\REPO_MenuItems.cs" />
     <Compile Include="Repository\REPO_ProfilUser.cs" />
     <Compile Include="Repository\REPO_ProfilePrivilege.cs" />
     <Compile Include="Repository\REPO_Register.cs" />
     <Compile Include="Repository\REPO_UploadFile.cs" />
+    <Compile Include="Repository\REPO_User.cs" />
     <Compile Include="Repository\Shared\AbstractRepository.cs" />
     <Compile Include="Repository\Shared\BaseRepository.cs" />
     <Compile Include="Repository\Shared\SqlBaseRepository.cs" />
@@ -321,6 +343,7 @@
     <Compile Include="Repository\TestData\_REPO_SalaireEntiteAdmin.cs" />
     <Compile Include="Repository\TestData\_REPO_TaxDeductionGraph.cs" />
     <Compile Include="Repository\TestData\_REPO_TopFiveEntiteAdmin.cs" />
+    <Compile Include="ViewModel\CampaignViewModel.cs" />
     <Compile Include="ViewModel\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -602,6 +625,10 @@
     <Content Include="Content\kendo\images\kendoui.ttf" />
     <Content Include="Content\kendo\images\kendoui.woff" />
     <Content Include="Views\Shared\EditorTemplates\GridForeignKey.cshtml" />
+    <None Include="Dockerfile" />
+    <None Include=".dockerignore">
+      <DependentUpon>Dockerfile</DependentUpon>
+    </None>
     <None Include="Properties\PublishProfiles\rasom_dashboard.pubxml" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -4488,7 +4515,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Shared\_oldLayout.cshtml" />
     <Content Include="Scripts\kendo\kendo.angular.min.js.map" />
     <Content Include="Scripts\kendo\kendo.autocomplete.min.js.map" />
     <Content Include="Scripts\kendo\kendo.binder.min.js.map" />
@@ -5425,14 +5451,20 @@
     <Content Include="Views\Shared\_FiltreCriteria.cshtml" />
     <Content Include="Views\Report\Report.cshtml" />
     <Content Include="Views\MenuItem\MenuItem.cshtml" />
-    <Content Include="Views\MenuItem\MenuItemEditor.cshtml" />
     <Content Include="Views\ProfilUser\ProfilUser.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\IconForeignKey.cshtml" />
+    <Content Include="Views\Campaign\Campaign.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201909071716456_InitialCreate.resx">
+      <DependentUpon>201909071716456_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -5462,6 +5494,14 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
