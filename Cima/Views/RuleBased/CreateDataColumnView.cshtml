@@ -73,12 +73,56 @@
 
 
 <div class="row">
-    <kendo-button class="btn-success k-button submit-form" onclick="saveDataColumnForm()" style="color:white;font-weight:bold"><span>Sauvegarder</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
     <kendo-button id="bt-cancel" class="btn-warning k-button submit-form" onclick="cancel()" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    <kendo-button class="btn-success k-button submit-form" onclick="saveDataColumnForm()" style="color:white;font-weight:bold"><span>Sauvegarder</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    
 </div>
 </form>
 
 <span id="notification" style="display:none;"></span>
+
+
+<br />
+<br />
+
+
+<h2>Liste des états de gestion</h2>
+@(Html.Kendo().Grid<Cima.Models.TblReport>()
+            .Name("Report")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.ReportId).Title("Code");
+                columns.Bound(c => c.LibReport).Title("Libelle");
+                columns.Bound(c => c.DetailReport).Title("Détails");
+                columns.Bound(c => c.Nbcolumn).Title("Nombre de colonnes");
+                columns.Bound(c => c.Periodicite).Title("Périodicité");
+                columns.Bound(c => c.DateLimite).Title("Date limite").Format("{0: yyyy-MM-dd}");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250).Title("Actions");
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.IdReport);
+                        model.Field(m => m.ReportId).Editable(false);
+                        model.Field(m => m.LibReport).DefaultValue("");
+                        model.Field(m => m.DateLimite).DefaultValue(DateTime.Now);
+                        })
+                    .Read(read => read.Action("Report_Read", "RuleBased"))
+                    .Update(update => update.Action("TblReport_Update", "RuleBased"))
+                    .Destroy(update => update.Action("Delete_Report", "RuleBased"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
 
 <script id="successTemplate" type="text/x-kendo-template">
     <div class="upload-success">

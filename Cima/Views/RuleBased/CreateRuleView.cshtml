@@ -102,12 +102,54 @@
 
 
 <div class="row">
-    <kendo-button class="btn-success k-button submit-form" onclick="saveActionForm()" style="color:white;font-weight:bold"><span>Sauvegarder</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
     <kendo-button id="bt-cancel" class="btn-warning k-button submit-form" onclick="cancel()" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    <kendo-button class="btn-success k-button submit-form" onclick="saveActionForm()" style="color:white;font-weight:bold"><span>Sauvegarder</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    
 </div>
 </form>
 
 <span id="notification" style="display:none;"></span>
+<br />
+<br />
+
+<h2>Liste des actions</h2>
+
+@(Html.Kendo().Grid<Cima.Models.TblAction>()
+            .Name("Actions")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.ActionId).Title("Code");
+                columns.Bound(c => c.LibAction).Title("Libelle");
+                columns.Bound(c => c.DetailAction).Title("Détails");
+                columns.Bound(c => c.Operator).Title("Opération");
+                columns.ForeignKey(c => c.IdRule, (System.Collections.IEnumerable)ViewBag.Rules, "IdRule", "RuleId").Title("Rêgle");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250).Title("Actions");
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                //.ToolBar(toolbar => toolbar.Create().Text("Nouveau"))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.IdAction);
+                        model.Field(m => m.ActionId).Editable(false);
+                        model.Field(m => m.LibAction).DefaultValue("");
+                        model.Field(r => r.IdRule).DefaultValue(null);
+                        })
+                    .Read(read => read.Action("Action_Read", "RuleBased"))
+                    .Update(update => update.Action("Update", "RuleBased"))
+                    .Destroy(update => update.Action("Delete_ActionRule", "RuleBased"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
 
 <script id="successTemplate" type="text/x-kendo-template">
     <div class="upload-success">
