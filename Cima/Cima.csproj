@@ -277,6 +277,7 @@
     <Compile Include="Helpers\CsvExportHelper.cs" />
     <Compile Include="Helpers\ExcelExportHelper.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
+    <Compile Include="Helpers\PeriodeHelper.cs" />
     <Compile Include="Helpers\Profil.cs" />
     <Compile Include="Migrations\201909071716456_InitialCreate.cs" />
     <Compile Include="Migrations\201909071716456_InitialCreate.Designer.cs">
@@ -5454,6 +5455,7 @@
     <Content Include="Views\ProfilUser\ProfilUser.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\IconForeignKey.cshtml" />
     <Content Include="Views\Campaign\Campaign.cshtml" />
+    <Content Include="Views\Shared\CampaignUnavailable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

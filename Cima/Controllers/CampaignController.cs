@@ -37,11 +37,17 @@ namespace Cima.Controllers
 
 
         [Authorize(Roles = Profil.ADMIN)]
-        public ActionResult CreateCampaign(DateTime datedeb, DateTime datefin, string[] selectedCampaignFiles, string[] selectedCampaingControls, string optexhaustivite, string optcoherence, string optconformite)
+        public ActionResult CreateCampaign(DateTime datedeb, DateTime datefin, string[] selectedCampaignFiles, string[] selectedCampaingControls, 
+                                string optexhaustivite, string optcoherence, string optconformite,
+                                string annee, string periode, string libperiode)
         {
 
             Campaign c = new Campaign
             {
+                Year = annee,
+                Periode = periode,
+                LibPeriodeCourt = libperiode +" "+ annee,
+                LibPeriodeLong = PeriodeHelper.GetLibelleLong(libperiode, periode) +" "+ annee,
                 BeginDate = datedeb,
                 EndDate = datefin,
                 Status = "O",

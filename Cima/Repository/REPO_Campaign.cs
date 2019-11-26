@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Web.Http.ModelBinding;
 using Cima.AppContext;
 using Cima.Models;
@@ -27,6 +29,9 @@ namespace Cima.Repository
             campaignControlRepository = (REPO_CampaignCampaignControl)unitOfWork.CampaignCampaignControlRepository;
         }
 
+        /**
+         * 
+         */
         public void SaveCampaignControl(int idCampaign, string[] CampaignControls, string optexhaustivite, string optcoherence, string optconformite)
         {
 
@@ -97,6 +102,35 @@ namespace Cima.Repository
                 }
 
             }
+        }
+
+        public ObservableCollection<Campaign> GetCampaignByStatus(string Status)
+        {
+            ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate FROM sysman.tblCampaign WHERE Status = @Status", sqlConnection))
+            {
+                sqlQuery.Parameters.AddWithValue("@Status", Status);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        while (sqlQueryResult.Read())
+                        {
+
+                            Campaign campaign = new Campaign()
+                            {
+                                CampaignId = sqlQueryResult.GetInt32(0),
+                                BeginDate = sqlQueryResult.GetDateTime(1),
+                                EndDate = sqlQueryResult.GetDateTime(2)
+                            };
+
+                            listcampaign.Add(campaign);
+                        }
+
+                    }
+            }
+
+            return listcampaign;
         }
     }
 }

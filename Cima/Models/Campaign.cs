@@ -19,6 +19,18 @@ namespace Cima.Models
 
        
         [Required]
+        public String Year { get; set; }
+
+        [Required]
+        public String Periode { get; set; }
+
+        [Required]
+        public String LibPeriodeCourt { get; set; }
+
+        [Required]
+        public String LibPeriodeLong { get; set; }
+
+        [Required]
         public DateTime BeginDate { get; set; }
 
         

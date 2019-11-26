@@ -24,6 +24,7 @@ namespace Cima.Controllers
         protected const string VER = "VER";
 
         private static readonly IREPO_UploadFile repoUploadFile = new REPO_UploadFile();
+        private static readonly REPO_Campaign repoCampaign = new REPO_Campaign();
 
         private string GetSessionCompanyId()
         {
@@ -42,6 +43,14 @@ namespace Cima.Controllers
         {
             if (Session["Profils"] !=  null && Session["Profils"].ToString() != "")
             {
+                //récupérer toutes les campagnes ouvertes
+                ObservableCollection<Campaign> listCampaign = repoCampaign.GetCampaignByStatus("O");
+
+                if(listCampaign.Count == 0) // pas de campagne ouverte
+                {
+                    return View("CampaignUnavailable");
+                }
+               
                 ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(GetSessionCompanyId());
 
                 return View("UploadFile", uploadingFiles);
