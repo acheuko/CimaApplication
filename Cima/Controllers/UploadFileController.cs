@@ -5,8 +5,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Collections.ObjectModel;
 using System.IO;
-using Kendo.Mvc.UI;
-using Kendo.Mvc.Extensions;
 using Cima.Models;
 using Cima.Repository;
 using System.Text;
@@ -25,6 +23,13 @@ namespace Cima.Controllers
 
         private static readonly IREPO_UploadFile repoUploadFile = new REPO_UploadFile();
         private static readonly REPO_Campaign repoCampaign = new REPO_Campaign();
+        private static readonly REPO_CampaignCampaignControl repoCampaignControl = new REPO_CampaignCampaignControl();
+        private static readonly REPO_ContratInterface repoContratInterface = new REPO_ContratInterface();
+
+        private static ObservableCollection<FichierRejete> fichierRejetes = new ObservableCollection<FichierRejete>();
+        private static List<string> listeFichiersRejetes = new List<string>();
+
+        private static List<string> FichiersRestants { get; set; }
 
         private string GetSessionCompanyId()
         {
@@ -44,15 +49,15 @@ namespace Cima.Controllers
             if (Session["Profils"] !=  null && Session["Profils"].ToString() != "")
             {
                 //récupérer toutes les campagnes ouvertes
-                ObservableCollection<Campaign> listCampaign = repoCampaign.GetCampaignByStatus("O");
+                ObservableCollection<Campaign> listCampaign = repoCampaign.GetCampaignByEndDate();
 
                 if(listCampaign.Count == 0) // pas de campagne ouverte
                 {
                     return View("CampaignUnavailable");
                 }
                
-                ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(GetSessionCompanyId());
-
+                ObservableCollection<UploadingFile> uploadingFiles = repoUploadFile.GetTmpFileNameByIdCompany(GetSessionCompanyId(), listCampaign[0].CampaignId);
+                ViewBag.CampaignList = listCampaign;
                 return View("UploadFile", uploadingFiles);
             }
 
@@ -64,15 +69,36 @@ namespace Cima.Controllers
          *  Copie des fichiers d'états dans le repertoire de chargement
          **/
         [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE + "," + Profil.ENTREPRISE_IARD + "," + Profil.ENTREPRISE_VIE)]
-        public JsonResult SaveFileToLanding()
+        public JsonResult SaveFileToLanding(int selectedCampaign)
         {
             String Status;
 
             // Get les fichiers dans le temporaire pour un IdCompany
             ObservableCollection<UploadingFile> Files = repoUploadFile.GetTmpFileByIdCompany(GetSessionCompanyId());
 
-            if(Files != null)
+            if(Files != null && Files.Count > 0)
             {
+
+                List<String> FichiersDeposes = CollectionToList(Files);
+                
+                // controle d'exhaustivite
+                if (!ControlerExhaustivite(selectedCampaign, FichiersRestants, FichiersDeposes))
+                {
+                    return Json(JSON_RESULT_FAILURE, JsonRequestBehavior.AllowGet);
+                }
+
+                // Controle de conformite
+                if (!ControlerConformite(selectedCampaign, Files))
+                {
+                    return Json(JSON_RESULT_FAILURE, JsonRequestBehavior.AllowGet);
+                }
+
+                // Controle de coherence
+                if (!ControlerCoherence(selectedCampaign))
+                {
+                    return Json(JSON_RESULT_FAILURE, JsonRequestBehavior.AllowGet);
+                }
+
                 string path = ConfigurationManager.AppSettings["LandingPath"];
 
                 // génération du numéro de batch
@@ -81,30 +107,39 @@ namespace Cima.Controllers
                 // copie des fichiers PFN et VER dans le repertoire Landing
                 foreach (var f in Files)
                 {
-                    string filename = batchNumber + "_" + f.FileName;
-                    string pfnFullPath = path + "\\" + filename;
-                    try
+                    // on déplace le fichier non rejeté
+                    if (!listeFichiersRejetes.Contains(f.FileName))
                     {
-                        using (var pfn = new FileStream(pfnFullPath, FileMode.Create, FileAccess.Write))
+                        string filename = batchNumber + "_" + f.FileName;
+                        string pfnFullPath = path + "\\" + filename;
+                        try
                         {
+                            using (var pfn = new FileStream(pfnFullPath, FileMode.Create, FileAccess.Write))
+                            {
 
-                            string verFullPath = path + "\\" + filename.Replace(PFN, VER);
+                                string verFullPath = path + "\\" + filename.Replace(PFN, VER);
 
-                            FileStream ver = new FileStream(verFullPath, FileMode.Create, FileAccess.Write);
-                            ver.Close();
+                                FileStream ver = new FileStream(verFullPath, FileMode.Create, FileAccess.Write);
+                                ver.Close();
 
-                            using (var sw = new StreamWriter(verFullPath))
-                                sw.Write(f.FileSize);
+                                using (var sw = new StreamWriter(verFullPath))
+                                    sw.Write(f.FileSize);
 
-                            pfn.Write(f.File, 0, f.File.Length);
+                                pfn.Write(f.File, 0, f.File.Length);
 
+                            }
                         }
-                    }
-                    catch(Exception e)
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error Copy files Generated. Details: " + e.ToString());
+                            throw e;
+                        }
+                    }else
                     {
-                        Console.WriteLine("Error Copy files Generated. Details: " + e.ToString());
-                        throw e;
-                    } 
+                        // On enlève de la collection le fichier rejeté.
+                        Files.Remove(f);
+                    }
+                    
                 }
 
                 // création du batch
@@ -114,7 +149,8 @@ namespace Cima.Controllers
                     {
                         BatchNumber = batchNumber,
                         IdCompany = GetSessionCompanyId(),
-                        NbFiles = Files.Count
+                        NbFiles = Files.Count,
+                        IdCampagne = selectedCampaign                        
                     };
                     repoUploadFile.SaveBatchFiles(batchFiles);
                     Status = JSON_RESULT_SUCCESS;
@@ -137,8 +173,8 @@ namespace Cima.Controllers
         /**
          * Sauvegarde des fichiers d'état dans la table temporaire
          **/ 
-        [Authorize(Roles = Profil.ENTREPRISE + "," + Profil.ENTREPRISE_IARD + "," + Profil.ENTREPRISE_VIE)]
-        public JsonResult UploadingFile(string fileName, int filesize, string file)
+        [Authorize(Roles = Profil.ADMIN + "," + Profil.ENTREPRISE + "," + Profil.ENTREPRISE_IARD + "," + Profil.ENTREPRISE_VIE)]
+        public JsonResult UploadingFile(string fileName, int filesize, string file, int idCampagne)
         {
 
             String Status;
@@ -155,6 +191,7 @@ namespace Cima.Controllers
                     FileMask = fileMask,
                     FileSize = filesize,
                     IdCompany = GetSessionCompanyId(),
+                    IdCampagne = idCampagne,
                     UserId = Session["Username"].ToString(),
                     File = Encoding.ASCII.GetBytes(file)
                 };
@@ -239,6 +276,135 @@ namespace Cima.Controllers
                 StatusReponse = JSON_RESULT_SUCCESS;
 
             return Json(StatusReponse, JsonRequestBehavior.AllowGet);
+        }
+
+        
+
+        public JsonResult GetCampaignReport(string selectedCampaign)
+        {
+            ObservableCollection<String> FichiersAttendus = repoCampaign.GetCampaignFileById(selectedCampaign);
+
+            ObservableCollection<String> FichiersEnvoyes = repoUploadFile.GetFileByCompanyAndCampagneId(selectedCampaign, GetSessionCompanyId());
+
+            FichiersRestants = FichiersAttendus.Except(FichiersEnvoyes).ToList();
+            
+            ObservableCollection<UploadingFile> FichiersTemporaires = repoUploadFile.GetTmpFileNameByIdCompany(GetSessionCompanyId(), Int32.Parse(selectedCampaign));
+
+            Dictionary<String, Object> response = new Dictionary<string, object>
+            {
+                ["fichiersAttendus"] = FichiersAttendus,
+                ["fichiersEnvoyes"] = FichiersEnvoyes,
+                ["fichiersRestants"] = FichiersRestants,
+                ["fichiersTemporaires"] = FichiersTemporaires
+            };
+           
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        private Boolean ControlerExhaustivite(int IdCampagne, List<string> FichiersRestants, List<String> FichiersDeposes)
+        {
+            var controlExhaustivite = repoCampaignControl.GetByCampaignIdAndControlType(IdCampagne, "E");
+
+            if(controlExhaustivite != null)
+            {
+                var list = FichiersRestants.Except(FichiersDeposes);
+
+                if (list != null && list.Count() > 0)
+                {
+                    foreach(string f in list)
+                    {
+                        FichierRejete fichierRejete = new FichierRejete
+                        {
+                            Filename = f,
+                            Reason = "Echec du contrôle d'exhaustivité"
+                        };
+                        fichierRejetes.Add(fichierRejete);
+                        listeFichiersRejetes.Add(f);
+                    }
+
+                    var blocking = controlExhaustivite[0];
+                    if (blocking == "Y")
+                    {
+                        return false;
+                    }
+                    else if(blocking == "N")
+                    {
+                        return true;
+                    }
+                }
+            }           
+
+            return true;
+        }
+
+        private Boolean ControlerConformite(int IdCampagne, ObservableCollection<UploadingFile> Files)
+        {
+            var controlConformite = repoCampaignControl.GetByCampaignIdAndControlType(IdCampagne, "CF");           
+
+            if (controlConformite != null && controlConformite.Count() > 0)
+            {
+                foreach (UploadingFile file in Files)
+                {
+                    var stringFromByteArray = Encoding.UTF8.GetString(file.File).Split('\n');
+                    var colonnesFichierDepose = stringFromByteArray[0].Split('|').ToList();
+
+                    var colonnesCI = repoContratInterface.GetByFileMask(file.FileMask);
+
+                    // récuperer la liste des colonnes qui sont dans le CI et non dans le fichier déposé
+                    var list = colonnesCI.Except(colonnesFichierDepose);
+
+                    if (list != null && list.Count() > 0)
+                    {
+                        FichierRejete fichierRejete = new FichierRejete
+                        {
+                            Filename = file.FileName,
+                            Reason = "Echec du contrôle de conformité"
+                        };
+                        fichierRejetes.Add(fichierRejete);
+                        listeFichiersRejetes.Add(file.FileName);
+
+                        var blocking = controlConformite[0];
+                        if (blocking == "Y")
+                        {
+                            return false;
+                        }
+                        else if (blocking == "N")
+                        {
+                            return true;
+                        }
+                    }
+
+                }               
+            }
+
+            return true;
+        }
+
+        private Boolean ControlerCoherence(int IdCampagne)
+        {
+            var controlCoherence = repoCampaignControl.GetByCampaignIdAndControlType(IdCampagne, "CH");
+
+            if (controlCoherence != null && controlCoherence.Count() > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private List<String> CollectionToList(ObservableCollection<UploadingFile> uploadFiles)
+        {
+            List<String> list = new List<string>();
+
+            if(uploadFiles != null)
+            {
+                foreach (UploadingFile f in uploadFiles)
+                {
+                    list.Add(f.FileMask);
+                }
+            }
+            
+            return list;
         }
 
     }

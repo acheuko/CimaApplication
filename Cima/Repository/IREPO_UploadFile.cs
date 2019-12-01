@@ -17,7 +17,9 @@ namespace Cima.Repository
 
         void SaveBatchFiles(BatchModel batchModel);
 
-        ObservableCollection<UploadingFile> GetTmpFileNameByIdCompany(string IdCompany);
+        ObservableCollection<UploadingFile> GetTmpFileNameByIdCompany(string IdCompany, int IdCampagne);
+
+        ObservableCollection<String> GetFileByCompanyAndCampagneId(string IdCampagne, string IdCompany);
 
         ObservableCollection<UploadingFile> GetTmpFileByIdCompany(string IdCopmpany);
     }

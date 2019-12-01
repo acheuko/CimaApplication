@@ -291,6 +291,8 @@
     <Compile Include="Models\CampaignCampaignFile.cs" />
     <Compile Include="Models\CampaignControl.cs" />
     <Compile Include="Models\CampaignFile.cs" />
+    <Compile Include="Models\ContratInterface.cs" />
+    <Compile Include="Models\FichierRejete.cs" />
     <Compile Include="Models\Icon.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\MenuItem.cs" />
@@ -319,6 +321,7 @@
     <Compile Include="Repository\REPO_CampaignCampaignControl.cs" />
     <Compile Include="Repository\REPO_CampaignCampaignFile.cs" />
     <Compile Include="Repository\REPO_CampaignFile.cs" />
+    <Compile Include="Repository\REPO_ContratInterface.cs" />
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
     <Compile Include="Repository\REPO_Icon.cs" />
     <Compile Include="Repository\REPO_Login.cs" />

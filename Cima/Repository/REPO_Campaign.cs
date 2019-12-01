@@ -29,6 +29,37 @@ namespace Cima.Repository
             campaignControlRepository = (REPO_CampaignCampaignControl)unitOfWork.CampaignCampaignControlRepository;
         }
 
+        public ObservableCollection<Campaign> GetCampaigns()
+        {
+            ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate, LibPeriodeLong, Year, Periode FROM sysman.tblCampaign ORDER BY CreationDate DESC", sqlConnection))
+            {
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        while (sqlQueryResult.Read())
+                        {
+                            Campaign campaign = new Campaign()
+                            {
+                                CampaignId = sqlQueryResult.GetInt32(0),
+                                BeginDate = sqlQueryResult.GetDateTime(1),
+                                EndDate = sqlQueryResult.GetDateTime(2),
+                                LibPeriodeLong = sqlQueryResult.GetString(3),
+                                Year = sqlQueryResult.GetString(4),
+                                Periode = sqlQueryResult.GetString(5)
+                            };
+
+                            listcampaign.Add(campaign);
+                        }
+
+                    }
+            }
+
+            return listcampaign;
+        }
+
+
         /**
          * 
          */
@@ -108,7 +139,7 @@ namespace Cima.Repository
         {
             ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
             using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
-            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate FROM sysman.tblCampaign WHERE Status = @Status", sqlConnection))
+            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate, LibPeriodeLong FROM sysman.tblCampaign WHERE Status = @Status ORDER BY CreationDate DESC", sqlConnection))
             {
                 sqlQuery.Parameters.AddWithValue("@Status", Status);
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
@@ -121,8 +152,66 @@ namespace Cima.Repository
                             {
                                 CampaignId = sqlQueryResult.GetInt32(0),
                                 BeginDate = sqlQueryResult.GetDateTime(1),
-                                EndDate = sqlQueryResult.GetDateTime(2)
+                                EndDate = sqlQueryResult.GetDateTime(2),
+                                LibPeriodeLong = sqlQueryResult.GetString(3)
                             };
+
+                            listcampaign.Add(campaign);
+                        }
+
+                    }
+            }
+
+            return listcampaign;
+        }
+
+        public ObservableCollection<Campaign> GetCampaignByEndDate()
+        {
+            ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate, LibPeriodeLong FROM sysman.tblCampaign WHERE EndDate > GETDATE() - 1 ORDER BY CreationDate DESC", sqlConnection))
+            {
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        while (sqlQueryResult.Read())
+                        {
+                            Campaign campaign = new Campaign()
+                            {
+                                CampaignId = sqlQueryResult.GetInt32(0),
+                                BeginDate = sqlQueryResult.GetDateTime(1),
+                                EndDate = sqlQueryResult.GetDateTime(2),
+                                LibPeriodeLong = sqlQueryResult.GetString(3)
+                            };
+
+                            listcampaign.Add(campaign);
+                        }
+
+                    }
+            }
+
+            return listcampaign;
+        }
+
+        public ObservableCollection<String> GetCampaignFileById(string Id)
+        {
+            ObservableCollection<String> listcampaign = new ObservableCollection<String>();
+
+            if(Id == "0_0")
+            {
+                return listcampaign;
+            }
+
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = new SqlCommand(@"SELECT Libelle FROM sysman.tblCampaignFileMask cf JOIN sysman.tblFileMask f ON cf.ID_FileMask = f.ID_FileMask WHERE ID_Campaign = @ParamId", sqlConnection))
+            {
+                sqlQuery.Parameters.AddWithValue("@ParamId", Id);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        while (sqlQueryResult.Read())
+                        {
+                            var campaign = sqlQueryResult.GetString(0);
 
                             listcampaign.Add(campaign);
                         }

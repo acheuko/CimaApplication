@@ -17,7 +17,7 @@ namespace Cima.Models
         [Column("ID_Campaign")]
         public string CampaignId { get; set; }
 
-        [Column("ID_LoadControl")]
+        [Column("ID_ControlType")]
         public string ControlId { get; set; }
                
         public string Blocking { get; set; }

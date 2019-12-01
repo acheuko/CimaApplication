@@ -8,6 +8,8 @@ using Cima.Models;
 using Cima.Repository;
 using Cima.Repository.Shared;
 using Cima.ViewModel;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
 
 namespace Cima.Controllers
 {
@@ -33,6 +35,12 @@ namespace Cima.Controllers
             GetCampaignFilesAvailableList();
 
             return View("Campaign");
+        }
+
+        public ActionResult ReadCampaign([DataSourceRequest]DataSourceRequest request)
+        {
+            var campaignItems = campaignRepository.GetCampaigns();
+            return Json(campaignItems.ToList().ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
 

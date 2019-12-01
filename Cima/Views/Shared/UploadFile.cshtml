@@ -15,8 +15,33 @@
                 <li class="breadcrumb-item active" aria-current="page">Upload Files</li>
             </ol>
         </nav>
-        
+
+        <div id="success-alert" class="alert alert-success" style="display:none;color: #3c763d;background-color: #dff0d8;border-color: #d6e9c6">
+            <strong>Success!</strong> Le dépôt des fichiers s'est effectué avec succès.
+        </div>
+
+        <div id="danger-alert" class="alert alert-danger" style="display:none;color: #a94442;background-color: #f2dede;border-color: #ebccd1;">
+            <strong>Erreur!</strong> Une erreur est survenue lors du dépôt des fichiers. Veuillez réessayer ou contactez votre DataSteward.
+        </div>
+
         <div ng-controller="UploadFileController">
+            <div style="margin-bottom:15px">
+                <p>Sélectionnez une campagne : </p>
+                <div>
+
+                    <select id='selectedcampagne' class="form-control">
+                        <option value="0_0">-- Sélectionnez une campagne --</option>
+                        @foreach (var m in ViewBag.CampaignList)
+                        {
+
+                            <option value=@m.CampaignId> @m.LibPeriodeLong</option>
+
+                        }
+                    </select>
+
+                </div>
+            </div>
+
             <div id="droptarget" kendo-droptarget k-drop="onDrop" class="k-header dashboard_graph x_panel">
                 <div id="file-upload-outline" class="file-upload-outline">
                     <img src="~/Images/uploadFile.jpg" />
@@ -60,8 +85,10 @@
 
             <div id="bt-uploadfiles">
                 <p>
-                    <kendo-button class="btn-success" ng-click="uploadFile()" style="color:white;font-weight:bold"><span>Charger</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
-                    <kendo-button id="bt-cancel" ng-click="cancelUpload()" style="color:darkorange;font-weight:bold" >Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#choixCampagneModal" style="color:white;font-weight:bold">
+                        <span>Charger</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i>
+                    </button>
+                    <kendo-button id="bt-cancel" ng-click="cancelUpload()" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
                 </p>
             </div>
         </div>
@@ -183,4 +210,168 @@
     </div>
 
 </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="choixCampagneModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Récapitulatif des fichiers de campagne</h4>
+            </div>
+            <div class="modal-body">
+                <div id="msg-warning"> Aucune campagne sélectionnée </div>
+                <div id="listefichiers" class="row" style="display:none">
+                    <div class="col-lg-4">
+                        liste des fichiers attendus
+                        <ul id="fichiersattendus">
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4" ">
+                        liste des fichiers envoyés
+                        <ul id="fichiersenvoyes"></ul>
+                    </div>
+
+                    <div class="col-lg-4" ">
+                        liste des fichiers restants
+                        <ul id="fichiersrestants"></ul>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                <button id="modal-loadbutton" type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationChargementModal" disabled><span>Charger</span></button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal confirmation d'envoi des fichiers-->
+<div class="modal fade" id="confirmationChargementModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmation d'envoi des fichiers</h4>
+            </div>
+            <div class="modal-body">
+                <span>Voulez-vous vraiment envoyer les fichiers sélectionnés? </span><br/>
+                <span>Une fois envoyé, ils ne pourront plus être modifiés</span>
+                <br /><br />
+                <p>Cliquez sur Oui pour confirmer ou sur Non pour annuler</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+                <button id="modal-loadbutton" type="button" class="btn btn-success" onclick="uploadFile()"><span>Oui</span></button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <!-- /upload files to landing -->
+
+<script>
+
+   
+    function uploadFile() {
+        $('#confirmationChargementModal').modal('toggle');
+        $('#choixCampagneModal').modal('toggle');
+        
+        $(".upload-spinner").show();
+        value = $("#selectedcampagne").val();
+        $.ajax({
+            type: 'POST',
+            url: '/UploadFile/SaveFileToLanding',
+            data: JSON.stringify({ selectedCampaign: value }),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (response) {               
+
+                if (response != "FAILURE") {
+                    $(".upload-spinner").hide();
+                    $("#filesList").html('');
+                    $("#danger-alert").hide();
+                     $("#success-alert").fadeTo(2000, 500).fadeOut(500, function(){
+                        $("#success-alert").fadeOut();
+                     });
+
+                } else {
+                    $(".upload-spinner").hide();
+                    $("#danger-alert").show();            
+                }
+            },
+            failure: function (response) {
+                alert("erreur uploading files");
+                $("#danger-alert").show();
+            }
+        });
+    }
+
+    $("#selectedcampagne").change(function () {
+
+        value = $("#selectedcampagne").val();
+
+        if (value == "0_0") {
+            $("#msg-warning").show();
+            $("#listefichiers").hide();
+            $("#modal-loadbutton").attr("disabled", true);
+        } else {
+
+            $("#msg-warning").hide();
+            $("#listefichiers").show();
+            $("#modal-loadbutton").attr("disabled", false);
+            $.ajax({
+                type: 'POST',
+                url: '/UploadFile/GetCampaignReport',
+                data: JSON.stringify({ selectedCampaign: value }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+
+                    $("#filesList").html('');
+                    var fichierstemporaires = response['fichiersTemporaires'];
+                    $.each(fichierstemporaires, function (key, value) {
+                        console.log("value: " + value.FileName);
+                        $("#filesList").append('<tbody><tr>' +
+                                               '<td class="icon"><i class="fa fa-file"></i></td>'+
+                                               '<td class="name">'+ value.FileName  +'</td>'+
+                                               '<td class="actions"><i id="' + value.FileName +'" class="fa fa-times" onclick="deleteFiles(this);"></i></td>'+
+                                               '</tr></tbody>');
+                    });
+
+                    var fichiersattendus = response['fichiersAttendus'];
+                    $("#fichiersattendus").html("");
+                    $.each(fichiersattendus, function (key, value) {
+                        $("#fichiersattendus").append('<li>' + value + '</li>');
+                    });
+
+                    var fichiersenvoyes = response['fichiersEnvoyes'];
+                    $("#fichiersenvoyes").html("");
+                    $.each(fichiersenvoyes, function (key, value) {
+                        $("#fichiersenvoyes").append('<li>' + value + '</li>');
+                    });
+
+                    var fichiersrestants = response['fichiersRestants'];
+                    $("#fichiersrestants").html("");
+                    $.each(fichiersrestants, function (key, value) {
+                        $("#fichiersrestants").append('<li>' + value + '</li>');
+                    });
+
+                },
+                failure: function (response) {
+                    alert("erreur uploading files");
+                }
+            });
+        }
+
+
+    })
+</script>

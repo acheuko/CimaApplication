@@ -51,15 +51,16 @@ namespace Cima.Repository
         }
 
         /**
-         * récupérer le nom des fichiers temporaires pour une company donnée
+         * récupérer le nom des fichiers temporaires pour une company et une campagne données
          **/ 
-        public ObservableCollection<UploadingFile> GetTmpFileNameByIdCompany(string IdCompany)
+        public ObservableCollection<UploadingFile> GetTmpFileNameByIdCompany(string IdCompany, int IdCampagne)
         {
             SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
             ObservableCollection<UploadingFile> items = new ObservableCollection<UploadingFile>();
-            using (var sqlQuery = new SqlCommand(@"SELECT FileName FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @UserId", con))
+            using (var sqlQuery = new SqlCommand(@"SELECT FileName FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @UserId AND IdCampagne = @IdCampagne", con))
             {
                 sqlQuery.Parameters.AddWithValue("@UserID", IdCompany);
+                sqlQuery.Parameters.AddWithValue("@IdCampagne", IdCampagne);
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
                     if (sqlQueryResult != null)
                     {
@@ -97,13 +98,13 @@ namespace Cima.Repository
         }
 
         /**
-        * Récupérer les fichiers temporaires pour une company donnée
+        * Récupérer les fichiers temporaires pour une company  donnée
         */
         public ObservableCollection<UploadingFile> GetTmpFileByIdCompany(string IdCompany)
         {
             ObservableCollection<UploadingFile> Files = new ObservableCollection<UploadingFile>();
             using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
-            using (var sqlQuery = new SqlCommand(@"SELECT FileName, FileSize,Contents FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @IdCompany", sqlConnection))
+            using (var sqlQuery = new SqlCommand(@"SELECT FileName, FileSize,Contents, FileMask FROM sysman.tmpUploadingFiles WHERE ID_COMPANY = @IdCompany", sqlConnection))
             {
                 sqlQuery.Parameters.AddWithValue("@IdCompany", IdCompany);
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
@@ -118,7 +119,8 @@ namespace Cima.Repository
                             {
                                 FileName = sqlQueryResult.GetString(0),
                                 FileSize = sqlQueryResult.GetInt32(1),
-                                File = blob
+                                File = blob,
+                                FileMask = sqlQueryResult.GetString(3)
                                 
                             };
 
@@ -141,7 +143,7 @@ namespace Cima.Repository
             SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
             
             //Replaced Parameters with Value
-            string query = "INSERT INTO sysman.tmpUploadingFiles (FileName, FileMask, FileSize, UploadDate, ID_Company, USERID, Contents) VALUES(@FileName,@FileMask,@FileSize, @UploadDate, @IDCompany,@UserID, @File)";
+            string query = "INSERT INTO sysman.tmpUploadingFiles (FileName, FileMask, FileSize, UploadDate, ID_Company, USERID, Contents, IdCampagne) VALUES(@FileName,@FileMask,@FileSize, @UploadDate, @IDCompany,@UserID, @File,@IdCampagne)";
             
             SqlCommand cmd = (SqlCommand)this.GetCommand(query, con);
 
@@ -152,6 +154,7 @@ namespace Cima.Repository
             cmd.Parameters.AddWithValue("@UploadDate", DateTime.UtcNow);
             cmd.Parameters.AddWithValue("@IDCompany", uploadingFile.IdCompany);
             cmd.Parameters.AddWithValue("@UserID", uploadingFile.UserId);
+            cmd.Parameters.AddWithValue("@IdCampagne", uploadingFile.IdCampagne);
 
             byte[] file = uploadingFile.File;
             cmd.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
@@ -224,12 +227,13 @@ namespace Cima.Repository
                     using (SqlConnection objConn = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
                     {
                         // insertion du Batch
-                        string sqlQuery1 = @"INSERT INTO sysman.tblBatch(BatchNumber,ID_Company,NbFiles,BatchClosed,DateBatch) VALUES(@BatchNumber, @IdCompany,@NbFiles,'N', GETDATE())";
+                        string sqlQuery1 = @"INSERT INTO sysman.tblBatch(BatchNumber,ID_Company, ID_Campagne, NbFiles,BatchClosed,DateBatch) VALUES(@BatchNumber, @IdCompany, @IdCampagne,@NbFiles,'N', GETDATE())";
                         SqlCommand objCmd1 = (SqlCommand)this.GetCommand(sqlQuery1, objConn);
                         //Pass values to Parameters
                         objCmd1.Parameters.AddWithValue("@BatchNumber", batchModel.BatchNumber);
                         objCmd1.Parameters.AddWithValue("@IdCompany", batchModel.IdCompany);
                         objCmd1.Parameters.AddWithValue("@NbFiles", batchModel.NbFiles);
+                        objCmd1.Parameters.AddWithValue("@IdCampagne", batchModel.IdCampagne);
 
                         // Insertion des fichiers du batch
                         string sqlQuery2 = @"INSERT INTO sysman.tblBatchFiles "+
@@ -286,6 +290,36 @@ namespace Cima.Repository
             }
         }
 
-        
+
+        public ObservableCollection<String> GetFileByCompanyAndCampagneId(string IdCampagne, string IdCompany)
+        {
+            ObservableCollection<String> listfilemask = new ObservableCollection<String>();
+
+            if (IdCampagne == "0_0")
+            {
+                return listfilemask;
+            }
+
+            using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = new SqlCommand(@"SELECT filemask FROM sysman.tblBatch b JOIN sysman.tblBatchFiles bf ON b.BatchNumber = bf.BatchNumber WHERE ID_Campagne = @ParamId AND b.ID_company = @ParamCompany ", sqlConnection))
+            {
+                sqlQuery.Parameters.AddWithValue("@ParamId", IdCampagne);
+                sqlQuery.Parameters.AddWithValue("@ParamCompany", IdCompany);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        while (sqlQueryResult.Read())
+                        {
+                            var uploadfile = sqlQueryResult.GetString(0);
+
+                            listfilemask.Add(uploadfile);
+                        }
+
+                    }
+            }
+
+            return listfilemask;
+        }
+
     }
 }
