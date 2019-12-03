@@ -21,6 +21,7 @@ namespace Cima.Repository.Shared
         private SqlBaseRepository<CampaignCampaignFile> campaignCampaignFileRepository;
         private SqlBaseRepository<CampaignCampaignControl> campaignCampaignControlRepository;
         private SqlBaseRepository<Derogation> derogationRepository;
+        private SqlBaseRepository<FichierRejete> fichierRejeteRepository;
 
 
         public SqlBaseRepository<Campaign> CampaignRepository
@@ -33,6 +34,19 @@ namespace Cima.Repository.Shared
                     this.campaignRepository = new REPO_Campaign(context);
                 }
                 return campaignRepository;
+            }
+        }
+
+        public SqlBaseRepository<FichierRejete> FichierRejeteRepository
+        {
+            get
+            {
+
+                if (this.fichierRejeteRepository == null)
+                {
+                    this.fichierRejeteRepository = new REPO_FichierRejete(context);
+                }
+                return fichierRejeteRepository;
             }
         }
 

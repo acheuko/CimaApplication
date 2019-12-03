@@ -10,6 +10,7 @@ using Cima.Repository;
 using System.Text;
 using System.Configuration;
 using Cima.Helpers;
+using Cima.Repository.Shared;
 
 namespace Cima.Controllers
 {
@@ -21,6 +22,9 @@ namespace Cima.Controllers
         protected const string PFN = "PFN";
         protected const string VER = "VER";
 
+        private readonly UnitOfWork unitOfWork = new UnitOfWork();
+        private readonly REPO_FichierRejete repoFichierRejete;
+
         private static readonly IREPO_UploadFile repoUploadFile = new REPO_UploadFile();
         private static readonly REPO_Campaign repoCampaign = new REPO_Campaign();
         private static readonly REPO_CampaignCampaignControl repoCampaignControl = new REPO_CampaignCampaignControl();
@@ -30,6 +34,11 @@ namespace Cima.Controllers
         private static List<string> listeFichiersRejetes = new List<string>();
 
         private static List<string> FichiersRestants { get; set; }
+
+        public UploadFileController()
+        {
+            repoFichierRejete = (REPO_FichierRejete)unitOfWork.FichierRejeteRepository;
+        }
 
         private string GetSessionCompanyId()
         {
@@ -319,7 +328,9 @@ namespace Cima.Controllers
                             Filename = f,
                             Reason = "Echec du contrôle d'exhaustivité"
                         };
-                        fichierRejetes.Add(fichierRejete);
+                        // Logger en base les fichiers rejetés
+                        repoFichierRejete.Insert(fichierRejete);
+                        unitOfWork.Save();
                         listeFichiersRejetes.Add(f);
                     }
 
@@ -361,7 +372,9 @@ namespace Cima.Controllers
                             Filename = file.FileName,
                             Reason = "Echec du contrôle de conformité"
                         };
-                        fichierRejetes.Add(fichierRejete);
+                        // Logger en base les fichiers rejetés
+                        repoFichierRejete.Insert(fichierRejete);
+                        unitOfWork.Save();
                         listeFichiersRejetes.Add(file.FileName);
 
                         var blocking = controlConformite[0];

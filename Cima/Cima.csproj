@@ -325,6 +325,7 @@
     <Compile Include="Repository\REPO_CampaignFile.cs" />
     <Compile Include="Repository\REPO_ContratInterface.cs" />
     <Compile Include="Repository\REPO_Derogation.cs" />
+    <Compile Include="Repository\REPO_FichierRejete.cs" />
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
     <Compile Include="Repository\REPO_Icon.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
