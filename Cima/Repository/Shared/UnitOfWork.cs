@@ -14,6 +14,13 @@ namespace Cima.Repository.Shared
         private SqlBaseRepository<MenuItem> menuRepository;
         private SqlBaseRepository<ProfilUser> profilRepository;
         private SqlBaseRepository<ProfilPrivilege> profilPrivilegeRepository;
+        private SqlBaseRepository<TblRule> ruleRepository;
+        private SqlBaseRepository<TblReport> reportRepository;
+        private SqlBaseRepository<TblAction> actionRepository;
+        private SqlBaseRepository<TblDataColumn> datacolumnRepository;
+        private SqlBaseRepository<TblRuleReport> rulereportRepository;
+        private SqlBaseRepository<TblRuleBasedLog> rulebasedlogrepository;
+        private SqlBaseRepository<TblRuleBasedDetail> rulebaseddetailrepository;
         private SqlBaseRepository<Icon> iconRepository;
         private SqlBaseRepository<User> userRepository;
         private SqlBaseRepository<Campaign> campaignRepository;
@@ -102,6 +109,7 @@ namespace Cima.Repository.Shared
             }
         }
 
+
         public SqlBaseRepository<MenuItem> MenuRepository
         {
             get
@@ -137,6 +145,91 @@ namespace Cima.Repository.Shared
                 }
                 return profilPrivilegeRepository;
             }
+        }
+
+
+        public SqlBaseRepository<TblRule> RuleRepository
+        {
+            get
+            {
+                if (this.ruleRepository == null)
+                {
+                    this.ruleRepository = new REPO_Rule(context);
+                }
+                return ruleRepository;
+            }
+        }
+
+        public SqlBaseRepository<TblReport> ReportRepository
+        {
+            get
+            {
+                if (this.reportRepository == null)
+                {
+                    this.reportRepository = new REPO_Report(context);
+                }
+                return reportRepository;
+            }
+        }
+
+        public SqlBaseRepository<TblAction> ActionRepository
+        {
+            get
+            {
+                if (this.actionRepository == null)
+                {
+                    this.actionRepository = new REPO_Action(context);
+                }
+                return actionRepository;
+            }
+        }
+
+        public SqlBaseRepository<TblDataColumn> DataColumnRepository
+        {
+            get
+            {
+                if (this.datacolumnRepository == null)
+                {
+                    this.datacolumnRepository = new REPO_DataColumn(context);
+                }
+                return datacolumnRepository;
+            }
+        }
+
+        public SqlBaseRepository<TblRuleReport> RuleReportRepository
+        {
+            get
+            {
+                if (this.rulereportRepository == null)
+                {
+                    this.rulereportRepository = new REPO_RuleReport(context);
+                }
+                return rulereportRepository;
+            }
+        }
+
+        public SqlBaseRepository<TblRuleBasedLog> RuleBasedLogRepository
+        {
+            get
+            {
+                if (this.rulebasedlogrepository == null)
+                {
+                    this.rulebasedlogrepository = new REPO_RuleBasedLog(context);
+                }
+                return rulebasedlogrepository;
+            }
+        }
+
+        public SqlBaseRepository<TblRuleBasedDetail> RuleBasedDetailRepository
+        {
+            get
+            {
+                if (this.rulebaseddetailrepository == null)
+                {
+                    this.rulebaseddetailrepository = new REPO_RuleBasedDetail(context);
+                }
+                return rulebaseddetailrepository;
+             }
         }
 
         public SqlBaseRepository<Icon> IconRepository

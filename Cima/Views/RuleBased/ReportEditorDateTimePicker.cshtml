@@ -1,0 +1,10 @@
+﻿@using System.Web.Mvc.Html;
+
+@model Cima.Models.TblReport
+
+<div data-container-for="DateLimite" class="k-edit-field">
+    @Html.Kendo().DateTimePickerFor(model => model.DateLimite).HtmlAttributes(new { style = "width:400px" }).Format(System.Globalization.CultureInfo.CurrentCulture.ToString()).Name("DateLimite").Min(DateTime.Now)
+
+
+    @(Html.ValidationMessageFor(m => m.DateLimite))     
+</div>

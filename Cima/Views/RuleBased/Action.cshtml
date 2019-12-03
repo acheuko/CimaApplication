@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Action";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Liste des actions</h2>
+
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    @Html.ActionLink("Nouveau", "CreateActionRule", null, new { @class="action-ui k-button k-button-icontext k-grid-add" }).
+</div>
+
+<div class="row">
+
+    <div id="menutable" style="width:100%; ">
+
+    
+            @(Html.Kendo().Grid<Cima.Models.TblAction>()
+            .Name("Actions")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.ActionId).Title("Code");
+                columns.Bound(c => c.LibAction).Title("Libelle");
+                columns.Bound(c => c.DetailAction).Title("Détails");
+                columns.Bound(c => c.Operator).Title("Opération");
+                columns.ForeignKey(c => c.IdRule, (System.Collections.IEnumerable)ViewBag.Rules, "IdRule", "RuleId").Title("Rêgle");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250).Title("Actions");
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                //.ToolBar(toolbar => toolbar.Create().Text("Nouveau"))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.IdAction);
+                        model.Field(m => m.ActionId).Editable(false);
+                        model.Field(m => m.LibAction).DefaultValue("");
+                        model.Field(r => r.IdRule).DefaultValue(null);
+                        })
+                    .Read(read => read.Action("Action_Read", "RuleBased"))
+                    .Update(update => update.Action("Update", "RuleBased"))
+                    .Destroy(update => update.Action("Delete_ActionRule", "RuleBased"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
+
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("a.action-ui")[0].innerHTML = '<span class="k-icon k-add"></span> Nouveau';
+        });
+        function onGridEdit(e) {
+            if (e.model.isNew()) {
+                e.container.kendoWindow("title", "Créer un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Enregistrer";
+            } else {
+                e.container.kendoWindow("title", "Modifier un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Modifier";
+            }
+        }
+    </script>
+
+</div>
+
+<style>
+#Actions .k-grid-header .k-header
+{
+       background-color: #428bca;
+       border-color: #169F85; 
+       
+}
+
+#Actions .k-grid-header .k-header a
+{
+     
+       color: #fff;
+}
+</style>
