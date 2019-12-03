@@ -1,60 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Web.Mvc;
 
 namespace Cima.Models
 {
+    [Table("tblUser", Schema = "sysman")]
     public class User
     {
 
-        private string firstName;
-        public string FirstName
-        {
-            get { return firstName; }
-            set { firstName = value; }
-        }
+        [Key]
+        [HiddenInput(DisplayValue = false)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [ScaffoldColumn(false)]
+        [Column("ID_User")]
+        public int UserId { get; set; }
 
-        private string lastName;
-        public string LastName
-        {
-            get { return lastName; }
-            set { lastName = value; }
-        }
+        public string FirstName { get; set; }
 
-        private string login;
-        public string Login
-        {
-            get { return login; }
-            set { login = value; }
-        }
+        public string LastName { get; set; }
 
-        private string password;
-        public string Password
-        {
-            get { return password; }
-            set { password = value; }
-        }
+        public string Login { get; set; }
 
-        private string salt;
-        public string Salt
-        {
-            get { return salt; }
-            set { salt = value; }
-        }
+        public string Password { get; set; }
 
-        private string profils;
-        public string Profils
-        {
-            get { return profils; }
-            set { profils = value; }
-        }
+        public string Salt { get; set; }
 
-        private string company;
-        public string Company
-        {
-            get { return company; }
-            set { company = value; }
-        }
+        public string Profils { get; set; }
+
+        public string Company { get; set; }
     }
 }

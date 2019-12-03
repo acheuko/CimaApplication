@@ -1,0 +1,580 @@
+﻿@{
+    ViewBag.Title = "Campagne";
+    Culture = "fr-FR";
+}
+
+<div class="row" style="margin-bottom:15px">
+    <button id="btn-creercampagne" type="button" class="btn btn-success" data-toggle="modal" data-target="#creerCampagneModal" style="color:white;font-weight:bold;float:right"><i class="upload-spinner fa fa-plus" style="font-size:1em"></i><span> Créer une campagne</span></button>
+    <h2>Liste des Campagnes</h2>
+</div>
+
+
+<div class="row">
+
+    <div id="campaigntable" style="width:100%; ">
+
+        @(Html.Kendo().Grid<Cima.Models.Campaign>()
+            .Name("campaignItems")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Year).Title("Année");
+                columns.Bound(c => c.Periode).Title("Periode");
+                columns.Bound(c => c.LibPeriodeLong).Title("Libelle");
+                columns.Bound(c => c.BeginDate).Title("Date début").Format("{0:dd/MM/yyyy}");
+                columns.Bound(c => c.EndDate).Title("Date fin").Format("{0:dd/MM/yyyy}");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250);
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+               .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.CampaignId);
+                        })
+                    .Read(read => read.Action("ReadCampaign", "Campaign"))
+                    .Update(update => update.Action("UpdateCampaign", "Campaign"))
+                    .Destroy(update => update.Action("DeleteCampaign", "Campaign"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
+
+    </div>
+
+</div>
+
+
+<!-- Modal confirmation d'envoi des fichiers-->
+<div class="modal fade" id="creerCampagneModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="width:800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Créer une campagne</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-component row" style="margin-bottom:15px">
+                    <div class="col-lg-6">
+                        <label for="annee" style="text-align:left">Année:</label>
+                        <select id="annee" style="width: 200px" class="kendoCombobox">
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2020">2015</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Choisir la période </label><br />
+                    </div>
+                    <div class="col-lg-4">
+
+                        <input class="rbannee" type="radio" name="periode" value="Annuel"> Année<br>
+                        <div id="optannee" style="display:none;padding-left:30px">
+                            <select id="selectannee" style="width: 200px" class="kendoCombobox">
+                                <option value="2015">2015</option>
+                                <option value="2016">2016</option>
+                                <option value="2017">2017</option>
+                                <option value="2018">2018</option>
+                                <option value="2019">2019</option>
+                            </select>
+                        </div>
+
+                        <input class="rbmois" type="radio" name="periode" value="Mensuel"> Mois<br>
+                        <div id="optmois" style="display:none;padding-left:30px">
+                            <select id="selectmois" style="width: 200px" class="kendoCombobox">
+                                <option value="Jan">Janvier</option>
+                                <option value="Fev">Février</option>
+                                <option value="Mar">Mars</option>
+                                <option value="Avr">Avril</option>
+                                <option value="Mai">Mai</option>
+                                <option value="Jun">Juin</option>
+                                <option value="Jui">Juillet</option>
+                                <option value="Aou">Août</option>
+                                <option value="Sep">Septembre</option>
+                                <option value="Oct">Octobre</option>
+                                <option value="Nov">Novembre</option>
+                                <option value="Dec">Décembre</option>
+                            </select>
+                        </div>
+
+                        <input class="rbtrimestre" type="radio" name="periode" value="Trimestriel"> Trimestre<br>
+                        <div id="opttrimestre" style="display:none;padding-left:30px">
+                            <select id="selecttrimestre" style="width: 200px" class="kendoCombobox">
+                                <option value="Q1">Trimestre 1</option>
+                                <option value="Q2">Trimestre 2</option>
+                                <option value="Q3">Trimestre 3</option>
+                                <option value="Q4">Trimestre 4</option>
+                            </select>
+                        </div>
+
+                        <input class="rbsemestre" type="radio" name="periode" value="Semestriel"> Semestre<br>
+                        <div id="optsemestre" style="display:none;padding-left:30px">
+                            <select id="selectsemestre" style="width: 200px" class="kendoCombobox">
+                                <option value="S1">Semestre 1</option>
+                                <option value="S2">Semestre 2</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+
+
+
+                <div class="row form-component" style="margin-bottom:15px">
+                    <div class="col-lg-6">
+                        <label for="start" style="text-align:left">Date de début:</label><input id="start" style="width: 200px" value="10/10/2025" />
+                    </div>
+
+                    <div class="col-lg-6">
+                        <label for="end" style="text-align:left">Date de fin:</label><input id="end" style="width: 200px" value="10/10/2026" />
+                    </div>
+                </div>
+
+
+                <div class="form-component row" style="margin-bottom:15px">
+                    <div class="subject-info-box-1">
+                        Fichiers Disponibles
+                        <select multiple="multiple" id='lstBox1' class="form-control">
+                            @foreach (var m in ViewBag.CampaignFiles)
+                            {
+
+                                <option value=@m.CampaignFileId> @m.CampaignFileName</option>
+
+                            }
+                        </select>
+                    </div>
+
+                    <div class="subject-info-arrows text-center">
+                        <input type='button' id='btnAllRight' value='>>' class="btn btn-default" /><br />
+                        <input type='button' id='btnRight' value='>' class="btn btn-default" /><br />
+                        <input type='button' id='btnLeft' value='<' class="btn btn-default" /><br />
+                        <input type='button' id='btnAllLeft' value='<<' class="btn btn-default" />
+                    </div>
+
+                    <div class="subject-info-box-2">
+                        Fichiers Sélectionnés
+                        <select multiple="multiple" id='lstBox2' class="form-control">
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <div class="form-component" style="clear:both">
+                    <label>Controle à activer</label>
+                    <div>
+
+                        <input class="chkbox-control" type="checkbox" name="exhaustivite" value="E"> Exhaustivité<br>
+                        <div id="rb-exhaustivite" style="display:none;margin-left: 35px;">
+                            <label><input type="radio" name="optexhaustivite" value="Y"> Bloquant</label>
+                            <label><input type="radio" name="optexhaustivite" value="N" checked="checked"> Non bloquant</label>
+                        </div>
+                        <input class="chkbox-control" type="checkbox" name="conformite" value="CF"> Conformité<br>
+                        <div id="rb-conformite" style="display:none;margin-left: 35px;">
+                            <label><input type="radio" name="optconformite" value="Y"> Bloquant</label>
+                            <label><input type="radio" name="optconformite" value="N" checked="checked"> Non bloquant</label>
+                        </div>
+                        <input class="chkbox-control" type="checkbox" name="coherence" value="CH"> Cohérence<br>
+                        <div id="rb-coherence" class="opt-control" style="display:none;margin-left: 35px;">
+                            <label><input type="radio" name="optcoherence" value="Y"> Bloquant</label>
+                            <label><input type="radio" name="optcoherence" value="N" checked="checked"> Non bloquant</label>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+            </div>
+            <div class="modal-footer">
+               
+                    
+                        <kendo-button class="btn-success k-button" onclick="saveCampaign()" style="color:white;font-weight:bold"><span>Enregistrer</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+                        <kendo-button id="bt-cancel" class="btn-warning k-button" data-dismiss="modal" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+                  
+               
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="row" style="margin-top:20px">
+
+    <div class="demo-section k-header" style="padding:20px">
+
+        
+
+        <span id="notification" style="display:none;"></span>
+
+
+        <script id="successTemplate" type="text/x-kendo-template">
+            <div class="upload-success">
+                <img src="../../Images/success-icon.png" />
+                <h3>#= message #</h3>
+            </div>
+        </script>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+
+
+            var annee = $("#annee").kendoComboBox().data("kendoComboBox");
+            annee.input.attr("readonly", true);
+
+            var selectannee = $("#selectannee").kendoComboBox().data("kendoComboBox");
+            selectannee.input.attr("readonly", true);
+
+            var selectmois = $("#selectmois").kendoComboBox().data("kendoComboBox");
+            selectmois.input.attr("readonly", true);
+
+            var selecttrimestre = $("#selecttrimestre").kendoComboBox().data("kendoComboBox");
+            selecttrimestre.input.attr("readonly", true);
+
+            var selectsemestre = $("#selectsemestre").kendoComboBox().data("kendoComboBox");
+            selectsemestre.input.attr("readonly", true);
+
+
+            //set culture of the Kendo UI
+            kendo.culture("fr-FR");
+
+            function startChange() {
+                var startDate = start.value(),
+                    endDate = end.value();
+
+                if (startDate) {
+                    startDate = new Date(startDate);
+                    startDate.setDate(startDate.getDate());
+                    end.min(startDate);
+                } else if (endDate) {
+                    start.max(new Date(endDate));
+                } else {
+                    endDate = new Date();
+                    start.max(endDate);
+                    end.min(endDate);
+                }
+            }
+
+            function endChange() {
+                var endDate = end.value(),
+                    startDate = start.value();
+
+                if (endDate) {
+                    endDate = new Date(endDate);
+                    endDate.setDate(endDate.getDate());
+                    start.max(endDate);
+                } else if (startDate) {
+                    end.min(new Date(startDate));
+                } else {
+                    endDate = new Date();
+                    start.max(endDate);
+                    end.min(endDate);
+                }
+            }
+
+            var start = $("#start").kendoDatePicker({
+                change: startChange
+            }).data("kendoDatePicker");
+
+            var end = $("#end").kendoDatePicker({
+                change: endChange
+            }).data("kendoDatePicker");
+
+            start.max(end.value());
+            end.min(start.value());
+        });
+
+        $('.chkbox-control').change(function () {
+            // this will contain a reference to the checkbox
+            if (this.checked) {
+                // the checkbox is now checked
+                //$("#rb-exhaustivite").slideDown();
+                $(this).next().next().slideDown();
+            } else {
+                // the checkbox is now no longer checked
+                //$("#rb-exhaustivite").slideUp();
+                $(this).next().next().slideUp();
+            }
+        });
+
+
+
+        $('input[type=radio][name=periode]').change(function () {
+            if (this.value == 'Mensuel') {
+                $("#optmois").slideDown();
+                $("#opttrimestre").slideUp();
+                $("#optsemestre").slideUp();
+                $("#optannee").slideUp();
+            }
+            else if (this.value == 'Trimestriel') {
+                $("#optmois").slideUp();
+                $("#opttrimestre").slideDown();
+                $("#optsemestre").slideUp();
+                $("#optannee").slideUp();
+            } else if (this.value == 'Semestriel') {
+                $("#optmois").slideUp();
+                $("#opttrimestre").slideUp();
+                $("#optsemestre").slideDown();
+                $("#optannee").slideUp();
+            } else if (this.value == 'Annuel') {
+                $("#optmois").slideUp();
+                $("#opttrimestre").slideUp();
+                $("#optsemestre").slideUp();
+                $("#optannee").slideDown();
+            }
+        });
+
+
+        // fonction qui permet d'enregistrer une campagne
+        function saveCampaign() {
+            var datedeb = $("#start").val();
+            var datefin = $("#end").val();
+            var selectedCampaignFiles = $("#lstBox2 option");
+            var optexhaustivite = $("input[name='optexhaustivite']:checked").val() == null ? 'N' : $("input[name='optexhaustivite']:checked").val();
+            var optcoherence = $("input[name='optcoherence']:checked").val() == null ? 'N' : $("input[name='optcoherence']:checked").val();
+            var optconformite = $("input[name='optconformite']:checked").val() == null ? 'N' : $("input[name='optconformite']:checked").val();
+            var annee = $("#annee").val();
+            var periode = $("input[name='periode']:checked").val();
+            var selectannee = $("#selectannee").val();
+            var selectmois = $("#selectmois").val();
+            var selecttrimestre = $("#selecttrimestre").val();
+            var selectsemestre = $("#selectsemestre").val();
+            var libperiode;
+
+
+            var notification = $("#notification").kendoNotification({
+                position: {
+                    pinned: true,
+                    top: 30,
+                    right: 30
+                },
+                autoHideAfter: 3000,
+                stacking: "down",
+                templates: [{
+                    type: "upload-success",
+                    template: $("#successTemplate").html()
+                }]
+            }).data("kendoNotification");
+
+            if (selectedCampaignFiles.length == 0) {
+
+                alert('Aucun fichier selectionné pour la campagne à créer');
+                //e.preventDefault();
+            }
+
+            var selectedCampaignFilesId = [];
+
+            $.map(selectedCampaignFiles, function (option) {
+                return selectedCampaignFilesId.push(option.value);
+            });
+
+            var selectedCampaingControlsId = [];
+            /* look for all checkboes that have a class 'chkbox-control' attached to it and check if it was checked */
+            $(".chkbox-control:checked").each(function () {
+                selectedCampaingControlsId.push($(this).val());
+            });
+
+            if (periode == "Mensuel") {
+                libperiode = selectmois;
+            } else if (periode == "Trimestriel") {
+                libperiode = selecttrimestre
+            } else if (periode == "Semestriel") {
+                libperiode = selectsemestre;
+            } else if (periode == "Annuel") {
+                libperiod = selectannee;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Campaign/CreateCampaign',
+                data: JSON.stringify({ datedeb: datedeb, datefin: datefin, selectedCampaignFiles: selectedCampaignFilesId, selectedCampaingControls: selectedCampaingControlsId, optexhaustivite: optexhaustivite, optcoherence: optcoherence, optconformite: optconformite, annee: annee, periode: periode, libperiode: libperiode }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    //$(".file-upload-progress").slideUp();
+                    if (response != null) {
+                        console.log("campagne enregistré avec succès");
+                        $('#creerCampagneModal').modal('toggle'); 
+                        notification.show({
+                            message: "Campagne créee"
+                        }, "upload-success");
+
+                        // Réinitialiser la listBox 2
+                        $("#lstBox2 option").remove();
+                        // Réinitialiser la listBox 1
+                        initListBox1(response);
+                    }
+                    else {
+                        console.log("echec enregistrement privileges");
+                    }
+
+                },
+                failure: function (response) {
+                    alert("erreur opération d'enregistrement");
+                }
+            });
+        }
+
+        function initListBox1(listItems) {
+            $("#lstBox1 option").remove();
+            $.map(listItems, function (option) {
+                $("#lstBox1").append('<option value="' + option.MenuId + '">' + option.Name + '</option>');
+            });
+        }
+
+        (function () {
+            $('#btnRight').click(function (e) {
+                var selectedOpts = $('#lstBox1 option:selected');
+                if (selectedOpts.length == 0) {
+                    alert("Nothing to move.");
+                    e.preventDefault();
+                }
+
+                $('#lstBox2').append($(selectedOpts).clone());
+                $(selectedOpts).remove();
+
+                /* -- Uncomment for optional sorting --
+                var box2Options = $('#lstBox2 option');
+                var box2OptionsSorted;
+                box2OptionsSorted = box2Options.toArray().sort(strDes);
+                $('#lstBox2').empty();
+                box2OptionsSorted.forEach(function(opt){
+                  $('#lstBox2').append(opt);
+                })
+                */
+
+                e.preventDefault();
+            });
+
+            $('#btnAllRight').click(function (e) {
+                var selectedOpts = $('#lstBox1 option');
+                if (selectedOpts.length == 0) {
+                    alert("Nothing to move.");
+                    e.preventDefault();
+                }
+
+                $('#lstBox2').append($(selectedOpts).clone());
+                $(selectedOpts).remove();
+                e.preventDefault();
+            });
+
+            $('#btnLeft').click(function (e) {
+                var selectedOpts = $('#lstBox2 option:selected');
+                if (selectedOpts.length == 0) {
+                    alert("Nothing to move.");
+                    e.preventDefault();
+                }
+
+                $('#lstBox1').append($(selectedOpts).clone());
+                $(selectedOpts).remove();
+                e.preventDefault();
+            });
+
+            $('#btnAllLeft').click(function (e) {
+                var selectedOpts = $('#lstBox2 option');
+                if (selectedOpts.length == 0) {
+                    alert("Nothing to move.");
+                    e.preventDefault();
+                }
+
+                $('#lstBox1').append($(selectedOpts).clone());
+                $(selectedOpts).remove();
+                e.preventDefault();
+            });
+        }(jQuery));
+
+    </script>
+
+    <style scoped>
+        label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+    width: 110px;
+}
+
+        .demo-section .form-component {
+            margin-top: 1em;
+        }
+
+        .demo-section label {
+            display: inline-block;
+            width: 120px;
+            padding-right: 5px;
+            text-align: right;
+        }
+
+        #example .k-datepicker {
+            vertical-align: middle;
+        }
+
+        #example h3 {
+            clear: both;
+        }
+
+        #example .code-sample {
+            width: 60%;
+            float: left;
+            margin-bottom: 20px;
+        }
+
+        #example .output {
+            width: 24%;
+            margin-left: 4%;
+            float: left;
+        }
+
+
+        .subject-info-box-1,
+        .subject-info-box-2 {
+            float: left;
+            width: 45%;
+        }
+
+            .subject-info-box-1 select,
+            .subject-info-box-2 select {
+                height: 200px;
+                padding: 0;
+            }
+
+                .subject-info-box-1 select option,
+                .subject-info-box-2 select option {
+                    padding: 4px 10px 4px 10px;
+                }
+
+
+                    .subject-info-box-1 select option:hover,
+                    .subject-info-box-2 select option:hover {
+                        background: #EEEEEE;
+                    }
+
+        .selectedOption {
+            background: #ccc;
+        }
+
+
+        .subject-info-arrows {
+            float: left;
+            width: 10%;
+            margin-top: 30px;
+        }
+
+            .subject-info-arrows input {
+                width: 70%;
+                margin-bottom: 5px;
+            }
+    </style>
+
+
+</div>
+

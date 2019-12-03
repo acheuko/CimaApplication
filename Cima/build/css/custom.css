@@ -731,7 +731,7 @@ a:focus {
     background: transparent
 }
 .nav.child_menu {
-    display: none;
+    display: none; 
     overflow: auto;
     max-height: 480px;
 }

@@ -16,9 +16,12 @@ namespace Cima.Controllers
 
         private readonly REPO_MenuItems menuRepository;
 
+        private readonly REPO_Icon repoIcon;
+
         public MenuItemController()
         {
             menuRepository = (REPO_MenuItems)unitOfWork.MenuRepository;
+            repoIcon = (REPO_Icon)unitOfWork.IconRepository;
         }
 
         //
@@ -26,6 +29,7 @@ namespace Cima.Controllers
         public ActionResult Index()
         {
             PopulateMenusDropDownList();
+            PopulateIconsDropDownList();
             return View("MenuItem");
         }
 
@@ -83,7 +87,11 @@ namespace Cima.Controllers
             return Json(results.ToDataSourceResult(request, ModelState));
         }
 
-       
+        private void PopulateIconsDropDownList()
+        {
+            var iconsQuery = repoIcon.GetAll(orderBy: q => q.OrderBy(i => i.Libelle));
+            ViewBag.Icons = iconsQuery;
+        }
 
         private void PopulateMenusDropDownList(object selectedMenu = null)
         {

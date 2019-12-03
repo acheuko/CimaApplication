@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -22,6 +23,10 @@
     <IISExpressUseClassicPipelineMode />
     <Use64BitIISExpress />
     <UseGlobalApplicationHostFile />
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+    <DockerLaunchUrl>http://{ServiceIPAddress}</DockerLaunchUrl>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -286,7 +291,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
+    <Compile Include="Controllers\DerogationController.cs" />
     <Compile Include="Controllers\FiltreCriteriaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MenuItemController.cs" />
@@ -303,10 +310,20 @@
     <Compile Include="Helpers\CsvExportHelper.cs" />
     <Compile Include="Helpers\ExcelExportHelper.cs" />
     <Compile Include="Helpers\PasswordHelper.cs" />
+    <Compile Include="Helpers\PeriodeHelper.cs" />
     <Compile Include="Helpers\Profil.cs" />
     <Compile Include="Helpers\ReportServerCredentials.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BatchModel.cs" />
+    <Compile Include="Models\Campaign.cs" />
+    <Compile Include="Models\CampaignCampaignControl.cs" />
+    <Compile Include="Models\CampaignCampaignFile.cs" />
+    <Compile Include="Models\CampaignControl.cs" />
+    <Compile Include="Models\CampaignFile.cs" />
+    <Compile Include="Models\ContratInterface.cs" />
+    <Compile Include="Models\Derogation.cs" />
+    <Compile Include="Models\FichierRejete.cs" />
+    <Compile Include="Models\Icon.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\MenuItem.cs" />
     <Compile Include="Models\ProfilPrivilege.cs" />
@@ -337,9 +354,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Repository\IREPO_UploadFile.cs" />
+
     <Compile Include="Repository\REPO_Action.cs" />
     <Compile Include="Repository\REPO_DataColumn.cs" />
+
+    <Compile Include="Repository\REPO_Campaign.cs" />
+    <Compile Include="Repository\REPO_CampaignCampaignControl.cs" />
+    <Compile Include="Repository\REPO_CampaignCampaignFile.cs" />
+    <Compile Include="Repository\REPO_CampaignFile.cs" />
+    <Compile Include="Repository\REPO_ContratInterface.cs" />
+    <Compile Include="Repository\REPO_Derogation.cs" />
+    <Compile Include="Repository\REPO_FichierRejete.cs" />
+
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
+    <Compile Include="Repository\REPO_Icon.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
     <Compile Include="Repository\REPO_MenuItems.cs" />
     <Compile Include="Repository\REPO_ProfilUser.cs" />
@@ -351,6 +379,7 @@
     <Compile Include="Repository\REPO_RuleBasedLog.cs" />
     <Compile Include="Repository\REPO_RuleReport.cs" />
     <Compile Include="Repository\REPO_UploadFile.cs" />
+    <Compile Include="Repository\REPO_User.cs" />
     <Compile Include="Repository\Shared\AbstractRepository.cs" />
     <Compile Include="Repository\Shared\BaseRepository.cs" />
     <Compile Include="Repository\Shared\SqlBaseRepository.cs" />
@@ -369,6 +398,7 @@
     <Compile Include="Repository\TestData\_REPO_TopFiveEntiteAdmin.cs" />
     <Compile Include="RulesBased\DataPreparation.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
+    <Compile Include="ViewModel\CampaignViewModel.cs" />
     <Compile Include="ViewModel\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -4556,7 +4586,6 @@
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\Shared\_oldLayout.cshtml" />
     <Content Include="Scripts\kendo\kendo.angular.min.js.map" />
     <Content Include="Scripts\kendo\kendo.autocomplete.min.js.map" />
     <Content Include="Scripts\kendo\kendo.binder.min.js.map" />
@@ -5493,7 +5522,6 @@
     <Content Include="Views\Shared\_FiltreCriteria.cshtml" />
     <Content Include="Views\Report\Report.cshtml" />
     <Content Include="Views\MenuItem\MenuItem.cshtml" />
-    <Content Include="Views\MenuItem\MenuItemEditor.cshtml" />
     <Content Include="Views\ProfilUser\ProfilUser.cshtml" />
     <Content Include="Views\RuleBased\Index.cshtml" />
     <Content Include="Views\RuleBased\Details.cshtml" />
@@ -5510,6 +5538,10 @@
     <Content Include="Views\RuleBased\ReportEditorDateTimePicker.cshtml" />
     <Content Include="Views\RuleBased\CreateReportView.cshtml" />
     <Content Include="Views\RuleBased\CreateDataColumnView.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\IconForeignKey.cshtml" />
+    <Content Include="Views\Campaign\Campaign.cshtml" />
+    <Content Include="Views\Shared\CampaignUnavailable.cshtml" />
+    <Content Include="Views\Derogation\Derogation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -5521,6 +5553,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201909071716456_InitialCreate.resx">
+      <DependentUpon>201909071716456_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -5550,6 +5587,14 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.1.7.12\build\Microsoft.VisualStudio.Azure.Containers.Tools.Targets.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

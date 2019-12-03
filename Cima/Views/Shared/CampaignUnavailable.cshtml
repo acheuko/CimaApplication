@@ -1,0 +1,168 @@
+﻿@{
+    ViewBag.Title = "CampaignUnavailable";
+}
+
+<h2>Campagne non disponible</h2>
+
+<h2> Aucune campagne n'est disponible à ce jour. Veuillez contacter le dataSteward pour plus informations</h2>
+
+
+
+<div style="width:400px;background-color:white">
+
+
+
+    <div class="modal-body">
+
+        <h2> Formulaire de contact </h2>
+
+        <div style="margin-top:25px">
+            <form id="derogationForm">
+                <div class="form-group">
+                    <label for="motif">Motif:</label>
+                    <select id="motif" class="form-control">
+                        <option value="0">-- Selectionner un motif --</option>
+                        <option value="1">Ouverture d'une campagne</option>
+                        <option value="2">Dépôt de fichiers</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="campagne">Campagne:</label>
+                    <select id="campagne" class="form-control">
+                        <option value="0">-- Selectionner une campagne --</option>
+                        @foreach (var m in ViewBag.CampaignItems)
+                        {
+
+                            <option value=@m.CampaignId> @m.LibPeriodeLong</option>
+
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filemask">Fichier:</label>
+                    <select id="filemask" class="form-control">
+                        <option value="0">-- Selectionner un fichier --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="raison">Raison:</label>
+                    <textarea id="raison" class="form-control">
+                </textarea>
+                </div>
+                <button id="btn-send" type="submit" class="btn btn-default">Envoyer</button>
+                <button id="btn-cancel" class="btn btn-default">Annuler</button>
+            </form>
+        </div>
+
+
+
+
+
+    </div>
+
+</div>
+
+<span id="notification" style="display:none;"></span>
+
+
+<script id="successTemplate" type="text/x-kendo-template">
+    <div class="upload-success">
+        <img src="../../Images/success-icon.png" />
+        <h3>#= message #</h3>
+    </div>
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        var notification = $("#notification").kendoNotification({
+                position: {
+                    pinned: true,
+                    top: 30,
+                    right: 30
+                },
+                autoHideAfter: 3000,
+                stacking: "down",
+                templates: [{
+                    type: "upload-success",
+                    template: $("#successTemplate").html()
+                }]
+            }).data("kendoNotification");
+
+        $('#campagne').change(function () {
+            var selectCampagne = $('#campagne').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/Campaign/GetFilesByCampaignId',
+                data: JSON.stringify({ IdCampaign: selectCampagne }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    //$(".file-upload-progress").slideUp();
+                    if (response != null) {
+                        $("#filemask").html('');
+                        $("#filemask").append('<option value="0">-- Selectionnez un fichier --</option>');
+                        $.each(response, function (key, value) {
+                            console.log("value: " + value.CampaignFileName);
+                            $("#filemask").append('<option value="' + value.CampaignFileId + '">' + value.CampaignFileName + '</option>');
+                        });
+                    }
+                    else {
+                        $("#filemask").html('');
+                        console.log("echec lecture des fichiers");
+                    }
+
+                },
+                failure: function (response) {
+                    $("#filemask").html('');
+                    alert("erreur opération de lecture des fichiers");
+                }
+            });
+        });
+
+
+        $('#btn-send').click(function () {
+            var selectMotif = $("#motif option:selected").text();
+            var selectCampagne = $("#campagne option:selected").text();
+            var selectFichier = $("#filemask option:selected").text();
+            var raison = $("#raison").val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/Derogation/Derogation_Create',
+                data: JSON.stringify({ selectMotif: selectMotif, selectCampagne: selectCampagne, selectFichier: selectFichier, raison: raison }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+
+                    if (response != null) {
+                        $("#derogationForm").clear();
+                        notification.show({
+                            message: "Dérogation créee"
+                        }, "upload-success");
+                    }
+                    else {
+                        notification.show({
+                            message: "Erreur Creation Dérogation"
+                        }, "upload-success");
+                        console.log("echec lecture des fichiers");
+                    }
+
+                },
+                failure: function (response) {
+                    notification.show({
+                            message: "Erreur Creation Dérogation"
+                        }, "upload-success");
+                    alert("erreur opération de lecture des fichiers");
+                }
+            });
+        });
+
+
+
+
+    }(jQuery));
+
+</script>
+

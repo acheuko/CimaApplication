@@ -32,6 +32,7 @@ namespace Cima.Models
         public string Action { get; set; }
 
         [DisplayName("Icône")]
+        [UIHint("IconForeignKey")]
         public string Icon { get; set; }
 
         [DisplayName("Paramètre")]

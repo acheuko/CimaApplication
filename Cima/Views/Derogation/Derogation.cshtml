@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Derogation";
+}
+
+
+<div class="row" style="margin-bottom:15px">
+    <h2>Liste des Derogations</h2>
+</div>
+
+
+<div class="row">
+
+    <div id="derogationtable" style="width:100%;">
+
+        @(Html.Kendo().Grid<Cima.Models.Derogation>()
+            .Name("derogationItems")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Motif).Title("Motif");
+                columns.Bound(c => c.Campagne).Title("Campagne");
+                columns.Bound(c => c.Fichier).Title("Fichier");
+                columns.Bound(c => c.Raison).Title("Raison");
+                columns.Bound(c => c.Statut).Title("Statut");
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+               .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.DerogationId);
+                        })
+                    .Read(read => read.Action("Derogation_Read", "Derogation"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
+
+    </div>
+
+</div>

@@ -56,6 +56,9 @@ function UploadFileController($scope) {
 
 }
 
+
+
+
 // récupération des fichiers sélectionnés
 function handleFileSelect(evt) {
 
@@ -124,10 +127,11 @@ function uploadingFiles(f) {
     reader.onload = function (event) {
         $(".file-upload-progress").slideDown();
         var RawData = event.target.result;
+        var idCampagne = $("#selectedcampagne").val();
         $.ajax({
             type: 'POST',
             url: '/UploadFile/UploadingFile',
-            data: JSON.stringify({ filename: f.name, filesize: f.size, file: RawData }),
+            data: JSON.stringify({ filename: f.name, filesize: f.size, file: RawData, idCampagne: idCampagne }),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function (response) {

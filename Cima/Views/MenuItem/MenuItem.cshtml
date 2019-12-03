@@ -16,7 +16,7 @@
                 columns.Bound(c => c.Name).Title("Libelle");
                 columns.Bound(c => c.Controller).Title("Controlleur");
                 columns.Bound(c => c.Action).Title("Vue");
-                columns.Bound(c => c.Icon).Title("Icône");
+                columns.ForeignKey(c => c.Icon, (System.Collections.IEnumerable)ViewBag.Icons, "IconValue", "Libelle").Title("Icône");
                 columns.Bound(c => c.ParamUrl).Title("Paramètre");
                 columns.ForeignKey(c => c.MenuParentId, (System.Collections.IEnumerable)ViewBag.MenusParent, "MenuId", "Name").Title("Menu Parent");
                 columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250);

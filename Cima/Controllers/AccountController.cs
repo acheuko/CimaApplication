@@ -13,20 +13,29 @@ using Cima.Repository;
 using System.Collections.ObjectModel;
 using Cima.Helpers;
 using Cima.ViewModel;
+using Cima.Repository.Shared;
 
 namespace Cima.Controllers
 {
     [Authorize]
-   // [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+        private readonly UnitOfWork unitOfWork = new UnitOfWork();
+
         private readonly REPO_Login repoLogin = new REPO_Login();
 
         private readonly REPO_Register repoRegister = new REPO_Register();
 
         private readonly REPO_ProfilePrivilege repoProfilePrivilege = new REPO_ProfilePrivilege();
 
+        private readonly REPO_User repoUser;
+
         UserViewModel userViewModel;
+
+        public AccountController()
+        {
+            repoUser = (REPO_User)unitOfWork.UserRepository;
+        }
 
         //
         // GET: /Account/Login
@@ -79,9 +88,13 @@ namespace Cima.Controllers
                     var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
                     HttpContext.Response.Cookies.Add(authCookie);
 
+                    REPO_Derogation repoDerogation = new REPO_Derogation();
+                    int nbOpenedDerogation = repoDerogation.GetNbOpenedDerogation();
+
                     Session["Username"] = user.Login;
                     Session["Profils"] = user.Profils;
                     Session["Company"] = user.Company;
+                    Session["nbOpenedDerogation"] = nbOpenedDerogation;
 
                     List<Menu> menuItems = repoProfilePrivilege.GetMenuItems(user.Profils);
                     Session["MenuItems"] = menuItems.ToList();

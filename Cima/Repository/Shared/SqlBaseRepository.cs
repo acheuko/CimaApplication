@@ -97,6 +97,11 @@ namespace Cima.Repository.Shared
             dbSet.Add(entity);
         }
 
+        public virtual T InsertAndReturn(T entity)
+        {
+            return dbSet.Add(entity);
+        }
+
         public virtual void Delete(object id)
         {
             T entityToDelete = dbSet.Find(id);

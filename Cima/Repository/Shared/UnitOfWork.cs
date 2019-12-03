@@ -10,6 +10,7 @@ namespace Cima.Repository.Shared
     public class UnitOfWork : IDisposable
     {
         private readonly SysmanDbContext context = new SysmanDbContext();
+
         private SqlBaseRepository<MenuItem> menuRepository;
         private SqlBaseRepository<ProfilUser> profilRepository;
         private SqlBaseRepository<ProfilPrivilege> profilPrivilegeRepository;
@@ -20,6 +21,94 @@ namespace Cima.Repository.Shared
         private SqlBaseRepository<TblRuleReport> rulereportRepository;
         private SqlBaseRepository<TblRuleBasedLog> rulebasedlogrepository;
         private SqlBaseRepository<TblRuleBasedDetail> rulebaseddetailrepository;
+        private SqlBaseRepository<Icon> iconRepository;
+        private SqlBaseRepository<User> userRepository;
+        private SqlBaseRepository<Campaign> campaignRepository;
+        private SqlBaseRepository<CampaignFile> campaignFileRepository;
+        private SqlBaseRepository<CampaignCampaignFile> campaignCampaignFileRepository;
+        private SqlBaseRepository<CampaignCampaignControl> campaignCampaignControlRepository;
+        private SqlBaseRepository<Derogation> derogationRepository;
+        private SqlBaseRepository<FichierRejete> fichierRejeteRepository;
+
+
+        public SqlBaseRepository<Campaign> CampaignRepository
+        {
+            get
+            {
+
+                if (this.campaignRepository == null)
+                {
+                    this.campaignRepository = new REPO_Campaign(context);
+                }
+                return campaignRepository;
+            }
+        }
+
+        public SqlBaseRepository<FichierRejete> FichierRejeteRepository
+        {
+            get
+            {
+
+                if (this.fichierRejeteRepository == null)
+                {
+                    this.fichierRejeteRepository = new REPO_FichierRejete(context);
+                }
+                return fichierRejeteRepository;
+            }
+        }
+
+        public SqlBaseRepository<Derogation> DerogationRepository
+        {
+            get
+            {
+
+                if (this.derogationRepository == null)
+                {
+                    this.derogationRepository = new REPO_Derogation(context);
+                }
+                return derogationRepository;
+            }
+        }
+
+        public SqlBaseRepository<CampaignFile> CampaignFileRepository
+        {
+            get
+            {
+
+                if (this.campaignFileRepository == null)
+                {
+                    this.campaignFileRepository = new REPO_CampaignFile(context);
+                }
+                return campaignFileRepository;
+            }
+        }
+
+        public SqlBaseRepository<CampaignCampaignFile> CampaignCampaignFileRepository
+        {
+            get
+            {
+
+                if (this.campaignCampaignFileRepository == null)
+                {
+                    this.campaignCampaignFileRepository = new REPO_CampaignCampaignFile(context);
+                }
+                return campaignCampaignFileRepository;
+            }
+        }
+
+        public SqlBaseRepository<CampaignCampaignControl> CampaignCampaignControlRepository
+        {
+            get
+            {
+
+                if (this.campaignCampaignControlRepository == null)
+                {
+                    this.campaignCampaignControlRepository = new REPO_CampaignCampaignControl(context);
+                }
+                return campaignCampaignControlRepository;
+            }
+        }
+
 
         public SqlBaseRepository<MenuItem> MenuRepository
         {
@@ -57,6 +146,7 @@ namespace Cima.Repository.Shared
                 return profilPrivilegeRepository;
             }
         }
+
 
         public SqlBaseRepository<TblRule> RuleRepository
         {
@@ -139,6 +229,30 @@ namespace Cima.Repository.Shared
                     this.rulebaseddetailrepository = new REPO_RuleBasedDetail(context);
                 }
                 return rulebaseddetailrepository;
+             }
+        }
+
+        public SqlBaseRepository<Icon> IconRepository
+        {
+            get
+            {
+                if(this.iconRepository == null)
+                {
+                    this.iconRepository = new REPO_Icon(context);
+                }
+                return iconRepository;
+            }
+        }
+
+        public SqlBaseRepository<User> UserRepository
+        {
+            get
+            {
+                if(this.userRepository == null)
+                {
+                    this.userRepository = new REPO_User(context);
+                }
+                return userRepository;
             }
         }
 

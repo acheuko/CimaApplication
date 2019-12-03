@@ -46,6 +46,7 @@ namespace Cima.Controllers
                 rptViewer.ServerReport.ReportServerUrl = new Uri(uriString: ReportServerUrl);
 
                 rptViewer.ServerReport.ReportPath = reportFolder;
+               // rptViewer.ServerReport.ReportServerCredentials = new C();
 
                 rptViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials("Administrateur", "Inter@BI2019","SESAME_BI");
                 //rptViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials("Tadjo", "Takianpi1", "TADJO-PC");

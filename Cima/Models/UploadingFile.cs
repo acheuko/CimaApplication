@@ -35,6 +35,13 @@ namespace Cima.Models
             set { idCompany = value; }
         }
 
+        private int idCampagne;
+        public int IdCampagne
+        {
+            get { return idCampagne; }
+            set { idCampagne = value; }
+        }
+
         private string userId;
         public string UserId
         {

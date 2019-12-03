@@ -41,5 +41,13 @@ namespace Cima.Models
             get { return dateUploadBatch; }
             set { dateUploadBatch = value; }
         }
+
+        private int idCampagne;
+        public int IdCampagne
+        {
+            get { return idCampagne; }
+            set { idCampagne = value; }
+        }
+
     }
 }
