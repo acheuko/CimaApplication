@@ -35,5 +35,7 @@ namespace Cima.AppContext
         public DbSet<CampaignCampaignControl> CampaignCampaignControl { get; set; }
 
         public DbSet<CampaignCampaignFile> CampaignCampaignFile { get; set; }
+
+        public DbSet<Derogation> Derogations { get; set; }
     }
 }

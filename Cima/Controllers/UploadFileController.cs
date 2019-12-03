@@ -51,8 +51,9 @@ namespace Cima.Controllers
                 //récupérer toutes les campagnes ouvertes
                 ObservableCollection<Campaign> listCampaign = repoCampaign.GetCampaignByEndDate();
 
-                if(listCampaign.Count == 0) // pas de campagne ouverte
+                if(listCampaign.Count >= 0) // pas de campagne ouverte
                 {
+                    ViewBag.CampaignItems = repoCampaign.GetCampaigns();
                     return View("CampaignUnavailable");
                 }
                

@@ -262,6 +262,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
+    <Compile Include="Controllers\DerogationController.cs" />
     <Compile Include="Controllers\FiltreCriteriaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MenuItemController.cs" />
@@ -292,6 +293,7 @@
     <Compile Include="Models\CampaignControl.cs" />
     <Compile Include="Models\CampaignFile.cs" />
     <Compile Include="Models\ContratInterface.cs" />
+    <Compile Include="Models\Derogation.cs" />
     <Compile Include="Models\FichierRejete.cs" />
     <Compile Include="Models\Icon.cs" />
     <Compile Include="Models\Menu.cs" />
@@ -322,6 +324,7 @@
     <Compile Include="Repository\REPO_CampaignCampaignFile.cs" />
     <Compile Include="Repository\REPO_CampaignFile.cs" />
     <Compile Include="Repository\REPO_ContratInterface.cs" />
+    <Compile Include="Repository\REPO_Derogation.cs" />
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
     <Compile Include="Repository\REPO_Icon.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
@@ -5459,6 +5462,7 @@
     <Content Include="Views\Shared\EditorTemplates\IconForeignKey.cshtml" />
     <Content Include="Views\Campaign\Campaign.cshtml" />
     <Content Include="Views\Shared\CampaignUnavailable.cshtml" />
+    <Content Include="Views\Derogation\Derogation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

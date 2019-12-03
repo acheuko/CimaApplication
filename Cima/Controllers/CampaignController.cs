@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -71,6 +72,15 @@ namespace Cima.Controllers
             campaignRepository.SaveCampaignControl(c.CampaignId, selectedCampaingControls, optexhaustivite,  optcoherence,  optconformite);
 
             return Json(c, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetFilesByCampaignId(int IdCampaign)
+        {
+            REPO_CampaignCampaignFile repoCampaignFiles = new REPO_CampaignCampaignFile();
+
+            ObservableCollection<CampaignFile> result = repoCampaignFiles.GetFilesByCampaignId(IdCampaign);
+            
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
 

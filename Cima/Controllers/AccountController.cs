@@ -88,9 +88,13 @@ namespace Cima.Controllers
                     var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
                     HttpContext.Response.Cookies.Add(authCookie);
 
+                    REPO_Derogation repoDerogation = new REPO_Derogation();
+                    int nbOpenedDerogation = repoDerogation.GetNbOpenedDerogation();
+
                     Session["Username"] = user.Login;
                     Session["Profils"] = user.Profils;
                     Session["Company"] = user.Company;
+                    Session["nbOpenedDerogation"] = nbOpenedDerogation;
 
                     List<Menu> menuItems = repoProfilePrivilege.GetMenuItems(user.Profils);
                     Session["MenuItems"] = menuItems.ToList();

@@ -52,13 +52,13 @@
 
 <!-- Modal confirmation d'envoi des fichiers-->
 <div class="modal fade" id="creerCampagneModal" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width:800px">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Créer une campagne</h4>
             </div>
             <div class="modal-body">
-                <div class="form-component row">
+                <div class="form-component row" style="margin-bottom:15px">
                     <div class="col-lg-6">
                         <label for="annee" style="text-align:left">Année:</label>
                         <select id="annee" style="width: 200px" class="kendoCombobox">
@@ -129,7 +129,7 @@
 
 
 
-                <div class="row form-component">
+                <div class="row form-component" style="margin-bottom:15px">
                     <div class="col-lg-6">
                         <label for="start" style="text-align:left">Date de début:</label><input id="start" style="width: 200px" value="10/10/2025" />
                     </div>
@@ -140,7 +140,7 @@
                 </div>
 
 
-                <div class="form-component row">
+                <div class="form-component row" style="margin-bottom:15px">
                     <div class="subject-info-box-1">
                         Fichiers Disponibles
                         <select multiple="multiple" id='lstBox1' class="form-control">
@@ -174,17 +174,17 @@
                     <div>
 
                         <input class="chkbox-control" type="checkbox" name="exhaustivite" value="E"> Exhaustivité<br>
-                        <div id="rb-exhaustivite" style="display:none">
+                        <div id="rb-exhaustivite" style="display:none;margin-left: 35px;">
                             <label><input type="radio" name="optexhaustivite" value="Y"> Bloquant</label>
                             <label><input type="radio" name="optexhaustivite" value="N" checked="checked"> Non bloquant</label>
                         </div>
                         <input class="chkbox-control" type="checkbox" name="conformite" value="CF"> Conformité<br>
-                        <div id="rb-conformite" style="display:none">
+                        <div id="rb-conformite" style="display:none;margin-left: 35px;">
                             <label><input type="radio" name="optconformite" value="Y"> Bloquant</label>
                             <label><input type="radio" name="optconformite" value="N" checked="checked"> Non bloquant</label>
                         </div>
                         <input class="chkbox-control" type="checkbox" name="coherence" value="CH"> Cohérence<br>
-                        <div id="rb-coherence" style="display:none">
+                        <div id="rb-coherence" class="opt-control" style="display:none;margin-left: 35px;">
                             <label><input type="radio" name="optcoherence" value="Y"> Bloquant</label>
                             <label><input type="radio" name="optcoherence" value="N" checked="checked"> Non bloquant</label>
                         </div>
@@ -495,7 +495,13 @@
     </script>
 
     <style scoped>
-
+        label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+    width: 110px;
+}
 
         .demo-section .form-component {
             margin-top: 1em;
