@@ -9,7 +9,7 @@ namespace Cima.Models
     {
         public CampaignFile()
         {
-            this.Campaigns = new HashSet<Campaign>();
+           Campaigns = new HashSet<Campaign>();
         }
 
         [Column("ID_FileMask")]

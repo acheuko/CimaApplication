@@ -169,7 +169,7 @@ namespace Cima.Repository
         {
             ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
             using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
-            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate, LibPeriodeLong FROM sysman.tblCampaign WHERE EndDate > GETDATE() - 1 ORDER BY CreationDate DESC", sqlConnection))
+            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate, LibPeriodeLong,LibelleCampagne FROM sysman.tblCampaign WHERE EndDate > GETDATE() - 1 ORDER BY CreationDate DESC", sqlConnection))
             {
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
                     if (sqlQueryResult != null)
@@ -181,7 +181,8 @@ namespace Cima.Repository
                                 CampaignId = sqlQueryResult.GetInt32(0),
                                 BeginDate = sqlQueryResult.GetDateTime(1),
                                 EndDate = sqlQueryResult.GetDateTime(2),
-                                LibPeriodeLong = sqlQueryResult.GetString(3)
+                                LibPeriodeLong = sqlQueryResult.GetString(3),
+                                LibelleCampagne = sqlQueryResult.GetString(4)
                             };
 
                             listcampaign.Add(campaign);

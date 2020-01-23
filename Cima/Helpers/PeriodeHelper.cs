@@ -13,15 +13,15 @@ namespace Cima.Helpers
 
             if (periode == "Mensuel")
             {
-                GetLibelleLongMois(libcourt);
+                libellelong = GetLibelleLongMois(libcourt);
             }
             else if(periode == "Trimestriel")
             {
-                GetLibelleLongTrimestre(libcourt);
+                libellelong = GetLibelleLongTrimestre(libcourt);
             }
             else if(periode == "Semestriel")
             {
-                GetLibelleLongSemestre(libcourt);
+                libellelong = GetLibelleLongSemestre(libcourt);
             }
 
 

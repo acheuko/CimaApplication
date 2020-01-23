@@ -815,9 +815,7 @@ a:focus {
     width: 100%;
     color: #ECF0F1 !important;
     margin-left: 0 !important;
-    line-height: 59px;
     display: block;
-    height: 150px;
 }
 .site_title:hover,
 .site_title:focus {

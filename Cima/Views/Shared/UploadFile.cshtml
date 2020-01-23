@@ -34,7 +34,7 @@
                         @foreach (var m in ViewBag.CampaignList)
                         {
 
-                            <option value=@m.CampaignId> @m.LibPeriodeLong</option>
+                            <option value=@m.CampaignId> @m.LibelleCampagne</option>
 
                         }
                     </select>
@@ -86,7 +86,7 @@
             <div id="bt-uploadfiles">
                 <p>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#choixCampagneModal" style="color:white;font-weight:bold">
-                        <span>Charger</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i>
+                        <span>Envoyer</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i>
                     </button>
                     <kendo-button id="bt-cancel" ng-click="cancelUpload()" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
                 </p>
@@ -248,7 +248,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
-                <button id="modal-loadbutton" type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationChargementModal" disabled><span>Charger</span></button>
+                <button id="modal-loadbutton" type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationChargementModal" disabled><span>Envoyer</span></button>
 
             </div>
         </div><!-- /.modal-content -->

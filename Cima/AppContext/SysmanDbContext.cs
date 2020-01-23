@@ -37,5 +37,7 @@ namespace Cima.AppContext
         public DbSet<CampaignCampaignFile> CampaignCampaignFile { get; set; }
 
         public DbSet<Derogation> Derogations { get; set; }
+
+        public DbSet<FichierRejete> FichierRejetes { get; set; }
     }
 }

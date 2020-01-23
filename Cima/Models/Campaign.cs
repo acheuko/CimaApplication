@@ -43,6 +43,12 @@ namespace Cima.Models
         
         public DateTime CreationDate { get; set; }
 
+        public string Nom { get; set; }
+
+        public string Code { get; set; }
+
+        public string LibelleCampagne { get; set; }
+
         public virtual ICollection<CampaignFile> CampaignFiles { get; set; }
 
         public virtual ICollection<CampaignControl> CampaignControls { get; set; }

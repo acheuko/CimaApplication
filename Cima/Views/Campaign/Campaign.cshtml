@@ -58,151 +58,165 @@
                 <h4 class="modal-title">Créer une campagne</h4>
             </div>
             <div class="modal-body">
+
                 <div class="form-component row" style="margin-bottom:15px">
                     <div class="col-lg-6">
-                        <label for="annee" style="text-align:left">Année:</label>
-                        <select id="annee" style="width: 200px" class="kendoCombobox">
-                            <option value="2019">2019</option>
-                            <option value="2018">2018</option>
-                            <option value="2017">2017</option>
-                            <option value="2016">2016</option>
-                            <option value="2020">2015</option>
-                        </select>
+                        <label for="nom" style="text-align:left">Nom:</label>
+                        <input id="nom" type="text" style="width: 200px;padding-left:5px"/>
                     </div>
-                    <div class="col-lg-2">
-                        <label>Choisir la période </label><br />
-                    </div>
-                    <div class="col-lg-4">
 
-                        <input class="rbannee" type="radio" name="periode" value="Annuel"> Année<br>
-                        <div id="optannee" style="display:none;padding-left:30px">
-                            <select id="selectannee" style="width: 200px" class="kendoCombobox">
-                                <option value="2015">2015</option>
-                                <option value="2016">2016</option>
-                                <option value="2017">2017</option>
-                                <option value="2018">2018</option>
+                    <div class="col-lg-6">
+                        <label for="code" style="text-align:left">Code:</label>
+                        <input id="code" type="text" style="width: 200px;padding-left:5px" />
+                    </div>
+
+                </div>
+
+                    <div class="form-component row" style="margin-bottom:15px">
+                        <div class="col-lg-6">
+                            <label for="annee" style="text-align:left">Année:</label>
+                            <select id="annee" style="width: 200px" class="kendoCombobox">
                                 <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2020">2015</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2">
+                            <label>Choisir la période </label><br />
+                        </div>
+                        <div class="col-lg-4">
+
+                            <input class="rbannee" type="radio" name="periode" value="Annuel"> Année<br>
+                            <div id="optannee" style="display:none;padding-left:30px">
+                                <select id="selectannee" style="width: 200px" class="kendoCombobox">
+                                    <option value="2015">2015</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2019">2019</option>
+                                </select>
+                            </div>
+
+                            <input class="rbmois" type="radio" name="periode" value="Mensuel"> Mois<br>
+                            <div id="optmois" style="display:none;padding-left:30px">
+                                <select id="selectmois" style="width: 200px" class="kendoCombobox">
+                                    <option value="Jan">Janvier</option>
+                                    <option value="Fev">Février</option>
+                                    <option value="Mar">Mars</option>
+                                    <option value="Avr">Avril</option>
+                                    <option value="Mai">Mai</option>
+                                    <option value="Jun">Juin</option>
+                                    <option value="Jui">Juillet</option>
+                                    <option value="Aou">Août</option>
+                                    <option value="Sep">Septembre</option>
+                                    <option value="Oct">Octobre</option>
+                                    <option value="Nov">Novembre</option>
+                                    <option value="Dec">Décembre</option>
+                                </select>
+                            </div>
+
+                            <input class="rbtrimestre" type="radio" name="periode" value="Trimestriel"> Trimestre<br>
+                            <div id="opttrimestre" style="display:none;padding-left:30px">
+                                <select id="selecttrimestre" style="width: 200px" class="kendoCombobox">
+                                    <option value="Q1">Trimestre 1</option>
+                                    <option value="Q2">Trimestre 2</option>
+                                    <option value="Q3">Trimestre 3</option>
+                                    <option value="Q4">Trimestre 4</option>
+                                </select>
+                            </div>
+
+                            <input class="rbsemestre" type="radio" name="periode" value="Semestriel"> Semestre<br>
+                            <div id="optsemestre" style="display:none;padding-left:30px">
+                                <select id="selectsemestre" style="width: 200px" class="kendoCombobox">
+                                    <option value="S1">Semestre 1</option>
+                                    <option value="S2">Semestre 2</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="row form-component" style="margin-bottom:15px">
+                        <div class="col-lg-6">
+                            <label for="start" style="text-align:left">Date de début:</label><input id="start" style="width: 200px" value="10/10/2025" />
+                        </div>
+
+                        <div class="col-lg-6">
+                            <label for="end" style="text-align:left">Date de fin:</label><input id="end" style="width: 200px" value="10/10/2026" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-component row" style="margin-bottom:15px">
+                        <div class="subject-info-box-1">
+                            Fichiers Disponibles
+                            <select multiple="multiple" id='lstBox1' class="form-control">
+                                @foreach (var m in ViewBag.CampaignFiles)
+                                {
+
+                                    <option value=@m.CampaignFileId> @m.CampaignFileName</option>
+
+                                }
                             </select>
                         </div>
 
-                        <input class="rbmois" type="radio" name="periode" value="Mensuel"> Mois<br>
-                        <div id="optmois" style="display:none;padding-left:30px">
-                            <select id="selectmois" style="width: 200px" class="kendoCombobox">
-                                <option value="Jan">Janvier</option>
-                                <option value="Fev">Février</option>
-                                <option value="Mar">Mars</option>
-                                <option value="Avr">Avril</option>
-                                <option value="Mai">Mai</option>
-                                <option value="Jun">Juin</option>
-                                <option value="Jui">Juillet</option>
-                                <option value="Aou">Août</option>
-                                <option value="Sep">Septembre</option>
-                                <option value="Oct">Octobre</option>
-                                <option value="Nov">Novembre</option>
-                                <option value="Dec">Décembre</option>
+                        <div class="subject-info-arrows text-center">
+                            <input type='button' id='btnAllRight' value='>>' class="btn btn-default" /><br />
+                            <input type='button' id='btnRight' value='>' class="btn btn-default" /><br />
+                            <input type='button' id='btnLeft' value='<' class="btn btn-default" /><br />
+                            <input type='button' id='btnAllLeft' value='<<' class="btn btn-default" />
+                        </div>
+
+                        <div class="subject-info-box-2">
+                            Fichiers Sélectionnés
+                            <select multiple="multiple" id='lstBox2' class="form-control">
                             </select>
                         </div>
-
-                        <input class="rbtrimestre" type="radio" name="periode" value="Trimestriel"> Trimestre<br>
-                        <div id="opttrimestre" style="display:none;padding-left:30px">
-                            <select id="selecttrimestre" style="width: 200px" class="kendoCombobox">
-                                <option value="Q1">Trimestre 1</option>
-                                <option value="Q2">Trimestre 2</option>
-                                <option value="Q3">Trimestre 3</option>
-                                <option value="Q4">Trimestre 4</option>
-                            </select>
-                        </div>
-
-                        <input class="rbsemestre" type="radio" name="periode" value="Semestriel"> Semestre<br>
-                        <div id="optsemestre" style="display:none;padding-left:30px">
-                            <select id="selectsemestre" style="width: 200px" class="kendoCombobox">
-                                <option value="S1">Semestre 1</option>
-                                <option value="S2">Semestre 2</option>
-                            </select>
-                        </div>
-
                     </div>
+
+
+
+                    <div class="form-component" style="clear:both">
+                        <label>Controle à activer</label>
+                        <div>
+
+                            <input class="chkbox-control" type="checkbox" name="exhaustivite" value="E"> Exhaustivité<br>
+                            <div id="rb-exhaustivite" style="display:none;margin-left: 35px;">
+                                <label><input type="radio" name="optexhaustivite" value="Y"> Bloquant</label>
+                                <label><input type="radio" name="optexhaustivite" value="N" checked="checked"> Non bloquant</label>
+                            </div>
+                            <input class="chkbox-control" type="checkbox" name="conformite" value="CF"> Conformité<br>
+                            <div id="rb-conformite" style="display:none;margin-left: 35px;">
+                                <label><input type="radio" name="optconformite" value="Y"> Bloquant</label>
+                                <label><input type="radio" name="optconformite" value="N" checked="checked"> Non bloquant</label>
+                            </div>
+                            <input class="chkbox-control" type="checkbox" name="coherence" value="CH"> Cohérence<br>
+                            <div id="rb-coherence" class="opt-control" style="display:none;margin-left: 35px;">
+                                <label><input type="radio" name="optcoherence" value="Y"> Bloquant</label>
+                                <label><input type="radio" name="optcoherence" value="N" checked="checked"> Non bloquant</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                 </div>
+                <div class="modal-footer">
 
 
+                    <kendo-button class="btn-success k-button" onclick="saveCampaign()" style="color:white;font-weight:bold"><span>Enregistrer</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+                    <kendo-button id="bt-cancel" class="btn-warning k-button" data-dismiss="modal" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
 
 
-
-
-                <div class="row form-component" style="margin-bottom:15px">
-                    <div class="col-lg-6">
-                        <label for="start" style="text-align:left">Date de début:</label><input id="start" style="width: 200px" value="10/10/2025" />
-                    </div>
-
-                    <div class="col-lg-6">
-                        <label for="end" style="text-align:left">Date de fin:</label><input id="end" style="width: 200px" value="10/10/2026" />
-                    </div>
                 </div>
-
-
-                <div class="form-component row" style="margin-bottom:15px">
-                    <div class="subject-info-box-1">
-                        Fichiers Disponibles
-                        <select multiple="multiple" id='lstBox1' class="form-control">
-                            @foreach (var m in ViewBag.CampaignFiles)
-                            {
-
-                                <option value=@m.CampaignFileId> @m.CampaignFileName</option>
-
-                            }
-                        </select>
-                    </div>
-
-                    <div class="subject-info-arrows text-center">
-                        <input type='button' id='btnAllRight' value='>>' class="btn btn-default" /><br />
-                        <input type='button' id='btnRight' value='>' class="btn btn-default" /><br />
-                        <input type='button' id='btnLeft' value='<' class="btn btn-default" /><br />
-                        <input type='button' id='btnAllLeft' value='<<' class="btn btn-default" />
-                    </div>
-
-                    <div class="subject-info-box-2">
-                        Fichiers Sélectionnés
-                        <select multiple="multiple" id='lstBox2' class="form-control">
-                        </select>
-                    </div>
-                </div>
-
-
-
-                <div class="form-component" style="clear:both">
-                    <label>Controle à activer</label>
-                    <div>
-
-                        <input class="chkbox-control" type="checkbox" name="exhaustivite" value="E"> Exhaustivité<br>
-                        <div id="rb-exhaustivite" style="display:none;margin-left: 35px;">
-                            <label><input type="radio" name="optexhaustivite" value="Y"> Bloquant</label>
-                            <label><input type="radio" name="optexhaustivite" value="N" checked="checked"> Non bloquant</label>
-                        </div>
-                        <input class="chkbox-control" type="checkbox" name="conformite" value="CF"> Conformité<br>
-                        <div id="rb-conformite" style="display:none;margin-left: 35px;">
-                            <label><input type="radio" name="optconformite" value="Y"> Bloquant</label>
-                            <label><input type="radio" name="optconformite" value="N" checked="checked"> Non bloquant</label>
-                        </div>
-                        <input class="chkbox-control" type="checkbox" name="coherence" value="CH"> Cohérence<br>
-                        <div id="rb-coherence" class="opt-control" style="display:none;margin-left: 35px;">
-                            <label><input type="radio" name="optcoherence" value="Y"> Bloquant</label>
-                            <label><input type="radio" name="optcoherence" value="N" checked="checked"> Non bloquant</label>
-                        </div>
-                    </div>
-                </div>
-
-                
-
-            </div>
-            <div class="modal-footer">
-               
-                    
-                        <kendo-button class="btn-success k-button" onclick="saveCampaign()" style="color:white;font-weight:bold"><span>Enregistrer</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
-                        <kendo-button id="bt-cancel" class="btn-warning k-button" data-dismiss="modal" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
-                  
-               
-            </div>
-        </div><!-- /.modal-content -->
+            </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
@@ -336,6 +350,8 @@
 
         // fonction qui permet d'enregistrer une campagne
         function saveCampaign() {
+            var nom = $("#nom").val();
+            var code = $("#code").val();
             var datedeb = $("#start").val();
             var datefin = $("#end").val();
             var selectedCampaignFiles = $("#lstBox2 option");
@@ -396,12 +412,12 @@
             $.ajax({
                 type: 'POST',
                 url: '/Campaign/CreateCampaign',
-                data: JSON.stringify({ datedeb: datedeb, datefin: datefin, selectedCampaignFiles: selectedCampaignFilesId, selectedCampaingControls: selectedCampaingControlsId, optexhaustivite: optexhaustivite, optcoherence: optcoherence, optconformite: optconformite, annee: annee, periode: periode, libperiode: libperiode }),
+                data: JSON.stringify({ datedeb: datedeb, datefin: datefin, selectedCampaignFiles: selectedCampaignFilesId, selectedCampaingControls: selectedCampaingControlsId, optexhaustivite: optexhaustivite, optcoherence: optcoherence, optconformite: optconformite, annee: annee, periode: periode, libperiode: libperiode,nom: nom,code: code }),
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (response) {
                     //$(".file-upload-progress").slideUp();
-                    if (response != null) {
+                    if (response['status'] == 'SUCCESS') {
                         console.log("campagne enregistré avec succès");
                         $('#creerCampagneModal').modal('toggle'); 
                         notification.show({
@@ -411,7 +427,8 @@
                         // Réinitialiser la listBox 2
                         $("#lstBox2 option").remove();
                         // Réinitialiser la listBox 1
-                        initListBox1(response);
+                        var response_data = response['data'];
+                        initListBox1(response_data);
                     }
                     else {
                         console.log("echec enregistrement privileges");
@@ -427,7 +444,7 @@
         function initListBox1(listItems) {
             $("#lstBox1 option").remove();
             $.map(listItems, function (option) {
-                $("#lstBox1").append('<option value="' + option.MenuId + '">' + option.Name + '</option>');
+                $("#lstBox1").append('<option value="' + option.CampaignFileId + '">' + option.CampaignFileName + '</option>');
             });
         }
 

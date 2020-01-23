@@ -33,7 +33,7 @@ namespace Cima.Controllers
 
         public ActionResult Index()
         {
-            GetCampaignFilesAvailableList();
+            ViewBag.CampaignFiles = GetCampaignFilesAvailableList();
 
             return View("Campaign");
         }
@@ -48,19 +48,24 @@ namespace Cima.Controllers
         [Authorize(Roles = Profil.ADMIN)]
         public ActionResult CreateCampaign(DateTime datedeb, DateTime datefin, string[] selectedCampaignFiles, string[] selectedCampaingControls, 
                                 string optexhaustivite, string optcoherence, string optconformite,
-                                string annee, string periode, string libperiode)
+                                string annee, string periode, string libperiode,string nom, string code)
         {
+
+            string libPeriodeLong = PeriodeHelper.GetLibelleLong(libperiode, periode);
 
             Campaign c = new Campaign
             {
                 Year = annee,
                 Periode = periode,
                 LibPeriodeCourt = libperiode +" "+ annee,
-                LibPeriodeLong = PeriodeHelper.GetLibelleLong(libperiode, periode) +" "+ annee,
+                LibPeriodeLong = libPeriodeLong + " "+ annee,
                 BeginDate = datedeb,
                 EndDate = datefin,
                 Status = "O",
-                CreationDate = DateTime.Now
+                CreationDate = DateTime.Now,
+                Nom = nom,
+                Code = code,
+                LibelleCampagne = nom + "_" + code + "_" + libPeriodeLong + "_" + annee
             };
 
             c = campaignRepository.InsertAndReturn(c);
@@ -71,7 +76,15 @@ namespace Cima.Controllers
 
             campaignRepository.SaveCampaignControl(c.CampaignId, selectedCampaingControls, optexhaustivite,  optcoherence,  optconformite);
 
-            return Json(c, JsonRequestBehavior.AllowGet);
+            ObservableCollection<CampaignFile> campaignFiles = campaignFileRepository.GetAll();
+
+            Dictionary<String, Object> response = new Dictionary<string, object>
+            {
+                ["status"] = "SUCCESS",
+                ["data"] = campaignFiles
+            };
+
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetFilesByCampaignId(int IdCampaign)
@@ -84,11 +97,12 @@ namespace Cima.Controllers
         }
 
 
-        private void GetCampaignFilesAvailableList()
+        private List<CampaignFile> GetCampaignFilesAvailableList()
         {
             var campaignFilesQuery = campaignFileRepository.GetAll(
                 orderBy: q => q.OrderBy(d => d.CampaignFileName));
-            ViewBag.CampaignFiles = campaignFilesQuery.ToList();
+
+            return campaignFilesQuery.ToList();
         }
 
       
