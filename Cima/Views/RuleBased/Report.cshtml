@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Liste des Rapports</h2>
+
+<div class="k-toolbar k-grid-toolbar k-grid-top">
+    @Html.ActionLink("Nouveau", "CreateReportView", null, new { @class="report-ui k-button k-button-icontext k-grid-add" }).
+</div>
+
+<div class="row">
+
+    <div id="menutable" style="width:100%; ">
+
+    
+            @(Html.Kendo().Grid<Cima.Models.TblReport>()
+            .Name("Report")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.ReportId).Title("Code");
+                columns.Bound(c => c.LibReport).Title("Libelle");
+                columns.Bound(c => c.DetailReport).Title("Détails");
+                columns.Bound(c => c.Nbcolumn).Title("Nombre de colonnes");
+                columns.Bound(c => c.Periodicite).Title("Périodicité");
+                columns.Bound(c => c.DateLimite).Title("Date limite").Format("{0: yyyy-MM-dd}");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250).Title("Actions");
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.IdReport);
+                        model.Field(m => m.ReportId).Editable(false);
+                        model.Field(m => m.LibReport).DefaultValue("");
+                        model.Field(m => m.DateLimite).DefaultValue(DateTime.Now);
+                        })
+                    .Read(read => read.Action("Report_Read", "RuleBased"))
+                    .Update(update => update.Action("TblReport_Update", "RuleBased"))
+                    .Destroy(update => update.Action("Delete_Report", "RuleBased"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
+
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("a.report-ui")[0].innerHTML = '<span class="k-icon k-add"></span> Nouveau';
+        });
+
+        function onGridEdit(e) {
+            if (e.model.isNew()) {
+                e.container.kendoWindow("title", "Créer un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Enregistrer";
+            } else {
+                e.container.kendoWindow("title", "Modifier un menu");
+                $("a.k-grid-update")[0].innerHTML = "<span class='k-icon k-update'></span>Modifier";
+            }
+        }
+    </script>
+
+</div>
+
+<style>
+#Report .k-grid-header .k-header
+{
+       background-color: #428bca;
+       border-color: #169F85; 
+       
+}
+
+#Report .k-grid-header .k-header a
+{
+     
+       color: #fff;
+}
+</style>

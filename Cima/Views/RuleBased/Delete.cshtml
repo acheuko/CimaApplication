@@ -1,0 +1,53 @@
+﻿@model Cima.Models.TblRule
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>TblRule</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.RuleId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.RuleId)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.LibRule)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.LibRule)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.TypeRule)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.TypeRule)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.RangeRule)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.RangeRule)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Exercice)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Exercice)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

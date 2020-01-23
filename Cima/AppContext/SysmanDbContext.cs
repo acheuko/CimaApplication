@@ -22,6 +22,21 @@ namespace Cima.AppContext
 
         public DbSet<ProfilPrivilege> ProfilPrivileges{ get; set; }
 
+
+        public DbSet<TblRule> TblRules { get; set; }
+
+        public DbSet<TblAction> TblAction { get; set; }
+
+        public DbSet<TblReport> TblReport { get; set; }
+
+        public DbSet<TblDataColumn> TblDataColumn { get; set; }
+
+        public DbSet<TblRuleReport> TblRuleReport { get; set; }
+
+        public DbSet<TblRuleBasedLog> tblrulebasedlog { get; set; }
+
+        public DbSet<TblRuleBasedDetail> tblrulebaseddetail { get; set; }
+
         public DbSet<Icon> Icons { get; set; }
 
         public DbSet<User> Users { get; set; }
@@ -39,5 +54,6 @@ namespace Cima.AppContext
         public DbSet<Derogation> Derogations { get; set; }
 
         public DbSet<FichierRejete> FichierRejetes { get; set; }
+
     }
 }

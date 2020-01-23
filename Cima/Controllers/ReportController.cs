@@ -1,4 +1,5 @@
-﻿using Microsoft.Reporting.WebForms;
+﻿using Cima.Helpers;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -46,6 +47,9 @@ namespace Cima.Controllers
 
                 rptViewer.ServerReport.ReportPath = reportFolder;
                // rptViewer.ServerReport.ReportServerCredentials = new C();
+
+                rptViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials("xxxxxxx", "xxxxxxxx","xxxxxxxx");
+                //rptViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials("Tadjo", "Takianpi1", "TADJO-PC");
 
                 List<ReportParameter> param = new List<ReportParameter>
                 {

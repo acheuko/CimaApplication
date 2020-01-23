@@ -1,0 +1,233 @@
+﻿@{
+    ViewBag.Title = "CreateReportView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create un rapport</h2>
+
+
+<form>
+<div class="row row-combo">    
+    <div class="col-md-6">
+      <input type="text" id="ReportId" class="form-control" placeholder="Code*">
+    </div>
+    <div class="col-md-6">
+      <input type="text" id="LibReport" class="form-control" placeholder="Libellé*">
+    </div>
+</div>
+<div class="row row-combo">
+    <div class="col-md-6">
+      @(Html.Kendo().ComboBox()
+        .Name("cbx_Periodicite")
+        .Placeholder("-- Choisir un type --")
+        .BindTo(new List<SelectListItem>() {
+              new SelectListItem() {
+                Text = "Annuel", Value = "Annuel"
+              },
+              new SelectListItem() {
+                Text = "Semestriel", Value = "Semestriel"
+              },new SelectListItem() {
+                Text = "Trimestriel", Value = "Trimestriel"
+              },
+              new SelectListItem() {
+                Text = "Mensuel", Value = "Mensuel"
+              }
+              })
+            .HtmlAttributes(new { style = "width: 100%" })
+        )
+    </div>
+    <div class="col-md-6">
+      <input type="text" id="DetailReport" class="form-control" placeholder="Détails*">
+    </div>
+</div>
+<div class="row row-combo">
+    <div class="col-md-6">  
+    <div class="form-group">
+    <label for="DateLimiteDP">Date limite:</label>  
+    @(Html.Kendo().DateTimePicker()
+        .Name("DateLimite")
+        .Min(DateTime.Now)
+        .Format("{0: yyyy-MM-dd}")
+        .HtmlAttributes(new { style = "width: 100%" })
+        )
+    </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="Nbcolumnlabel">Nombre de colonnes:</label>
+            <input type="number" id="Nbcolumn" class="form-control" min="0" max="50" value="0">
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <kendo-button id="bt-cancel" class="btn-warning k-button submit-form" onclick="cancel()" style="color:darkorange;font-weight:bold">Annuler <i class="cancel-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    <kendo-button class="btn-success k-button submit-form" onclick="saveReportForm()" style="color:white;font-weight:bold"><span>Sauvegarder</span>  <i class="upload-spinner fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:1em;display:none"></i></kendo-button>
+    
+</div>
+</form>
+
+<span id="notification" style="display:none;"></span>
+
+<br />
+<br />
+
+<h2>Liste des Colonnes de données</h2>
+
+@(Html.Kendo().Grid<Cima.Models.TblDataColumn>()
+            .Name("DataColumn")
+            .Columns(columns =>
+            {
+                columns.Bound(dc => dc.DataColumnId).Title("Code");
+                columns.Bound(dc => dc.Name).Title("Nom");
+                columns.Bound(dc => dc.Datatype).Title("Type");
+                columns.Bound(dc => dc.NumColumn).Title("Numéro de colonne");
+                columns.ForeignKey(c => c.IdReport, (System.Collections.IEnumerable)ViewBag.Report, "IdReport", "ReportId").Title("Rapport");
+                columns.Command(command => { command.Edit().Text("Modifier"); command.Destroy().Text("Supprimer"); }).Width(250).Title("Actions");
+            })
+                .HtmlAttributes(new { style = "height: 550px;" })
+                .Scrollable()
+                .Sortable()
+                .Pageable(pageable => pageable
+                    .Refresh(true)
+                    .PageSizes(true)
+                    .ButtonCount(5))
+                .Editable(editable => editable.Mode(GridEditMode.PopUp))
+                .DataSource(datasource => datasource
+                    .Ajax()
+                    .Model(model =>
+                            {
+                        model.Id(m => m.IdReport);
+                        model.Field(m => m.DataColumnId).Editable(false);
+                        })
+                    .Read(read => read.Action("DataColumn_Read", "RuleBased"))
+                    .Update(update => update.Action("Update", "RuleBased"))
+                    .Destroy(update => update.Action("Delete_DataColumn", "RuleBased"))
+                    .PageSize(20))
+                 .AutoBind(true)
+        )
+
+
+<script id="successTemplate" type="text/x-kendo-template">
+    <div class="upload-success">
+        <img src="../../Images/success-icon.png" />
+        <h3>#= message #</h3>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var afterEditStatement = "";
+    var _oparator = ["diff", "equal", "issame", "checkType", "checkRangeData", "ncol", "regex", "ordercol"];
+    var Nbcolumn;
+    var cbx_Periodicite;
+    var DateLimite;
+    var ReportId;
+    var LibReport;
+    var DetailReport;
+
+    function IsNullOrEmptyOrUdf(s) {
+        if ((s != "") && (s != " ") && (s != null) && (typeof s !== 'undefined')) return true;
+        else return false;
+    }
+    function IsValidForm() {
+        Nbcolumn = $("#Nbcolumn").val();
+        cbx_Periodicite = $("#cbx_Periodicite").val();
+        DateLimite = $("#DateLimite").val();
+        ReportId = $("#ReportId").val();
+        LibReport = $("#LibReport").val();
+        DetailReport = $("#DetailReport").val();
+        var boolValid = false;
+        if (Nbcolumn > 0 && IsNullOrEmptyOrUdf(cbx_Periodicite) && IsNullOrEmptyOrUdf(DateLimite) && IsNullOrEmptyOrUdf(ReportId) && IsNullOrEmptyOrUdf(LibReport)) boolValid = true;
+        return boolValid;
+    }
+    function saveReportForm() {
+        var notification = $("#notification").kendoNotification({
+            position: {
+                pinned: true,
+                top: 30,
+                right: 30
+            },
+            autoHideAfter: 3000,
+            stacking: "down",
+            templates: [{
+                type: "upload-success",
+                template: $("#successTemplate").html()
+            }]
+
+        }).data("kendoNotification");
+        if (IsValidForm()) {
+            $.ajax({
+                type: 'POST',
+                url: '/RuleBased/SaveReport',
+                data: JSON.stringify({ ReportId: ReportId, LibReport: LibReport, DetailReport: DetailReport, Nbcolumn: Nbcolumn, Periodicite: cbx_Periodicite, DateLimite: DateLimite }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response != null) {
+                        var customMessage = 'Le rapport ' + response.data + ' a été enregistré avec succès';
+                        notification.show({
+                            message: customMessage
+                        }, "upload-success");
+
+                        cancel();
+                    }
+                    else {
+                        console.log("echec de l'enregistrement");
+                    }
+
+                },
+                failure: function (response) {
+                    alert("erreur opération d'enregistrement");
+                }
+            });
+        }
+        else alert("Remplir tous les champs");
+    }
+    function cancel() {
+        $("#Nbcolumn").val("");
+        $("#cbx_Periodicite").data('kendoComboBox').value("");
+        $("#LibReport").val("");
+        $("#DetailReport").val("");
+        $("#ReportId").val("");
+        $("#DateLimite").data("kendoDateTimePicker").value(null);
+        
+    } 
+</script>
+
+
+<style>
+    .row-combo {
+        margin-bottom: 10px;
+    }
+    .submit-form {
+        float: right;
+        margin-right: 10px;
+    }
+    .k-notification-upload-success.k-group {
+        background: rgba(0%,60%,0%,.7);
+        color: #fff;
+    }
+
+    .k-notification-upload-success.k-group {
+        background: rgba(0%,60%,0%,.7);
+        color: #fff;
+    }
+    .upload-success {
+        width: 240px;
+        height: 100px;
+        padding: 0 30px;
+        line-height: 100px;
+    }
+    .upload-success h3 {
+        font-size: 1.7em;
+        font-weight: normal;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .upload-success img {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+</style>
