@@ -60,17 +60,39 @@
             <div class="modal-body">
 
                 <div class="form-component row" style="margin-bottom:15px">
-                    <div class="col-lg-6">
-                        <label for="nom" style="text-align:left">Nom:</label>
-                        <input id="nom" type="text" style="width: 200px;padding-left:5px"/>
-                    </div>
+                    <div class="col-lg-12">
 
-                    <div class="col-lg-6">
-                        <label for="code" style="text-align:left">Code:</label>
-                        <input id="code" type="text" style="width: 200px;padding-left:5px" />
+                        <span for="campagne" style="text-align:left">Copier la configuration :</span>
+                        <select id="campagne" style="width: 300px;display:inline" class="form-control">
+                            <option value="0_0">-- Sélectionnez une campagne --</option>
+                            @foreach (var m in ViewBag.CampaignList)
+                            {
+
+                                <option value=@m.CampaignId> @m.LibelleCampagne</option>
+
+                            }
+                        </select>
                     </div>
 
                 </div>
+
+                <div class="form-component row" style="margin-bottom:15px">
+                    <h3><span> OU </span></h3>  
+                </div>
+
+
+                    <div class="form-component row" style="margin-bottom:15px">
+                        <div class="col-lg-6">
+                            <label for="nom" style="text-align:left">Nom:</label>
+                            <input id="nom" type="text" style="width: 200px;padding-left:5px" />
+                        </div>
+
+                        <div class="col-lg-6">
+                            <label for="code" style="text-align:left">Code:</label>
+                            <input id="code" type="text" style="width: 200px;padding-left:5px" />
+                        </div>
+
+                    </div>
 
                     <div class="form-component row" style="margin-bottom:15px">
                         <div class="col-lg-6">
@@ -448,6 +470,33 @@
             });
         }
 
+        function initListBox2(listItems) {
+            $("#lstBox2 option").remove();
+            $.map(listItems, function (option) {
+                $("#lstBox2").append('<option value="' + option.CampaignFileId + '">' + option.CampaignFileName + '</option>');
+            });
+        }
+
+        function initCampaignControls(listControls) {
+             $.map(listControls, function (option) {
+
+                 if (option.ControlId == "E") {
+                     $("input[name='exhaustivite']").prop("checked", true);  
+                     $("input[name='optexhaustivite'][value='"+option.Blocking+"']").prop('checked', true);
+                     $("#rb-exhaustivite").slideDown();
+                 } else if (option.ControlId == "CF"){
+                     $("input[name='conformite']").prop("checked", true);
+                     $("input[name='optconformite'][value='"+option.Blocking+"']").prop('checked', true);
+                     $("#rb-conformite").slideDown();
+                 }else if (option.ControlId == "CH"){
+                     $("input[name='coherence']").prop("checked", true);
+                     $("input[name='optcoherence'][value='"+option.Blocking+"']").prop('checked', true);
+                     $("#rb-coherence").slideDown();
+                 }
+
+            });
+        }
+
         (function () {
             $('#btnRight').click(function (e) {
                 var selectedOpts = $('#lstBox1 option:selected');
@@ -507,6 +556,113 @@
                 $(selectedOpts).remove();
                 e.preventDefault();
             });
+
+
+            $("#campagne").change(function () {
+
+                value = $("#campagne").val();
+
+                $("#nom").val("");
+                $("#code").val("");
+                $("#start").val("");
+                $("#end").val("");
+                $("#lstBox2 option").remove();
+                $("input[name='exhaustivite']").prop("checked",false); 
+                $("input[name='conformite']").prop("checked",false);
+                $("input[name='coherence']").prop("checked", false);
+                $("#rb-exhaustivite").slideUp();
+                $("#rb-conformite").slideUp();
+                $("#rb-coherence").slideUp();
+                $("#annee").val("");
+                $("input[name='periode']:checked").val();
+                $("#selectannee").val("");
+                $("#selectmois").val("");
+                $("#selecttrimestre").val("");
+                $("#selectsemestre").val("");
+                
+                if (value != "0_0") {   
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Campaign/GetConfigurationByCampaignId',
+                        data: JSON.stringify({ selectedCampaign: value }),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+
+                            $("#nom").val(response['nom']);
+                            $("#code").val(response['code']);
+                            $("#start").val(response['start']);
+                            $("#end").val(response['end']);
+                            initListBox2(response['selectedReport']);
+                            initCampaignControls(response['selectedControl']);
+
+                            $('#annee').data('kendoComboBox').value(response['annee']);
+                            if(response['periode'] == "Annuel"){
+                                $(".rbannee").prop("checked", true);
+                                $(".rbsemestre").prop("checked", false);
+                                $(".rbtrimestre").prop("checked", false);
+                                $(".rbmois").prop("checked", false);
+
+                                $("#optmois").slideUp();
+                                $("#opttrimestre").slideUp();
+                                $("#optsemestre").slideUp();
+                                $("#optannee").slideDown();
+
+                                 $('#selectannee').data('kendoComboBox').value(response['selectedperiode']);
+                            }
+                            if(response['periode'] == "Semestriel"){
+                                $(".rbannee").prop("checked", false);
+                                $(".rbsemestre").prop("checked", true);
+                                $(".rbtrimestre").prop("checked", false);
+                                $(".rbmois").prop("checked", false);
+
+                                 $("#optmois").slideUp();
+                                 $("#opttrimestre").slideUp();
+                                 $("#optsemestre").slideDown();
+                                $("#optannee").slideUp();
+
+                                 $('#selectsemestre').data('kendoComboBox').value(response['selectedperiode']);
+                            }
+                            if(response['periode'] == "Trimestriel"){
+                                $(".rbannee").prop("checked", false);
+                                $(".rbsemestre").prop("checked", false);
+                                $(".rbtrimestre").prop("checked", true);
+                                $(".rbmois").prop("checked", false);
+
+                                $("#optmois").slideUp();
+                                $("#opttrimestre").slideDown();
+                                $("#optsemestre").slideUp();
+                                $("#optannee").slideUp();
+
+                                var val = response['selectedperiode'];
+                                //$("#selecttrimestre > [value=" + val + "]").attr("selected", "true");
+                                $('#selecttrimestre').data('kendoComboBox').value(val);
+                            }
+                            if(response['periode'] == "Mensuel"){
+                                $(".rbannee").prop("checked", false);
+                                $(".rbsemestre").prop("checked", false);
+                                $(".rbtrimestre").prop("checked", false);
+                                $(".rbmois").prop("checked", true);
+
+                                $("#optmois").slideDown();
+                                $("#opttrimestre").slideUp();
+                                $("#optsemestre").slideUp();
+                                $("#optannee").slideUp();
+
+                                $('#selectmois').data('kendoComboBox').value(response['selectedperiode']);
+                            }
+                        },
+                        failure: function (response) {
+                            alert("Erreur chargement des configurations" + response);
+                        }
+                    });
+                }
+
+
+    })
+
+
         }(jQuery));
 
     </script>
@@ -590,6 +746,19 @@
                 width: 70%;
                 margin-bottom: 5px;
             }
+
+            h3 {
+   width: 100%; 
+   text-align: center; 
+   border-bottom: 1px solid #73879C; 
+   line-height: 0.1em;
+   margin: 10px 0 20px; 
+} 
+
+h3 span { 
+    background:#fff; 
+    padding:0 10px; 
+}
     </style>
 
 

@@ -165,7 +165,7 @@ namespace Cima.Repository
             return listcampaign;
         }
 
-        public ObservableCollection<Campaign> GetCampaignByEndDate()
+        public ObservableCollection<Campaign> GetAll()
         {
             ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
             using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
@@ -213,6 +213,39 @@ namespace Cima.Repository
                         while (sqlQueryResult.Read())
                         {
                             var campaign = sqlQueryResult.GetString(0);
+
+                            listcampaign.Add(campaign);
+                        }
+
+                    }
+            }
+
+            return listcampaign;
+        }
+
+        public ObservableCollection<Campaign> GetCampaignById(int Id)
+        {
+            ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
+            using (var sqlConnection = this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = new SqlCommand(@"SELECT BeginDate,EndDate,year,Periode,LibPeriodeCourt,Nom,Code FROM sysman.tblCampaign WHERE ID_Campaign = @Id", sqlConnection))
+            {
+                sqlQuery.Parameters.AddWithValue("@Id", Id);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        while (sqlQueryResult.Read())
+                        {
+
+                            Campaign campaign = new Campaign()
+                            {
+                                BeginDate = sqlQueryResult.GetDateTime(0),
+                                EndDate = sqlQueryResult.GetDateTime(1),
+                                Year = sqlQueryResult.GetString(2),
+                                Periode = sqlQueryResult.GetString(3),
+                                LibPeriodeCourt = sqlQueryResult.GetString(4),
+                                Nom = sqlQueryResult.GetString(5),
+                                Code = sqlQueryResult.GetString(6)
+                            };
 
                             listcampaign.Add(campaign);
                         }

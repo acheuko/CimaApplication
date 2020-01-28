@@ -21,11 +21,16 @@ namespace Cima.Controllers
 
         private readonly REPO_CampaignFile campaignFileRepository;
         private readonly REPO_Campaign campaignRepository;
+        private readonly REPO_CampaignCampaignFile campaignCampaignFileRepository;
+        private readonly REPO_CampaignCampaignControl campaignCampaignControlRepository;
+
 
         public CampaignController()
         {
             campaignRepository = (REPO_Campaign)unitOfWork.CampaignRepository;
             campaignFileRepository = (REPO_CampaignFile)unitOfWork.CampaignFileRepository;
+            campaignCampaignFileRepository = (REPO_CampaignCampaignFile)unitOfWork.CampaignCampaignFileRepository;
+            campaignCampaignControlRepository = (REPO_CampaignCampaignControl)unitOfWork.CampaignCampaignControlRepository;
         }
 
         //
@@ -34,6 +39,11 @@ namespace Cima.Controllers
         public ActionResult Index()
         {
             ViewBag.CampaignFiles = GetCampaignFilesAvailableList();
+
+            //récupérer toutes les campagnes ouvertes
+            ObservableCollection<Campaign> listCampaign = campaignRepository.GetAll();
+
+            ViewBag.CampaignList = listCampaign;
 
             return View("Campaign");
         }
@@ -94,6 +104,39 @@ namespace Cima.Controllers
             ObservableCollection<CampaignFile> result = repoCampaignFiles.GetFilesByCampaignId(IdCampaign);
             
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetConfigurationByCampaignId(int selectedCampaign)
+        {
+            ObservableCollection<Campaign> campaigns = campaignRepository.GetCampaignById(selectedCampaign);
+            ObservableCollection<CampaignFile> campaignFiles = campaignCampaignFileRepository.GetFilesByCampaignId(selectedCampaign);
+            ObservableCollection<CampaignCampaignControl> campaignControls = campaignCampaignControlRepository.GetByCampaignId(selectedCampaign);
+
+            Dictionary<string, object> response = new Dictionary<string, object>();
+
+            if (campaigns.Count > 0)
+            {
+                var campaign = campaigns.ElementAt(0);
+                response.Add("nom",campaign.Nom);
+                response.Add("code", campaign.Code);
+                response.Add("start", campaign.BeginDate.ToString("dd/MM/yyyy"));
+                response.Add("end", campaign.EndDate.ToString("dd/MM/yyyy"));
+                response.Add("annee", campaign.Year);
+                response.Add("periode", campaign.Periode);
+                response.Add("selectedperiode", campaign.LibPeriodeCourt.Split(' ')[0]);
+            }
+
+            if(campaignFiles != null)
+            {
+                response.Add("selectedReport", campaignFiles);
+            }
+
+            if (campaignControls != null)
+            {
+                response.Add("selectedControl", campaignControls);
+            }
+
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
 

@@ -46,5 +46,34 @@ namespace Cima.Repository
 
             return result;
         }
+
+        public ObservableCollection<CampaignCampaignControl> GetByCampaignId(int IdCampagne)
+        {
+            ObservableCollection<CampaignCampaignControl> result = new ObservableCollection<CampaignCampaignControl>();
+
+            using (var sqlConnection = this.Connect(CONNECTION_STRING_SYSMAN))
+            using (var sqlQuery = new SqlCommand(@"SELECT ID_ControlType, Blocking FROM sysman.tblCampaignControl WHERE ID_Campaign = @ParamId", sqlConnection))
+            {
+                sqlQuery.Parameters.AddWithValue("@ParamId", IdCampagne);
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        while (sqlQueryResult.Read())
+                        {
+                          
+                            CampaignCampaignControl campaignControl = new CampaignCampaignControl()
+                            {
+                                ControlId = sqlQueryResult.GetString(0),
+                                Blocking = sqlQueryResult.GetString(1)
+                            };
+
+                            result.Add(campaignControl);
+                        }
+
+                    }
+            }
+
+            return result;
+        }
     }
 }

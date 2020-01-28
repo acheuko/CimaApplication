@@ -58,7 +58,7 @@ namespace Cima.Controllers
             if (Session["Profils"] !=  null && Session["Profils"].ToString() != "")
             {
                 //récupérer toutes les campagnes ouvertes
-                ObservableCollection<Campaign> listCampaign = repoCampaign.GetCampaignByEndDate();
+                ObservableCollection<Campaign> listCampaign = repoCampaign.GetAll();
 
                 if(listCampaign.Count == 0) // pas de campagne ouverte
                 {
