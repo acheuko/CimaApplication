@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -148,7 +149,72 @@ namespace Cima.Controllers
             return campaignFilesQuery.ToList();
         }
 
-      
+        [HttpPost]
+        public ActionResult UpdateCampaign([DataSourceRequest] DataSourceRequest request,
+            Campaign campaign)
+        {
+            try
+            {
+                string libelleLong = campaign.LibPeriodeLong.Substring(campaign.LibPeriodeLong.Length-4, 4);
+                string libPeriodeCourt = PeriodeHelper.GetLibelleCourt(libelleLong, campaign.Periode);
+
+                campaign.LibPeriodeCourt = libPeriodeCourt + " " + campaign.Year;
+                campaign.LibelleCampagne = campaign.Nom + "_" + campaign.Code + "_" + campaign.LibPeriodeLong + "_" + campaign.Year;
+                campaign.Status = "O";
+                campaign.CreationDate = DateTime.Now;
+
+                //Campaign c = new Campaign
+                //{
+                //    Year = annee,
+                //    Periode = periode,
+                //    LibPeriodeCourt = libperiode + " " + annee,
+                //    LibPeriodeLong = libPeriodeLong + " " + annee,
+                //    BeginDate = datedeb,
+                //    EndDate = datefin,
+                //    Status = "O",
+                //    CreationDate = DateTime.Now,
+                //    Nom = nom,
+                //    Code = code,
+                //    LibelleCampagne = nom + "_" + code + "_" + libPeriodeLong + "_" + annee
+                //};
+
+                if (campaign != null)
+                {
+
+                   
+
+
+                    campaignRepository.Update(campaign);
+                }
+
+                try
+                {
+                    unitOfWork.Save();
+                }catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+                
+            }
+            catch (DataException /* dex */)
+            {
+                //Log the error (uncomment dex variable name after DataException and add a line here to write a log.)
+                ModelState.AddModelError("", "Unable to save update changes. Try again, and if the problem persists, see your system administrator.");
+            }
+
+            return Json("".ToDataSourceResult(request, ModelState));
+        }
+
+        [HttpPost]
+        public ActionResult DeleteCampaign([DataSourceRequest] DataSourceRequest request, Campaign campaign)
+        {
+            if (campaign != null)
+                 campaignRepository.DeleteCampaign(campaign);
+            unitOfWork.Save();
+
+            return Json("".ToDataSourceResult(request, ModelState));
+        }
 
     }
 }

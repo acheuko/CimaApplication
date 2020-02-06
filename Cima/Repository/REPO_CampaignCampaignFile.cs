@@ -50,5 +50,37 @@ namespace Cima.Repository
 
             return listcampaignFiles;
         }
+
+        public int DeleteByIdCampaign(int IdCampagne)
+        {
+            SqlConnection con = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN);
+
+            //Replaced Parameters with Value
+            string query = @"DELETE FROM sysman.tblCampaignFileMask WHERE ID_Campaign = @IdCampagne";
+
+            SqlCommand cmd = (SqlCommand)this.GetCommand(query, con);
+
+            //Pass values to Parameters
+            cmd.Parameters.AddWithValue("@IdCampagne", IdCampagne);
+
+            int response = 0;
+
+            try
+            {
+                response = cmd.ExecuteNonQuery();
+                Console.WriteLine("Records deleted Successfully");
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine("Error Generated. Details: " + e.ToString());
+            }
+            finally
+            {
+                cmd.Dispose();
+                con.Close();
+            }
+
+            return response;
+        }
     }
 }

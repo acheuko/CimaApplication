@@ -31,10 +31,12 @@ namespace Cima.Models
         public String LibPeriodeLong { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime BeginDate { get; set; }
 
         
         [Required]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
         

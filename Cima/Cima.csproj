@@ -354,10 +354,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Repository\IREPO_UploadFile.cs" />
-
     <Compile Include="Repository\REPO_Action.cs" />
     <Compile Include="Repository\REPO_DataColumn.cs" />
-
     <Compile Include="Repository\REPO_Campaign.cs" />
     <Compile Include="Repository\REPO_CampaignCampaignControl.cs" />
     <Compile Include="Repository\REPO_CampaignCampaignFile.cs" />
@@ -365,7 +363,6 @@
     <Compile Include="Repository\REPO_ContratInterface.cs" />
     <Compile Include="Repository\REPO_Derogation.cs" />
     <Compile Include="Repository\REPO_FichierRejete.cs" />
-
     <Compile Include="Repository\REPO_FiltreCriteria.cs" />
     <Compile Include="Repository\REPO_Icon.cs" />
     <Compile Include="Repository\REPO_Login.cs" />
@@ -5542,6 +5539,8 @@
     <Content Include="Views\Campaign\Campaign.cshtml" />
     <Content Include="Views\Shared\CampaignUnavailable.cshtml" />
     <Content Include="Views\Derogation\Derogation.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Date.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

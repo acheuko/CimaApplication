@@ -33,7 +33,7 @@ namespace Cima.Repository
         {
             ObservableCollection<Campaign> listcampaign = new ObservableCollection<Campaign>();
             using (var sqlConnection = (SqlConnection)this.Connect(CONNECTION_STRING_SYSMAN))
-            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate, LibPeriodeLong, Year, Periode FROM sysman.tblCampaign ORDER BY CreationDate DESC", sqlConnection))
+            using (var sqlQuery = new SqlCommand(@"SELECT ID_Campaign,BeginDate,EndDate, LibPeriodeLong, Year, Periode, Nom, Code FROM sysman.tblCampaign ORDER BY CreationDate DESC", sqlConnection))
             {
                 using (var sqlQueryResult = sqlQuery.ExecuteReader())
                     if (sqlQueryResult != null)
@@ -47,7 +47,9 @@ namespace Cima.Repository
                                 EndDate = sqlQueryResult.GetDateTime(2),
                                 LibPeriodeLong = sqlQueryResult.GetString(3),
                                 Year = sqlQueryResult.GetString(4),
-                                Periode = sqlQueryResult.GetString(5)
+                                Periode = sqlQueryResult.GetString(5),
+                                Nom = sqlQueryResult.GetString(6),
+                                Code = sqlQueryResult.GetString(7)
                             };
 
                             listcampaign.Add(campaign);
@@ -254,6 +256,26 @@ namespace Cima.Repository
             }
 
             return listcampaign;
+        }
+
+        /**
+         * Supprimer une campagne et les fichiers et controles associés
+         **/
+        public void DeleteCampaign(Campaign campaign)
+        {
+            if (campaign != null)
+            {
+                // suppression des fichiers de campagne
+                campaignFileRepository.DeleteByIdCampaign(campaign.CampaignId);
+                // suppression des controles de campagne
+                campaignControlRepository.DeleteByIdCampaign(campaign.CampaignId);
+                // suppression de la campagne
+                Delete(campaign);
+
+            }
+
+            unitOfWork.Save();
+
         }
     }
 }
